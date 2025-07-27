@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en" xmlns:th="http://www.thymeleaf.org">
+
+    <head th:replace="~{fragments :: head('Add Owner')}"></head>
+
+    <body>
+        <div th:replace="~{fragments :: authenticatedNavbar('')}"></div>
+
+        <div th:replace="~{fragments :: heading('Add A New Owner User')}"></div>
+
+        <div class="container form-container mt-3">
+            <form class="text-center" action="#" method="POST"
+                  th:action="@{/owner-dashboard/add-owner/processAddOwner}" th:object="${form}">
+                <div class="card bg-transparent shadow">
+                    <div class="card-body">
+                        <div th:if="${#fields.hasErrors('*')}">
+                            <div class="alert alert-danger text-start">
+                                <ul>
+                                    <li th:each="error : ${#fields.errors('*')}" th:text="${error}"></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div th:if="${param.success}">
+                            <div class="alert alert-success">You have successfully added a new owner user.</div>
+                        </div>
+                        <input class="form-control mt-3" th:field="*{username}"
+                               type="text" placeholder="Username" required>
+                        <input class="form-control mt-3" th:field="*{password}"
+                               type="password" placeholder="Password" required>
+                        <input class="form-control mt-3" th:field="*{confirmPassword}"
+                               type="password" placeholder="Confirm password" required>
+                        <input class="btn btn-secondary mt-4" type="submit" name="submit" value="Add Owner User">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+        <script th:src="@{/js/bs-init.js}"></script>
+    </body>
+
+</html>

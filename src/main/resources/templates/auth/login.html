@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en" xmlns:th="http://www.thymeleaf.org">
+
+    <head th:replace="~{fragments :: head('Login')}"></head>
+
+    <body>
+        <div th:replace="~{fragments :: unauthenticatedNavbar}"></div>
+
+        <div th:replace="~{fragments :: heading('Login')}"></div>
+        <div class="container form-container text-center mt-5">
+            <div class="card bg-transparent shadow">
+                <div class="card-body">
+                    <form action="#" th:action="@{/authenticateTheUser}" method="POST">
+                        <div th:if="${param.error}">
+                            <div class="alert alert-danger">Invalid username or password!</div>
+                        </div>
+                        <div th:if="${param.logout}">
+                            <div class="alert alert-success">You have logged out successfully.</div>
+                        </div>
+                        <div th:if="${param.registrationSuccess}">
+                            <div class="alert alert-success">You have registered successfully. Please log in.</div>
+                        </div>
+                        <div th:if="${param.accountDeleted}">
+                            <div class="alert alert-success">You have deleted your account successfully.</div>
+                        </div>
+                        <input class="form-control" type="text" name="username" placeholder="Username" style="margin-bottom: 20px;" required>
+                        <input class="form-control" type="password" name="password" placeholder="Password" required>
+                        <input class="btn btn-secondary" type="submit" name="submit" value="Login" style="margin-top: 20px;">
+                        <p style="margin-top: 10px;">Don't have an account?&nbsp;<a th:href="@{register}" style="color: var(--bs-secondary);">Register now</a></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+    </body>
+
+</html>

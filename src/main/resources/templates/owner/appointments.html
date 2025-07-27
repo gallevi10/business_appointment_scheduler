@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+    <head th:replace="~{fragments :: head('Owner Dashboard - Scheduled Appointments')}"></head>
+
+    <body>
+        <div th:replace="~{fragments :: authenticatedNavbar('appointments')}"></div>
+
+        <div th:replace="~{fragments :: heading('Scheduled Appointments')}"></div>
+
+        <div class="container-md mt-4 text-center w-75">
+            <div class="text-start">
+                <div class="form-check form-switch form-check-inline fs-4">
+                    <input id="only-active-checkbox" class="form-check-input" type="checkbox" checked>
+                    <label class="form-check-label" for="only-active-checkbox">Active Appointments Only</label>
+                </div>
+            </div>
+            <div id="no-active-appointments-alert" class="alert alert-info mt-3 fs-5 text-center d-none">
+                There are no active appointments scheduled at the moment. Please check back later.
+            </div>
+            <div class="table-responsive-sm mt-3 fs-5 text-center">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr class="table-dark">
+                            <th>Customer Details</th>
+                            <th>Service name</th>
+                            <th>Date</th>
+                            <th>Hour</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="align-middle" th:each="appointment : ${appointments}"
+                            th:classappend="${appointment.isActive} ? 'active-appointment' : 'inactive-appointment d-none'">
+                            <td>
+                                <a href="#" class="customer-link text-decoration-none link-primary fw-bold"
+                                   th:text="${appointment.customer.firstName + ' ' + appointment.customer.lastName}"
+                                   th:data-firstname="${appointment.customer.firstName}"
+                                   th:data-lastname="${appointment.customer.lastName}"
+                                   th:data-email="${appointment.customer.email}"
+                                   th:data-phone="${appointment.customer.phone}"
+                                   data-bs-toggle="modal"
+                                   data-bs-target="#customer-modal"
+                                   title="Click to see more details">
+                                </a>
+                            </td>
+                            <td th:text="${appointment.service.serviceName}"/>
+                            <td th:text="${#temporals.format(appointment.date, 'dd/MM/yyyy')}"/>
+                            <td th:text="${appointment.time}"/>
+                            <td>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a th:href="@{/book(sid=${appointment.service.id},aid=${appointment.appointmentId})}"
+                                       class="btn btn-info" >
+                                        Update
+                                    </a>
+                                    <a th:href="@{/owner-dashboard/appointments/cancel(aid=${appointment.appointmentId})}"
+                                       class="btn btn-danger"
+                                       onclick="return confirm('Are you sure you want to cancel this appointment?');">
+                                        Cancel
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <a id="export-to-xml-btn" class="btn btn-secondary mt-2 mb-4 fs-5"
+               role="button" th:href="@{/owner-dashboard/appointments/export-to-xml(active=true)}">Export to XML file</a>
+        </div>
+        <div class="modal fade" id="customer-modal" tabindex="-1" aria-labelledby="customer-modal-label" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title w-100 text-center" id="customer-modal-label">Customer Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>First Name:</strong> <span id="modal-first-name"></span></p>
+                        <p><strong>Last Name:</strong> <span id="modal-last-name"></span></p>
+                        <p><strong>Email:</strong> <span id="modal-email"></span></p>
+                        <p><strong>Phone:</strong> <span id="modal-phone"></span></p>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+        <script th:src="@{/js/bs-init.js}"></script>
+        <script th:src="@{/js/appointments.js}"></script>
+    </body>
+
+</html>

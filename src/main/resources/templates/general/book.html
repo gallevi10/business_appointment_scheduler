@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+    <head th:replace="~{fragments :: head('Customer Dashboard - My Appointments')}"></head>
+
+    <body>
+        <div sec:authorize="!isAuthenticated()"
+             th:replace="~{fragments :: unauthenticatedNavbar}">
+        </div>
+
+        <div sec:authorize="isAuthenticated()"
+             th:replace="~{fragments :: authenticatedNavbar('')}">
+        </div>
+
+        <div th:if="${selectedService.isActive}">
+            <div th:replace="${param.aid != null} ? ~{fragments :: heading('Update The Appointment')} : ~{fragments :: heading('Book An Appointment')}"></div>
+            <div class="container mt-4 w-100">
+                <p class="fs-4 text-center">
+                    Hi
+                    <span sec:authorize="isAuthenticated()" th:text="${#authentication.name} + ','"></span>
+                    <span sec:authorize="!isAuthenticated()">guest, please fill your details, and</span>
+                    <br />
+                    <span>
+                        pick date and hour for the selected service
+                    </span>
+                </p>
+            </div>
+
+            <div class="container d-flex justify-content-center text-center mt-4 mb-4">
+                <div class="card bg-transparent shadow">
+                    <div class="card-body">
+                        <form action="#" method="POST"
+                              th:action="@{/book/processBooking}" th:object="${form}">
+                            <div th:if="${#fields.hasErrors('*')}">
+                                <div class="alert alert-danger text-start">
+                                    <ul>
+                                        <li th:each="error : ${#fields.errors('*')}" th:text="${error}"></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div sec:authorize="!isAuthenticated()">
+                                <div class="row">
+                                    <div class="col">
+                                        <input class="form-control" type="text" placeholder="First name"
+                                               th:field="*{customerDetailsForm.firstName}" />
+                                    </div>
+                                    <div class="col">
+                                        <input class="form-control" type="text" placeholder="Last name"
+                                               th:field="*{customerDetailsForm.lastName}"/>
+                                    </div>
+                                </div>
+                                <input class="form-control mt-2" type="email" placeholder="Email"
+                                       th:field="*{customerDetailsForm.email}"/>
+                                <input class="form-control mt-2" type="tel" placeholder="Phone number"
+                                       th:field="*{customerDetailsForm.phoneNumber}" />
+                            </div>
+                            <div class="row mt-2" >
+                                <div class="col">
+                                    <input id="date-input" class="form-control" type="date"
+                                           onkeydown="return false;" onpaste="return false;"
+                                           th:field="*{appointmentTimeForm.appointmentDate}" />
+                                </div>
+                                <div class="col">
+                                    <select id="time-select" class="form-select" name="time"
+                                            th:field="*{appointmentTimeForm.appointmentTime}">
+                                        <option th:if="*{appointmentTimeForm.appointmentTime != null}"
+                                                th:value="*{appointmentTimeForm.appointmentTime}"
+                                                th:text="*{appointmentTimeForm.appointmentTime}">
+                                        </option>
+                                        <option th:unless="*{appointmentTimeForm.appointmentTime != null}"
+                                                value="" disabled selected>Select a date first</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <input type="hidden" id="sid-input" name="sid" th:value="${param.sid}"/>
+                            <input type="hidden" th:if="${param.aid != null}" name="aid" th:value="${param.aid}"/>
+                            <input id="submit-btn" class="btn btn-secondary disabled mt-3" type="submit" name="submit"
+                                   th:value="${param.aid != null} ? 'Update' : 'Book'" />
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- display message if the service is not active -->
+        <div th:unless="${selectedService.isActive}">
+            <div class="container" style="width: 100%; margin-top: 15px;">
+                <h1 style="text-align: center; font-size: 40.8813px;">Service Unavailable</h1>
+                <p style="text-align: center; font-size: 24px; color: black;">
+                    The selected service is currently unavailable. Please try again later.
+                </p>
+            </div>
+        </div>
+
+        <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+        <script th:src="@{/js/bs-init.js}"></script>
+        <script th:src="@{/js/book.js}"></script>
+    </body>
+
+</html>

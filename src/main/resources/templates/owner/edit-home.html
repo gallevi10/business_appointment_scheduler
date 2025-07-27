@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+    <head th:replace="~{fragments :: head('Edit Home')}"></head>
+
+    <body>
+        <div th:replace="~{fragments :: authenticatedNavbar('edit-home')}"></div>
+
+        <div th:replace="~{fragments :: heading('Edit Home')}"></div>
+
+        <div class="container d-flex justify-content-center mt-5">
+            <form class="fs-5 text-center w-75 mb-3" action="#" enctype="multipart/form-data" method="POST"
+                  th:action="@{/owner-dashboard/edit-home/processEditHome}" th:object="${form}">
+                <div th:if="${#fields.hasErrors('*')}">
+                    <div class="alert alert-danger text-start">
+                        <ul>
+                            <li th:each="error : ${#fields.errors('*')}" th:text="${error}"></li>
+                        </ul>
+                    </div>
+                </div>
+                <div th:if="${param.editSuccess}">
+                    <div class="alert alert-success">You have successfully edited your home page!</div>
+                </div>
+                <div th:if="${param.removeSuccess}">
+                    <div class="alert alert-success">You have successfully removed the background image!</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">
+                        <label class="col-form-label">Business Name:</label>
+                    </div>
+                    <div class="col align-self-center">
+                        <input class="form-control" type="text" placeholder="Business Name" th:field="*{businessName}" required>
+                    </div>
+                </div>
+                <div class="row mt-5">
+                    <div class="col-md-5">
+                        <label class="col-form-label">Description:</label>
+                    </div>
+                    <div class="col align-self-center">
+                        <textarea class="form-control" placeholder="Write here your business description..."
+                                  autocomplete="on" th:field="*{description}" required></textarea>
+                    </div>
+                </div>
+                <div class="row mt-5">
+                    <div class="col-md-5 align-self-center">
+                        <label class="col-form-label">Background Image:</label>
+                    </div>
+                    <div class="col align-self-center">
+                        <input class="form-control" type="file" accept="image/jpeg, image/jpg, image/png"
+                               name="backgroundImage" th:field="*{backgroundImage}">
+                    </div>
+                    <div th:if="${form.imagePath != null}"  class="col-md-2 align-self-center">
+                        <a href="#" class="text-decoration-none">
+                            <img class="img-thumbnail img-view"
+                                 th:src="${form.imagePath}"
+                                 alt="Background Image"
+                                 data-bs-toggle="modal"
+                                 data-bs-target="#background-image-modal"
+                                 title="Click to see full image or remove it">
+                        </a>
+                    </div>
+                </div>
+                <input class="btn btn-lg btn-secondary mt-5" type="submit" value="Submit Changes">
+            </form>
+        </div>
+        <div th:if="${form.imagePath != null}" class="modal fade" id="background-image-modal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title w-100 text-center">Background Image</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="close"></button>
+                    </div>
+                    <div class="modal-body justify-content-center">
+                        <img class="img-fluid" th:src="${form.imagePath}" alt="Background Image">
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <a th:href="@{/owner-dashboard/edit-home/remove-background-image}"
+                           class="btn btn-danger"
+                           onclick="return confirm('Are you sure you want to remove the current background?');">
+                            Remove Background Image
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+        <script th:src="@{/js/bs-init.js}"></script>
+    </body>
+
+</html>

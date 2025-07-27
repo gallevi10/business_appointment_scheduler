@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en" xmlns:th="http://www.thymeleaf.org">
+
+    <head th:replace="~{fragments :: head('Register')}"></head>
+
+    <body>
+        <div th:replace="~{fragments :: unauthenticatedNavbar}"></div>
+
+        <div th:replace="~{fragments :: heading('Register')}"></div>
+
+        <div class="container form-container mt-4 mb-3">
+            <form class="text-center" action="#" method="POST"
+                  th:action="@{/processRegistrationForm}" th:object="${form}">
+                <div class="card bg-transparent shadow">
+                    <div class="card-body">
+                        <div th:if="${#fields.hasErrors('*')}">
+                            <div class="alert alert-danger text-start">
+                                <ul>
+                                    <li th:each="error : ${#fields.errors('*')}" th:text="${error}"></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <input class="form-control" th:field="*{customerDetailsForm.firstName}"
+                                       type="text" name="firstName" placeholder="First name">
+                            </div>
+                            <div class="col">
+                                <input class="form-control" th:field="*{customerDetailsForm.lastName}"
+                                       type="text" name="lastName" placeholder="Last name">
+                            </div>
+                        </div>
+                        <input class="form-control mt-2" th:field="*{customerDetailsForm.email}"
+                               type="email" placeholder="Email" required>
+                        <input class="form-control mt-2" th:field="*{customerDetailsForm.phoneNumber}"
+                               type="tel" placeholder="Phone number" required>
+                        <input class="form-control mt-2" th:field="*{userDetailsForm.username}"
+                               type="text" placeholder="Username" required>
+                        <input class="form-control mt-2" th:field="*{userDetailsForm.password}"
+                               type="password" placeholder="Password" required>
+                        <input class="form-control mt-2" th:field="*{userDetailsForm.confirmPassword}"
+                               type="password" placeholder="Confirm password" required>
+                        <input class="btn btn-secondary mt-3" type="submit" value="Register">
+                        <p class="text-secondary mt-2">Already have an account?
+                            <a class="link-secondary" th:href="@{/login}">Log in</a>
+                        </p>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+    </body>
+
+</html>

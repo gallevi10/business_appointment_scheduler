@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+    <head th:replace="~{fragments :: head('Successful Booking')}"></head>
+
+    <body>
+        <div sec:authorize="!isAuthenticated()"
+             th:replace="~{fragments :: unauthenticatedNavbar}">
+        </div>
+
+        <div sec:authorize="isAuthenticated()"
+             th:replace="~{fragments :: authenticatedNavbar('')}">
+        </div>
+
+        <div th:replace="~{fragments :: heading('Successful Booking')}"></div>
+
+        <div class="container mt-3 w-100 text-center p-3 fs-4 shadow">
+            <div class="card text-center fw-bold">
+                <div class="card-body">
+                    <h1 class="card-title"
+                        th:text="${isRescheduling} ? 'Your appointment has been rescheduled!' : 'Your appointment has been booked!'">
+                    </h1>
+                    <br>
+                    <p class="card-text">
+                        <span th:text="'Hello ' + ${bookedAppointment.customer.firstName} + ','"/>
+                        <br>
+                        Your appointment has been scheduled for:
+                        <br>
+                        <span th:text="'Date: ' + ${#temporals.format(bookedAppointment.startTime.toLocalDate(), 'dd/MM/yyyy')}"/>
+                        <br>
+                        <span th:text="'Time: ' + ${bookedAppointment.startTime.toLocalTime()}"/>
+                        <br>
+                        <span th:text="'Service: ' + ${bookedAppointment.service.serviceName}"/>
+                        <br><br>
+                        Thank you for choosing our business!
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+        <script th:src="@{/js/bs-init.js}"></script>
+    </body>
+</html>

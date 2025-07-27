@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments :: head('Customer Dashboard - My Appointments')}"></head>
+
+<body>
+    <div th:replace="~{fragments :: authenticatedNavbar('appointments')}"></div>
+
+    <div th:replace="~{fragments :: heading('My Next Appointments')}"></div>
+
+    <div class="container mt-4 w-75">
+        <a class="btn btn-primary fs-5" role="button" th:href="@{/pick-service}">Book new appointment</a>
+        <div class="alert alert-info mt-3 fs-5 text-center" th:if="${appointments.isEmpty()}">
+            You have no appointments scheduled. Please book a new appointment.
+        </div>
+        <div class="table-responsive-sm mt-3 fs-5 text-center" th:unless="${appointments.isEmpty()}">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr class="table-dark">
+                        <th>Service name</th>
+                        <th>Date</th>
+                        <th>Hour</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="align-middle" th:each="appointment : ${appointments}">
+                        <td th:text="${appointment.service.serviceName}"/>
+                        <td th:text="${#temporals.format(appointment.date, 'dd/MM/yyyy')}"/>
+                        <td th:text="${appointment.time}"/>
+                        <td>
+                            <div class="d-flex justify-content-center gap-2">
+                                <a th:href="@{/book(sid=${appointment.service.id},aid=${appointment.appointmentId})}"
+                                   class="btn btn-info" >
+                                    Update
+                                </a>
+                                <a th:href="@{/customer-dashboard/appointments/cancel(aid=${appointment.appointmentId})}"
+                                   class="btn btn-danger"
+                                   onclick="return confirm('Are you sure you want to cancel this appointment?');">
+                                    Cancel
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/bs-init.js}"></script>
+</body>
+
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+    <head th:replace="~{fragments :: head('Owner Dashboard - Service Manager')}"></head>
+
+    <body>
+        <div th:replace="~{fragments :: authenticatedNavbar('service-manager')}"></div>
+
+        <div th:replace="~{fragments :: heading('Service Manager')}"></div>
+
+        <div class="container-md mt-4">
+            <a class="btn btn-primary fs-5" role="button" th:href="@{service-manager/add-service}">Add new service</a>
+            <div class="alert alert-info mt-3 fs-5 text-center" th:if="${services.isEmpty()}">
+                There are no services at the moment. Please add a service to manage it.
+            </div>
+            <div class="table-responsive-sm mt-3 fs-5 text-center" th:unless="${services.isEmpty()}">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr class="table-dark">
+                            <th>Service Image</th>
+                            <th>Service name</th>
+                            <th>price</th>
+                            <th>duration</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="align-middle" th:each="service : ${services}">
+                            <td>
+                                <img class="img-fluid img-view"
+                                     th:src="${service.imagePath} != null ? ${service.imagePath} : '/images/default-service.png'"
+                                     alt="Service Image">
+
+                            </td>
+                            <td th:text="${service.serviceName}"></td>
+                            <td th:text="${service.price} + '₪'"></td>
+                            <td th:text="${service.duration} + ' Minutes'"></td>
+                            <td>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a th:href="@{/owner-dashboard/service-manager/update-service(sid=${service.id})}"
+                                       class="btn btn-info" >
+                                        Edit
+                                    </a>
+                                    <a th:href="@{/owner-dashboard/service-manager/delete(sid=${service.id})}"
+                                       href="#" class="btn btn-danger"
+                                       onclick="return confirm('Are you sure you want to delete this service?');">
+                                        Delete
+                                    </a>
+                                    <a href="#"
+                                       th:href="@{/owner-dashboard/service-manager/change-availability(sid=${service.id})}"
+                                       class="btn"
+                                       th:classappend="${service.isActive ? 'btn-warning' : 'btn-success'}"
+                                       th:text="${service.isActive ? 'Disable' : 'Enable'}"
+                                       th:onclick="${service.isActive} ? 'return confirm(\'Are you sure you want to disable this service?\');' : null">
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+        <script th:src="@{/js/bs-init.js}"></script>
+    </body>
+
+</html>

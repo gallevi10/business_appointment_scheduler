@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+    <head th:replace="~{fragments :: head('Add Range')}"></head>
+
+    <body>
+        <div th:replace="~{fragments :: authenticatedNavbar('')}"></div>
+
+        <div th:replace="${param.bhid != null} ? ~{fragments :: heading('Edit The Range')} : ~{fragments :: heading('Add New Range')}"></div>
+
+        <div class="container form-container text-center mt-4">
+            <form class="fs-5" action="#" method="POST"
+                  th:action="@{/owner-dashboard/opening-hours/processNewRange}" th:object="${form}">
+                <div th:if="${#fields.hasErrors('*')}">
+                    <div class="alert alert-danger text-start">
+                        <ul>
+                            <li th:each="error : ${#fields.errors('*')}" th:text="${error}"></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        <label class="col-form-label">Start time</label>
+                        <input class="form-control" type="time" th:field="*{startTime}" required>
+                    </div>
+                    <div class="col">
+                        <label class="col-form-label">End time</label>
+                        <input class="form-control" type="time" th:field="*{endTime}" required>
+                    </div>
+                    <div class="col align-self-center">
+                        <div class="form-check form-switch form-check-inline fs-4">
+                            <input class="form-check-input" type="checkbox" id="check-is-open"
+                                   th:field="*{isOpen}" th:checked="${form.isOpen}">
+                            <label class="form-check-label" for="check-is-open">Open</label>
+                        </div>
+                    </div>
+                </div>
+                <input class="btn btn-secondary mt-4" type="submit" name="submit"
+                       th:value="${param.bhid != null} ? 'Update' : 'Add'">
+                <input type="hidden" th:field="*{dayOfWeek}" th:value="${param.dow}" />
+                <input type="hidden" name="bhid" th:value="${param.bhid}" />
+            </form>
+        </div>
+        <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+        <script th:src="@{/js/bs-init.js}"></script>
+    </body>
+
+</html>

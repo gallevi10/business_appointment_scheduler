@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+    <head th:replace="~{fragments :: head('Opening Hours Manager')}"></head>
+
+    <body>
+        <div th:replace="~{fragments :: authenticatedNavbar('opening-hours-manager')}"></div>
+
+        <div th:replace="~{fragments :: heading('Opening Hours Manager')}"></div>
+
+        <div class="container-md mt-5 w-75">
+            <div class="table-responsive-sm fs-5 text-center">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr class="table-dark">
+                            <th>Day</th>
+                            <th>Ranges</th>
+                            <th class="w-25">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="align-middle" th:each="openingHour : ${openingHours}">
+                            <td th:text="${openingHour.day}"></td>
+                            <td>
+                                <div th:each="range : ${openingHour.ranges}">
+                                    <a href="#" class="range-link text-decoration-none fw-bold"
+                                       th:text="${range.startTime} + ' - ' + ${range.endTime}"
+                                       th:classappend="${range.isOpen ? 'link-success' : 'link-danger'}"
+                                       th:data-businesshourid="${range.id}"
+                                       th:data-isonlyonerange="${openingHour.ranges.size() == 1}"
+                                       data-bs-toggle="modal"
+                                       data-bs-target="#range-options-modal"
+                                       title="Click to see options for this range">
+                                    </a>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a th:href="@{/owner-dashboard/opening-hours/add-range(dow=${openingHour.ranges[0].dayOfWeek})}"
+                                       class="btn btn-success" >
+                                        Add New Range
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="modal fade" id="range-options-modal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title w-100 text-center">Range Options</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body text-center">
+                        <div class="mb-3">
+                            <p> Please select an option for the selected range</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <a id="model-edit-range" class="btn btn-info" >
+                            Edit
+                        </a>
+                        <a id="model-delete-range" class="btn btn-danger"
+                           onclick="return confirm('Are you sure you want to delete this range?');">
+                            Delete
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+        <script th:src="@{/js/bs-init.js}"></script>
+        <script th:src="@{/js/opening-hours.js}"></script>
+
+    </body>
+
+</html>

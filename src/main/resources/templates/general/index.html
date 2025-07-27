@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+    <head th:replace="~{fragments :: head('Home')}"></head>
+
+    <body>
+        <div sec:authorize="!isAuthenticated()"
+             th:replace="~{fragments :: unauthenticatedNavbar}">
+        </div>
+
+        <div sec:authorize="isAuthenticated()"
+             th:replace="~{fragments :: authenticatedNavbar('')}">
+        </div>
+
+        <div th:replace="~{fragments :: heading(${businessInfo.name})}"></div>
+
+        <div class="container w-100 mt-4">
+            <p class="text-center fs-4" th:text="${businessInfo.description}" style="white-space: pre-wrap;">
+            </p>
+        </div>
+
+        <div sec:authorize="!hasRole('ROLE_OWNER')" class="container text-center mt-4">
+            <div class="row">
+                <div class="col" id="book">
+                    <a class="btn btn-secondary fs-2" th:href="@{/pick-service}"
+                       style="font-family: cursive;">Book An Appointment</a>
+                    <p class="fs-6 fw-light">
+                        Guests can book appointments directly
+                    </p>
+                </div>
+            </div>
+        </div>
+        <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+        <script th:src="@{js/bs-init.js}"></script>
+    </body>
+
+</html>

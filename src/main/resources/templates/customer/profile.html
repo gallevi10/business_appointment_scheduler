@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+    <head th:replace="~{fragments :: head('My Profile')}"></head>
+
+    <body>
+        <div sec:authorize="isAuthenticated()"
+             th:replace="~{fragments :: authenticatedNavbar('')}">
+        </div>
+
+        <div th:replace="~{fragments :: heading('My Profile')}"></div>
+
+        <div class="container text-center mt-3 form-container">
+            <div class="card bg-transparent shadow">
+                <div class="card-body">
+                    <form action="#" method="POST"
+                          th:action="@{/customer-dashboard/profile/processChangeProfile}" th:object="${form}">
+                        <div th:if="${#fields.hasErrors('*')}">
+                            <div class="alert alert-danger text-start">
+                                <ul>
+                                    <li th:each="error : ${#fields.errors('*')}" th:text="${error}"></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div th:if="${param.success}">
+                            <div class="alert alert-success">You have changed your profile successfully.</div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <input class="form-control profile-form-inputs" type="text" th:field="*{firstName}"
+                                       title="First name" th:disabled="${!(#fields.hasErrors('*'))}">
+                            </div>
+                            <div class="col">
+                                <input class="form-control profile-form-inputs" type="text" th:field="*{lastName}"
+                                       title="Last name" th:disabled="${!(#fields.hasErrors('*'))}">
+                            </div>
+                        </div>
+                        <input class="form-control mt-3 profile-form-inputs" type="email" th:field="*{email}"
+                               title="Email" th:disabled="${!(#fields.hasErrors('*'))}">
+                        <input class="form-control mt-3 profile-form-inputs" type="tel" th:field="*{phoneNumber}"
+                               title="Phone number" th:disabled="${!(#fields.hasErrors('*'))}">
+                        <input id="submit-changes-btn" class="btn btn-secondary mt-4"
+                               th:classappend="${!(#fields.hasErrors('*')) ? 'd-none' : ''}"
+                               type="submit" value="Submit Changes">
+                        <button id="edit-details-btn" class="btn btn-secondary mt-4"
+                                th:classappend="${#fields.hasErrors('*') ? 'd-none' : ''}"
+                                type="button">Edit Details</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+        <script th:src="@{/js/bs-init.js}"></script>
+        <script th:src="@{/js/profile.js}"></script>
+    </body>
+
+</html>

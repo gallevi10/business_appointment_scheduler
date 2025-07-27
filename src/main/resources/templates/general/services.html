@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+    <head th:replace="~{fragments :: head('Services')}"></head>
+
+    <body>
+        <div sec:authorize="!isAuthenticated()"
+             th:replace="~{fragments :: unauthenticatedNavbar}">
+        </div>
+
+        <div sec:authorize="isAuthenticated()"
+             th:replace="~{fragments :: authenticatedNavbar('')}">
+        </div>
+
+        <div th:replace="~{fragments :: heading('Pick A Service')}"></div>
+
+        <div class="container mt-3 text-center">
+            <div class="row">
+                <div class="col col-md-4 mt-2 mb-2 d-flex" th:each="service : ${servicePage.content}">
+                    <div class="card text-center card-selectable bg-transparent w-100 m-3"
+                         th:attr="data-service-id=${service.id}">
+                        <div class="card-body shadow">
+                            <h4 class="card-title" th:text="${service.serviceName}"></h4>
+                            <img class="card-img"
+                                 th:src="${service.imagePath} != null ? ${service.imagePath} : '/images/default-service.png'"
+                                 alt="Service Image">
+                            <p class="lead card-text mt-2"
+                               th:text="'~' + ${service.duration} + ' Minutes'">
+                            <p class="lead card-text fw-bold"
+                               th:text="${service.price} + '₪'">
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${servicePage.totalPages} > 1" class="text-center mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${servicePage.first} ? 'disabled'">
+                        <a class="page-link" th:href="@{/pick-service(p=${currentPage - 1})}">Prev</a>
+                    </li>
+
+                    <li class="page-item" th:each="i : ${#numbers.sequence(0, servicePage.totalPages - 1)}"
+                        th:classappend="${i == currentPage} ? 'active'">
+                        <a class="page-link" th:href="@{/pick-service(p=${i})}" th:text="${i + 1}"></a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${servicePage.last} ? 'disabled'">
+                        <a class="page-link" th:href="@{/pick-service(p=${currentPage + 1})}">Next</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="alert alert-info mt-3 fs-5 text-center mt-4" th:if="${servicePage.isEmpty()}">
+                There are no services available at the moment. Please check back later.
+            </div>
+            <a th:unless="${servicePage.isEmpty()}" href="#" id="pick-link-btn"
+               class="btn btn-lg btn-secondary mt-4 mb-3 disabled">
+                Pick
+            </a>
+        </div>
+        <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+        <script th:src="@{/js/bs-init.js}"></script>
+        <script th:src="@{/js/services.js}"></script>
+    </body>
+
+</html>

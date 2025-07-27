@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+    <head th:replace="~{fragments :: head('Add New Service')}"></head>
+
+
+    <body>
+        <div th:replace="~{fragments :: authenticatedNavbar('')}"></div>
+
+        <div th:replace="${param.sid != null} ? ~{fragments :: heading('Edit The Service')} : ~{fragments :: heading('Add New Service')}"></div>
+
+        <div class="container d-flex justify-content-center mt-5">
+            <form class="fs-5 text-center w-75 mb-3" action="#" enctype="multipart/form-data" method="POST"
+                  th:action="@{add-service/processAddingService}" th:object="${form}">
+                <div th:if="${#fields.hasErrors('*')}">
+                    <div class="alert alert-danger text-start">
+                        <ul>
+                            <li th:each="error : ${#fields.errors('*')}" th:text="${error}"></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">
+                        <label class="col-form-label">Service Name:</label>
+                    </div>
+                    <div class="col align-self-center">
+                        <input class="form-control" type="text" placeholder="Service Name" required th:field="*{serviceName}">
+                    </div>
+                </div>
+                <div class="row mt-5">
+                    <div class="col-md-5">
+                        <label class="col-form-label">Price:</label>
+                    </div>
+                    <div class="col align-self-center">
+                        <input class="form-control" type="number" placeholder="Price" th:field="*{price}" required>
+                    </div>
+                </div>
+                <div class="row mt-5">
+                    <div class="col-md-5">
+                        <label class="col-form-label">Duration (in minutes):</label>
+                    </div>
+                    <div class="col align-self-center">
+                        <input class="form-control" type="number" placeholder="Duration" th:field="*{duration}" required>
+                    </div>
+                </div>
+                <div class="row mt-5">
+                    <div class="col-md-5 align-self-center">
+                        <label class="col-form-label">Image:</label>
+                    </div>
+                    <div class="col align-self-center">
+                        <input class="form-control" type="file"
+                               accept="image/jpeg, image/jpg, image/png" th:field="*{serviceImage}">
+                    </div>
+                    <div th:if="${form.imagePath != null}"  class="col-md-2 align-self-center">
+                        <a href="#" class="text-decoration-none">
+                            <img class="img-thumbnail img-view"
+                                 th:src="${form.imagePath}"
+                                 alt="Service Image"
+                                 data-bs-toggle="modal"
+                                 data-bs-target="#service-image-modal"
+                                 title="Click to see full image or remove it">
+                        </a>
+                    </div>
+                </div>
+                <input class="btn btn-lg btn-secondary mt-5" type="submit" name="submit"
+                       th:value="${param.sid != null} ? 'Update' : 'Add'">
+                <input type="hidden" name="sid" th:value="${param.sid}"/>
+            </form>
+        </div>
+        <div th:if="${form.imagePath != null}" class="modal fade" id="service-image-modal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title w-100 text-center" th:text="${form.serviceName}"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="close"></button>
+                    </div>
+                    <div class="modal-body justify-content-center">
+                        <img class="img-fluid" th:src="${form.imagePath}" alt="Service Image">
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <a th:href="@{/owner-dashboard/service-manager/update-service/remove-image(sid=${param.sid})}"
+                           class="btn btn-danger"
+                           onclick="return confirm('Are you sure you want to remove this image?');">
+                            Remove Image
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+        <script th:src="@{/js/bs-init.js}"></script>
+    </body>
+
+</html>
