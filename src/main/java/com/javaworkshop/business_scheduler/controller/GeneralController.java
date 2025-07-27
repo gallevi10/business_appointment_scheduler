@@ -118,7 +118,7 @@ public class GeneralController {
 
         if (!result.hasErrors()) { // if there are no validation errors
             String customerEmail = null, customerPhone = null, customerFirstName = null, customerLastName = null;
-            if (form.getCustomerDetailsForm() != null) { // if it's a new customer
+            if (form.getCustomerDetailsForm() != null) { // if it's a guest booking
                 customerEmail = form.getCustomerDetailsForm().getEmail();
                 customerPhone = form.getCustomerDetailsForm().getPhoneNumber();
                 customerFirstName = form.getCustomerDetailsForm().getFirstName();
