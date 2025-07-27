@@ -26,7 +26,7 @@
                 <div class="col" id="book">
                     <a class="btn btn-secondary fs-2" th:href="@{/pick-service}"
                        style="font-family: cursive;">Book An Appointment</a>
-                    <p class="fs-6 fw-light">
+                    <p sec:authorize="!isAuthenticated()" class="fs-6 fw-light">
                         Guests can book appointments directly
                     </p>
                 </div>
