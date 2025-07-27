@@ -9,7 +9,7 @@
 
         <div th:replace="${param.bhid != null} ? ~{fragments :: heading('Edit The Range')} : ~{fragments :: heading('Add New Range')}"></div>
 
-        <div class="container form-container text-center mt-4">
+        <div class="container form-container text-center mt-5">
             <form class="fs-5" action="#" method="POST"
                   th:action="@{/owner-dashboard/opening-hours/processNewRange}" th:object="${form}">
                 <div th:if="${#fields.hasErrors('*')}">

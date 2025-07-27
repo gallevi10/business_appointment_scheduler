@@ -8,7 +8,7 @@
 
         <div th:replace="~{fragments :: heading('Add A New Owner User')}"></div>
 
-        <div class="container form-container mt-3">
+        <div class="container form-container mt-5">
             <form class="text-center" action="#" method="POST"
                   th:action="@{/owner-dashboard/add-owner/processAddOwner}" th:object="${form}">
                 <div class="card bg-transparent shadow">
