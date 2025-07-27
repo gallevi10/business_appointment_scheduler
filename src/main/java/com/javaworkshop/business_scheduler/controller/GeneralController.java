@@ -64,12 +64,13 @@ public class GeneralController {
     public String showPickService(@RequestParam(value = "p", defaultValue = "0") int page,
                                   Model model) {
 
-        Page<Service> servicePage = serviceService.getServicePage(page, PAGE_SIZE);
-        if (page < 0 || page >= servicePage.getTotalPages()) {
-            return "error/404"; // if the page number is invalid return 404 error page
+        try {
+            Page<Service> servicePage = serviceService.getServicePage(page, PAGE_SIZE);
+            model.addAttribute("servicePage", servicePage);
+            model.addAttribute("currentPage", page);
+        } catch (RuntimeException e) {
+            return "error/404"; // if there is an error fetching services, return 404 error page
         }
-        model.addAttribute("servicePage", servicePage);
-        model.addAttribute("currentPage", page);
 
         return "general/services";
     }

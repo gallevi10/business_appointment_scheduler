@@ -63,7 +63,11 @@ public class ServiceServiceImpl implements ServiceService{
 
     @Override
     public Page<Service> getServicePage(int page, int size) {
-        return serviceRepository.findByIsActiveTrue(PageRequest.of(page, size));
+        Page<Service> servicePage = serviceRepository.findAll(PageRequest.of(page, size));
+        if (page >= servicePage.getTotalPages()) {
+            throw new RuntimeException();
+        }
+        return servicePage;
     }
 
     @Transactional // to ensure that the image upload and service creation are atomic
