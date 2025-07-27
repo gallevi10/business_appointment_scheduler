@@ -35,8 +35,10 @@ public class RegistrationService {
 
         // customer details validation
         Customer existingCustomer = customerService.findByEmailAndPhone(email, phone);
-        Customer customerToSave = customerService.validateCustomer(existingCustomer, email, phone,
-                firstName, lastName, username, false);
+        Customer customerToSave = customerService.getValidCustomer(
+                existingCustomer, email, phone,
+                firstName, lastName, username
+        );
 
         // after all validations, save the user and customer
         customerToSave.setUser(user);

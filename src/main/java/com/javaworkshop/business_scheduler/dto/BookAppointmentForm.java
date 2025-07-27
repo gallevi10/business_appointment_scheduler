@@ -1,6 +1,7 @@
 package com.javaworkshop.business_scheduler.dto;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 public class BookAppointmentForm {
 

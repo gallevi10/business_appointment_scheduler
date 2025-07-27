@@ -23,8 +23,9 @@ public class BookingService {
     }
 
     @Transactional // ensures that the booking operation is atomic
-    public Appointment bookAppointment(Customer customer, Service service, UUID appointmentId,
-                                LocalDateTime startTime, LocalDateTime endTime) {
+    public Appointment bookAppointment(String firstName, String lastName, String email, String phone,
+                                       String username, Service service, UUID appointmentId,
+                                       LocalDateTime startTime, LocalDateTime endTime) {
 
         // checks if the given start time is valid
         if (startTime.isBefore(LocalDateTime.now()) || startTime.isAfter(LocalDateTime.now().plusMonths(1))) {
@@ -34,6 +35,18 @@ public class BookingService {
         // double check if the slot is available
         if (!appointmentService.isSlotAvailable(startTime, endTime)) {
             throw new RuntimeException("error.appointmentTime.taken");
+        }
+
+        Customer bookingCustomer;
+        if (username != null) { // if the username is provided we are booking for an existing and valid customer
+            bookingCustomer = customerService.findByUsername(username);
+        } else {
+            // if the customer already exists, we retrieve it by email and phone
+            Customer existingCustomer = customerService.findByEmailAndPhone(email, phone);
+            bookingCustomer = customerService.getValidCustomer(
+                    existingCustomer, email, phone,
+                    firstName, lastName, null
+            );
         }
 
         Appointment appointmentToBook;
@@ -46,8 +59,8 @@ public class BookingService {
             appointmentService.sendAppointmentConfirmationEmail(appointmentToBook, true);
         }
         else { // if the appointmentId is not provided, we are creating a new appointment
-            appointmentToBook = new Appointment(customer, service, startTime, endTime, false);
-            customerService.save(customer); // ensure the customer is saved before saving the appointment
+            appointmentToBook = new Appointment(bookingCustomer, service, startTime, endTime, false);
+            customerService.save(bookingCustomer); // ensure the customer is saved before saving the appointment
             appointmentService.save(appointmentToBook);
             appointmentService.sendAppointmentConfirmationEmail(appointmentToBook, false);
         }

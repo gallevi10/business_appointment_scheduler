@@ -87,14 +87,6 @@ public class GeneralController {
             selectedService = serviceService.findById(serviceId);
             if (appointmentId != null) { // this is a rescheduling request
                 appointment = appointmentService.findById(appointmentId);
-                form.setCustomerDetailsForm( // sets the customer details form with the existing appointment details
-                        new CustomerDetailsForm(
-                                appointment.getCustomer().getFirstName(),
-                                appointment.getCustomer().getLastName(),
-                                appointment.getCustomer().getEmail(),
-                                appointment.getCustomer().getPhone()
-                        )
-                );
                 form.setAppointmentTimeForm( // sets the appointment time form with the existing appointment details
                         new AppointmentTimeForm(
                                 appointment.getStartTime().toLocalDate(),
@@ -122,53 +114,35 @@ public class GeneralController {
 
         Service service = serviceService.findById(serviceId);
         model.addAttribute("selectedService", service);
+        String username = authentication != null ? authentication.getName() : null;
 
-        // STAGE 1: validate the customer details form and get the customer object
-        Customer customer = null;
-        if (authentication != null) { // if the user is logged in
-            customer = customerService.findByUsername(authentication.getName());
-        }
-        else {
-            if (!result.hasFieldErrors("customerDetailsForm.*")) { // if there are no errors in the customer details form
-                String customerEmail = form.getCustomerDetailsForm().getEmail();
-                String customerPhone = form.getCustomerDetailsForm().getPhoneNumber();
-                String customerFirstName = form.getCustomerDetailsForm().getFirstName();
-                String customerLastName = form.getCustomerDetailsForm().getLastName();
-                Customer exisitingCustomer = customerService.findByEmailAndPhone(customerEmail, customerPhone);
-                try {
-                    customer = customerService.validateCustomer(exisitingCustomer, customerEmail, customerPhone,
-                            customerFirstName, customerLastName, null, false
-                    );
-                } catch (RuntimeException e) {
-                    result.rejectValue("customerDetailsForm", e.getMessage());
-                }
-
+        if (!result.hasErrors()) { // if there are no validation errors
+            String customerEmail = null, customerPhone = null, customerFirstName = null, customerLastName = null;
+            if (form.getCustomerDetailsForm() != null) { // if it's a new customer
+                customerEmail = form.getCustomerDetailsForm().getEmail();
+                customerPhone = form.getCustomerDetailsForm().getPhoneNumber();
+                customerFirstName = form.getCustomerDetailsForm().getFirstName();
+                customerLastName = form.getCustomerDetailsForm().getLastName();
             }
-            // validate customer details (input/after validation)
-            if (result.hasFieldErrors("customerDetailsForm.*") || result.hasFieldErrors("customerDetailsForm")) {
-                return "general/book";
-            }
-        }
-
-        // STAGE 2: validate the appointment time form and book the appointment
-        if (!result.hasFieldErrors("appointmentTimeForm.*")) { // if there are no errors in the appointment time form
             LocalDate appointmentDate = form.getAppointmentTimeForm().getAppointmentDate();
             LocalTime appointmentTime = form.getAppointmentTimeForm().getAppointmentTime();
             LocalDateTime startTime = LocalDateTime.of(appointmentDate, appointmentTime);
             LocalDateTime endTime = startTime.plusMinutes(service.getDuration());
 
             try {
-                Appointment bookedAppointment = bookingService.bookAppointment(customer, service, appointmentId, startTime, endTime);
+                Appointment bookedAppointment = bookingService.bookAppointment(
+                        customerFirstName, customerLastName, customerEmail, customerPhone,
+                        username, service, appointmentId, startTime, endTime
+                );
                 boolean isRescheduling = appointmentId != null;
                 model.addAttribute("bookedAppointment", bookedAppointment);
                 model.addAttribute("isRescheduling", isRescheduling);
             } catch (RuntimeException e) {
-                result.rejectValue("appointmentTimeForm.appointmentTime", e.getMessage());
+                result.reject(e.getMessage());
             }
         }
 
-        // validate appointment time (input/after booking)
-        if (result.hasFieldErrors("appointmentTimeForm.*")) {
+        if (result.hasErrors()) { // if there is any validation error
             return "general/book";
         }
 

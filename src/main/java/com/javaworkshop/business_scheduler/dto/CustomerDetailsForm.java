@@ -1,26 +1,27 @@
 package com.javaworkshop.business_scheduler.dto;
 
 import com.javaworkshop.business_scheduler.model.Customer;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 public class CustomerDetailsForm {
 
+    @NotNull(message = "Phone number is required")
     @NotBlank(message = "Phone number is required")
     @Pattern(regexp = "^[0-9]{10}", message = "Phone number must be 10 digits")
     private String phoneNumber;
 
+    @NotNull(message = "Email is required")
     @NotBlank(message = "Email is required")
     @Size(max = 150, message = "Email must not exceed 150 characters")
     @Email(message = "Email should be valid")
     private String email;
 
+    @NotNull(message = "First name is required")
     @NotBlank(message = "First name is required")
     @Size(min = 2, max = 100, message = "First name must be between 2 and 100 characters")
     private String firstName;
 
+    @NotNull(message = "Last name is required")
     @NotBlank(message = "Last name is required")
     @Size(min = 2, max = 100, message = "Last name must be between 2 and 100 characters")
     private String lastName;

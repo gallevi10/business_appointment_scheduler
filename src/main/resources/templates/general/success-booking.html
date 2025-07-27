@@ -16,8 +16,8 @@
 
         <div th:replace="~{fragments :: heading('Successful Booking')}"></div>
 
-        <div class="container mt-3 w-100 text-center p-3 fs-4 shadow">
-            <div class="card text-center fw-bold">
+        <div class="container mt-3 mb-3 w-100 text-center p-3 fs-4">
+            <div class="card text-center fw-bold shadow bg-transparent">
                 <div class="card-body">
                     <h1 class="card-title"
                         th:text="${isRescheduling} ? 'Your appointment has been rescheduled!' : 'Your appointment has been booked!'">

@@ -93,21 +93,16 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public Customer validateCustomer(Customer existingCustomer, String email, String phone,
-                                     String firstName, String lastName, String username, boolean isUpdate) {
+    public Customer getValidCustomer(Customer existingCustomer, String email, String phone,
+                                     String firstName, String lastName, String username) {
 
-        if (customerRepository.existsByEmail(existingCustomer, email)) {
-            throw new RuntimeException("error.customer.email.conflict");
-        }
-        if (customerRepository.existsByPhone(existingCustomer, phone)) {
-            throw new RuntimeException("error.customer.phone.conflict");
-        }
+        validateEmailOrPhone(existingCustomer, email, phone);
 
         Customer validCustomer;
         if (existingCustomer == null) {
             validCustomer = new Customer(null, firstName, lastName, email, phone);
         }
-        else if (!isUpdate && !existingCustomer.getFirstName().equals(firstName)
+        else if (!existingCustomer.getFirstName().equals(firstName)
                 || !existingCustomer.getLastName().equals(lastName)) {
             throw new RuntimeException("error.customer.email.and.phone.conflict");
         }
@@ -122,9 +117,18 @@ public class CustomerServiceImpl implements CustomerService{
         return validCustomer;
     }
 
+    private void validateEmailOrPhone(Customer customer, String email, String phone) {
+        if (customerRepository.existsByEmail(customer, email)) {
+            throw new RuntimeException("error.customer.email.conflict");
+        }
+        if (customerRepository.existsByPhone(customer, phone)) {
+            throw new RuntimeException("error.customer.phone.conflict");
+        }
+    }
+
     @Override
     public void updateCustomerDetails(Customer customer, String email, String phone, String firstName, String lastName) {
-        validateCustomer(customer, email, phone, firstName, lastName, null, true);
+        validateEmailOrPhone(customer, email, phone);
         customer.setEmail(email);
         customer.setPhone(phone);
         customer.setFirstName(firstName);
