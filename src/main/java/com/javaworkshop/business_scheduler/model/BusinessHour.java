@@ -28,9 +28,9 @@ public class BusinessHour {
     @Column(name = "end_time", nullable = false)
     private LocalTime endTime;
 
-    @ColumnDefault("0")
+    @ColumnDefault("1")
     @Column(name = "is_open")
-    private boolean isOpen;
+    private boolean isOpen = true; // default value for isOpen
 
     public BusinessHour() {
     }

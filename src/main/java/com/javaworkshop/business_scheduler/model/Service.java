@@ -37,7 +37,7 @@ public class Service {
 
     @ColumnDefault("1")
     @Column(name = "is_active")
-    private boolean isActive;
+    private boolean isActive = true; // default value for isActive
 
     public Service() {
     }

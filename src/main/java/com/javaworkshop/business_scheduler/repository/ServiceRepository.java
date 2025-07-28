@@ -22,9 +22,9 @@ public interface ServiceRepository extends JpaRepository<Service, UUID> {
     @Query("""
             SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END
             FROM Service s
-            WHERE (:id IS NULL OR s.id <> :id)
+            WHERE (:service IS NULL OR s <> :service)
             AND s.serviceName = :serviceName
             """)
-    boolean existsByServiceName(@Param("id") UUID id,
+    boolean existsByServiceName(@Param("service") Service service,
                                 @Param("serviceName") String serviceName);
 }

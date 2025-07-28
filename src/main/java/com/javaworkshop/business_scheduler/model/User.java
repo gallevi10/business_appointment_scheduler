@@ -36,7 +36,7 @@ public class User {
 
     @ColumnDefault("1")
     @Column(name = "enabled")
-    private boolean enabled;
+    private boolean enabled = true; // default value for enabled
 
     public User() {
     }

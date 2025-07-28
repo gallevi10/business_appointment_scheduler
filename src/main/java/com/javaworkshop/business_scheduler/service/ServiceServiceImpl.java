@@ -64,7 +64,7 @@ public class ServiceServiceImpl implements ServiceService{
                                    int duration, MultipartFile serviceImage) {
 
         // validates service name
-        if (serviceRepository.existsByServiceName(existingService.getId(), serviceName)) {
+        if (serviceRepository.existsByServiceName(existingService, serviceName)) {
             throw new RuntimeException("error.service.service.name.conflict");
         }
         Service service = existingService != null ? existingService : new Service();

@@ -41,7 +41,7 @@ public class Appointment {
 
     @ColumnDefault("0")
     @Column(name = "is_completed")
-    private boolean isCompleted;
+    private boolean isCompleted = false; // default value for isCompleted
 
     public Appointment() {
     }
