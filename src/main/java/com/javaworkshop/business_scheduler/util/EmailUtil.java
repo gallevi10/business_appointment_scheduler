@@ -9,7 +9,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
-
+// This class is a utility for sending emails using JavaMailSender.
 @Component
 public class EmailUtil {
 

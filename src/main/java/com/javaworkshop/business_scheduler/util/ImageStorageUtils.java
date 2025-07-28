@@ -9,8 +9,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
+// This class provides utility methods for handling image storage operations,
 public class ImageStorageUtils {
 
+    // clears all files in the specified folder
     public static void clearFolder(Path folderPath) throws IOException {
         File folder = folderPath.toFile();
         if (folder.exists() && folder.isDirectory()) {
@@ -22,6 +24,7 @@ public class ImageStorageUtils {
         }
     }
 
+    // saves an image file to the specified target directory with a given file name
     public static String saveImage(MultipartFile imageFile,
                                    String fileName,
                                    Path targetDir) {
@@ -47,7 +50,7 @@ public class ImageStorageUtils {
     }
 
 
-
+    // creates a folder if it does not exist, and throws an exception if the path exists but is not a directory
     private static boolean createFolderIfNotExists(Path folderPath) throws IOException {
         File folder = folderPath.toFile();
         if (!folder.exists()) {
