@@ -6,6 +6,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalTime;
 
+// This class represents a business hour entity in the business scheduler application.
 @Entity
 @Table(name = "business_hours")
 public class BusinessHour {

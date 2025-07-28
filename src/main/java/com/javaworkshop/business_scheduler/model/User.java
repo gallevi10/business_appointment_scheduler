@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+// This class represents a User entity in the business scheduler application.
 @Entity
 @Table(name = "users")
 public class User {

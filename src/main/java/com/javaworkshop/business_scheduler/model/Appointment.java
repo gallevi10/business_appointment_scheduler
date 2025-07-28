@@ -9,6 +9,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+// This class represents an appointment entity in the business scheduler application.
 @Entity
 @Table(name = "appointments")
 public class Appointment {
@@ -112,15 +113,4 @@ public class Appointment {
         this.isCompleted = isCompleted;
     }
 
-    @Override
-    public String toString() {
-        return "Appointment{" +
-                "id=" + id +
-                ", customer=" + customer +
-                ", service=" + service +
-                ", startTime=" + startTime +
-                ", endTime=" + endTime +
-                ", isCompleted=" + isCompleted +
-                '}';
-    }
 }

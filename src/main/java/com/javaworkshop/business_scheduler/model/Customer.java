@@ -8,6 +8,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.UUID;
 
+// This class represents a customer entity in the business scheduler application.
 @Entity
 @Table(name = "customers")
 public class Customer {
@@ -110,15 +111,4 @@ public class Customer {
         this.phone = phone;
     }
 
-    @Override
-    public String toString() {
-        return "Customer{" +
-                "id=" + id +
-                ", user=" + user +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
-                '}';
-    }
 }

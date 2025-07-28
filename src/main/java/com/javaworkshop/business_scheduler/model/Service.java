@@ -8,6 +8,7 @@ import org.hibernate.annotations.ColumnDefault;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+// This class represents a service entity in the business scheduler application.
 @Entity
 @Table(name = "services")
 public class Service {
@@ -106,15 +107,4 @@ public class Service {
         this.isActive = isActive;
     }
 
-    @Override
-    public String toString() {
-        return "Service{" +
-                "id=" + id +
-                ", serviceName='" + serviceName + '\'' +
-                ", price=" + price +
-                ", duration=" + duration +
-                ", imagePath='" + imagePath + '\'' +
-                ", isActive=" + isActive +
-                '}';
-    }
 }

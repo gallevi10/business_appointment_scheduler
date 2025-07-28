@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+// This class represents the business information entity in the business scheduler application.
 @Entity
 @Table(name = "business_info")
 public class BusinessInfo {
