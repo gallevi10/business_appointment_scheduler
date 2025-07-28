@@ -41,14 +41,14 @@ public class BusinessRestController {
     public List<LocalTime> getAvailableSlots(
             @RequestParam("sid") UUID serviceId,
             @RequestParam("d") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  LocalDate date) {
-        try{
-            Service service = serviceService.findById(serviceId);
-            byte dayOfWeek = (byte) (date.getDayOfWeek().getValue() % 7); // converts to 0-6 range for Sunday-Saturday
-            List<BusinessHour> businessHours = businessHourService.findAllRangesByDayOfWeek(dayOfWeek);
-            return appointmentService.getAvailableSlots(service, date, businessHours);
-        } catch (RuntimeException e) {
-            return new ArrayList<>(); // return an empty list if service not found or error occurs
+        Service service = serviceService.findById(serviceId);
+        if (service == null) {
+            return new ArrayList<>(); // return empty list if service not found
         }
+        byte dayOfWeek = (byte) (date.getDayOfWeek().getValue() % 7); // converts to 0-6 range for Sunday-Saturday
+        List<BusinessHour> businessHours = businessHourService.findAllRangesByDayOfWeek(dayOfWeek);
+        return appointmentService.getAvailableSlots(service, date, businessHours);
+
 
     }
 

@@ -15,9 +15,6 @@ import java.util.UUID;
 @Repository
 public interface ServiceRepository extends JpaRepository<Service, UUID> {
 
-    // retrieves all active services
-    List<Service> findByIsActiveTrue();
-
     // retrieves a paginated list of active services
     Page<Service> findByIsActiveTrue(Pageable pageable);
 

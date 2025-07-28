@@ -1,16 +1,16 @@
 package com.javaworkshop.business_scheduler.service;
 
 import com.javaworkshop.business_scheduler.model.Customer;
-import com.javaworkshop.business_scheduler.model.User;
 import com.javaworkshop.business_scheduler.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+// This class implements the CustomerService interface providing methods
+// for managing customers in the business scheduler application.
 @Service
 public class CustomerServiceImpl implements CustomerService{
 
@@ -78,11 +78,11 @@ public class CustomerServiceImpl implements CustomerService{
             validCustomer = new Customer(null, firstName, lastName, email, phone);
         }
         else if (!existingCustomer.getFirstName().equals(firstName)
-                || !existingCustomer.getLastName().equals(lastName)) {
+                || !existingCustomer.getLastName().equals(lastName)) { // existing customer has different name
             throw new RuntimeException("error.customer.email.and.phone.conflict");
         }
         else if (username != null && existingCustomer.getUser() != null
-                && !existingCustomer.getUser().getUsername().equals(username)) {
+                && !existingCustomer.getUser().getUsername().equals(username)) { // existing customer has different username
             throw new RuntimeException("error.customer.username.conflict");
         }
         else {

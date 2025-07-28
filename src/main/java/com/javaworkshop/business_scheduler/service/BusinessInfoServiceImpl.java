@@ -13,6 +13,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+// This class implements the BusinessInfoService interface providing methods
+// for managing business information in the business scheduler application.
 @Service
 public class BusinessInfoServiceImpl implements BusinessInfoService {
 
@@ -34,7 +36,8 @@ public class BusinessInfoServiceImpl implements BusinessInfoService {
         return businessInfoRepository.save(businessInfo);
     }
 
-    @Transactional
+    // updates the business information including name, description, and background image
+    @Transactional // ensures that the operation is atomic
     @Override
     public void updateBusinessInfo(String businessName,
                                    String description,
@@ -53,7 +56,8 @@ public class BusinessInfoServiceImpl implements BusinessInfoService {
 
     }
 
-    @Transactional
+    // removes the background image from the business information
+    @Transactional // ensures that the operation is atomic
     @Override
     public void removeBackgroundImage() throws IOException {
         BusinessInfo businessInfo = getBusinessInfo();
@@ -63,6 +67,7 @@ public class BusinessInfoServiceImpl implements BusinessInfoService {
         save(businessInfo);
     }
 
+    // checks if the business information exists in the database
     @Override
     public boolean isThereBusinessInfo() {
         return businessInfoRepository.existsById(1);

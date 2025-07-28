@@ -1,11 +1,11 @@
 package com.javaworkshop.business_scheduler.service;
 
-import com.javaworkshop.business_scheduler.dto.OpeningHour;
 import com.javaworkshop.business_scheduler.model.BusinessHour;
 
 import java.time.LocalTime;
 import java.util.List;
 
+// This interface defines the contract for business hour-related operations in the business scheduler application.
 public interface BusinessHourService {
 
     List<BusinessHour> findAll();
@@ -18,8 +18,7 @@ public interface BusinessHourService {
 
     List<BusinessHour> findAllRangesByDayOfWeek(byte dayOfWeek);
 
-    List<OpeningHour> getDayBusinessHours(byte dayOfWeek);
-
+    // adds or updates a business hour entry
     void addOrUpdateBusinessHour(Long businessHourId,
                                  byte dayOfWeek,
                                  LocalTime startTime,

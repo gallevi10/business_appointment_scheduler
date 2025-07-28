@@ -9,11 +9,10 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
+// This interface defines the contract for service-related operations in the business scheduler application.
 public interface ServiceService {
 
     List<Service> findAll();
-
-    List<Service> findAllActiveServices();
 
     Service findById(UUID id) throws RuntimeException;
 
@@ -21,11 +20,14 @@ public interface ServiceService {
 
     void deleteById(UUID id);
 
+    // retrieves a paginated list of services
     Page<Service> getServicePage(int page, int size);
 
-    void addOrUpdateService(UUID existingServiceId, String serviceName, BigDecimal price,
+    // adds or updates a service entry
+    void addOrUpdateService(Service existingService, String serviceName, BigDecimal price,
                             int duration, MultipartFile serviceImage);
 
+    // removes the service image associated with a service
     void removeServiceImage(UUID serviceId) throws IOException;
 
 }

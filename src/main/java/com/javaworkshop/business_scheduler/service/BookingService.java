@@ -32,7 +32,7 @@ public class BookingService {
             throw new RuntimeException("error.appointmentTime.invalid");
         }
 
-        // double check if the slot is available
+        // checks if the slot is available for the given time range
         if (!appointmentService.isSlotAvailable(startTime, endTime)) {
             throw new RuntimeException("error.appointmentTime.taken");
         }
@@ -40,7 +40,8 @@ public class BookingService {
         Customer bookingCustomer;
         if (username != null) { // if the username is provided we are booking for an existing and valid customer
             bookingCustomer = customerService.findByUsername(username);
-        } else {
+        }
+        else {
             // if the customer already exists, we retrieve it by email and phone
             Customer existingCustomer = customerService.findByEmailAndPhone(email, phone);
             bookingCustomer = customerService.getValidCustomer(

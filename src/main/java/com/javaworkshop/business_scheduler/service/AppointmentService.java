@@ -12,6 +12,7 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
+// This interface defines the contract for appointment-related operations in the business scheduler application.
 public interface AppointmentService {
 
     List<Appointment> findAll();

@@ -155,14 +155,21 @@ public class OwnerController {
                                        @ModelAttribute("form") @Valid NewServiceForm form,
                                        BindingResult result) {
         if (!result.hasErrors()) {
+            Service existingService = null;
+            if (serviceId != null) { // if serviceId is provided we are updating an existing service
+                existingService = serviceService.findById(serviceId);
+                if (existingService == null) {
+                    return "error/404"; // if the service does not exist return 404 error page
+                }
+            }
             String serviceName = form.getServiceName();
             BigDecimal price = form.getPrice();
             int duration = form.getDuration();
             MultipartFile serviceImage = form.getServiceImage();
             try {
-                serviceService.addOrUpdateService(serviceId, serviceName, price, duration, serviceImage);
+                serviceService.addOrUpdateService(existingService, serviceName, price, duration, serviceImage);
             } catch (RuntimeException e) {
-                result.rejectValue("serviceImage", e.getMessage());
+                result.reject(e.getMessage());
             }
 
         }

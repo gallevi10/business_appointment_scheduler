@@ -33,11 +33,6 @@ public class ServiceServiceImpl implements ServiceService{
     }
 
     @Override
-    public List<Service> findAllActiveServices() {
-        return serviceRepository.findByIsActiveTrue();
-    }
-
-    @Override
     public Service findById(UUID id) throws RuntimeException {
 
         Optional<Service> service = serviceRepository.findById(id);
@@ -65,14 +60,14 @@ public class ServiceServiceImpl implements ServiceService{
 
     @Transactional // to ensure that the image upload and service creation are atomic
     @Override
-    public void addOrUpdateService(UUID existingServiceId, String serviceName, BigDecimal price,
+    public void addOrUpdateService(Service existingService, String serviceName, BigDecimal price,
                                    int duration, MultipartFile serviceImage) {
 
-        // validates inputs
-        if (serviceRepository.existsByServiceName(existingServiceId, serviceName)) {
+        // validates service name
+        if (serviceRepository.existsByServiceName(existingService.getId(), serviceName)) {
             throw new RuntimeException("error.service.service.name.conflict");
         }
-        Service service = existingServiceId == null ? new Service() : findById(existingServiceId);
+        Service service = existingService != null ? existingService : new Service();
 
         // setting the service properties
         service.setServiceName(serviceName);
@@ -96,10 +91,10 @@ public class ServiceServiceImpl implements ServiceService{
     public void removeServiceImage(UUID serviceId) throws IOException{
         Path folerPath = Paths.get("uploads/services/" + serviceId);
 
-        // clear the folder where the service image is stored
+        // clears the folder where the service image is stored
         ImageStorageUtils.clearFolder(folerPath);
 
-        // update the service to remove the image path
+        // updates the service to remove the image path
         Service service = findById(serviceId);
         service.setImagePath(null);
         save(service);

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+// This class implements the UserDetailsService interface to load custom user details.
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 

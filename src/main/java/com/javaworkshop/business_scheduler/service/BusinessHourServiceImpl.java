@@ -1,6 +1,5 @@
 package com.javaworkshop.business_scheduler.service;
 
-import com.javaworkshop.business_scheduler.dto.OpeningHour;
 import com.javaworkshop.business_scheduler.model.BusinessHour;
 import com.javaworkshop.business_scheduler.repository.BusinessHourRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +10,8 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
+// This class implements the BusinessHourService interface providing methods
+// for managing business hours in the business scheduler application.
 @Service
 public class BusinessHourServiceImpl implements BusinessHourService{
 
@@ -47,13 +48,7 @@ public class BusinessHourServiceImpl implements BusinessHourService{
         return businessHourRepository.findByDayOfWeekOrderByStartTime(dayOfWeek);
     }
 
-    @Override
-    public List<OpeningHour> getDayBusinessHours(byte dayOfWeek) {
-        List<BusinessHour> businessHours = findAllRangesByDayOfWeek(dayOfWeek);
-        return OpeningHour.fromBusinessHours(businessHours);
-    }
-
-    @Transactional
+    @Transactional // ensures that the operation is atomic
     @Override
     public void addOrUpdateBusinessHour(Long businessHourId,
                                         byte dayOfWeek,
@@ -69,12 +64,8 @@ public class BusinessHourServiceImpl implements BusinessHourService{
             throw new RuntimeException("error.business.hour.overlapping");
         }
 
-        BusinessHour businessHour;
-        if (businessHourId != null) {
-            businessHour = findById(businessHourId);
-        } else {
-            businessHour = new BusinessHour();
-        }
+        BusinessHour businessHour = businessHourId != null ?
+                findById(businessHourId) : new BusinessHour();
 
         businessHour.setDayOfWeek(dayOfWeek);
         businessHour.setStartTime(startTime);

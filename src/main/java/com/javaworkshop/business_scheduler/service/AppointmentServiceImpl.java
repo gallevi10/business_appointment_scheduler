@@ -20,12 +20,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+// This class implements the AppointmentService interface providing methods
+// for managing appointments in the business scheduler application.
 @org.springframework.stereotype.Service
 public class AppointmentServiceImpl implements AppointmentService{
 
-    private final int MINUTE = 60000;
+    private final int MINUTE = 60000; // 1 minute in milliseconds
     private AppointmentRepository appointmentRepository;
-    private EmailUtil emailUtil;
+    private EmailUtil emailUtil; // utility for sending emails
 
     @Autowired
     public AppointmentServiceImpl(AppointmentRepository appointmentRepository,
@@ -50,6 +52,7 @@ public class AppointmentServiceImpl implements AppointmentService{
         return appointmentRepository.save(appointment);
     }
 
+    // this method is scheduled to run every day at 7:00 AM to send reminders for appointments scheduled for today
     @Scheduled(cron = "0 0 7 * * *") // every day at 7:00 AM
     @Override
     public void sendDailyReminders() {
@@ -96,6 +99,7 @@ public class AppointmentServiceImpl implements AppointmentService{
         return new ArrayList<>();
     }
 
+    // this method retrieves available time slots for a given service on a selected date
     @Override
     public List<LocalTime> getAvailableSlots(Service service,
                                              LocalDate selectedDate,
@@ -134,11 +138,13 @@ public class AppointmentServiceImpl implements AppointmentService{
         return availableSlots;
     }
 
+    // this method retrieves all appointments that are not marked as completed and have already expired
     @Override
     public List<Appointment> findAllNotMarkedAsCompletedExpiredAppointments() {
         return appointmentRepository.findByEndTimeBeforeAndIsCompletedFalse(LocalDateTime.now());
     }
 
+    // this method exports all appointments to an XML file
     @Override
     public void exportAppointmentsToXML(OutputStream outputStream, boolean activeAppointmentsOnly) throws XMLStreamException {
         List<Appointment> appointments = activeAppointmentsOnly ? findAllActiveAppointments() : findAll();
@@ -202,6 +208,7 @@ public class AppointmentServiceImpl implements AppointmentService{
         return !appointmentRepository.isOverlapping(startTime, endTime);
     }
 
+    // this method sends an appointment confirmation email to the customer
     public void sendAppointmentConfirmationEmail(Appointment appointment, boolean isRescheduled) {
         try {
             String toEmail = appointment.getCustomer().getEmail();
