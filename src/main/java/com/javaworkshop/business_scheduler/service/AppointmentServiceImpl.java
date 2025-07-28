@@ -4,10 +4,8 @@ import com.javaworkshop.business_scheduler.model.Appointment;
 import com.javaworkshop.business_scheduler.model.BusinessHour;
 import com.javaworkshop.business_scheduler.model.Service;
 import com.javaworkshop.business_scheduler.repository.AppointmentRepository;
+import com.javaworkshop.business_scheduler.util.EmailUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.xml.stream.XMLOutputFactory;
@@ -25,17 +23,15 @@ import java.util.UUID;
 @org.springframework.stereotype.Service
 public class AppointmentServiceImpl implements AppointmentService{
 
-    @Value("${spring.mail.username}")
-    private String EMAIL_FROM;
-
     private final int MINUTE = 60000;
     private AppointmentRepository appointmentRepository;
-    private JavaMailSender javaMailSender;
+    private EmailUtil emailUtil;
 
     @Autowired
-    public AppointmentServiceImpl(AppointmentRepository appointmentRepository, JavaMailSender javaMailSender) {
+    public AppointmentServiceImpl(AppointmentRepository appointmentRepository,
+                                  EmailUtil emailUtil) {
         this.appointmentRepository = appointmentRepository;
-        this.javaMailSender = javaMailSender;
+        this.emailUtil = emailUtil;
     }
 
     @Override
@@ -75,7 +71,7 @@ public class AppointmentServiceImpl implements AppointmentService{
                             "Service: " + appointment.getService().getServiceName() + "\n\n" +
                             "We look forward to seeing you!";
 
-                    sendMail(toEmail, subject, body);
+                    emailUtil.sendMail(toEmail, subject, body);
                 }
             }
         } catch (Exception e) {
@@ -218,7 +214,7 @@ public class AppointmentServiceImpl implements AppointmentService{
                     "Service: " + appointment.getService().getServiceName() + "\n\n" +
                     "Thank you for choosing our business!";
 
-            sendMail(toEmail, subject, body);
+            emailUtil.sendMail(toEmail, subject, body);
 
         } catch (Exception e) {
             System.err.println("Failed to send confirmation email: " + e.getMessage());
@@ -229,12 +225,4 @@ public class AppointmentServiceImpl implements AppointmentService{
         return appointmentRepository.findAppointmentsByIsCompletedFalseOrderByStartTime();
     }
 
-    private void sendMail(String toEmail, String subject, String body) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(EMAIL_FROM);
-        message.setTo(toEmail);
-        message.setSubject(subject);
-        message.setText(body);
-        javaMailSender.send(message);
-    }
 }
