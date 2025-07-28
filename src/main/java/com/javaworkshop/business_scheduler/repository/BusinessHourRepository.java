@@ -9,13 +9,17 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalTime;
 import java.util.List;
 
+// This interface defines the repository for managing BusinessHour entities.
 @Repository
 public interface BusinessHourRepository extends JpaRepository<BusinessHour, Long> {
 
+    // retrieves all business hours ordered by day of the week and start time
     List<BusinessHour> findAllByOrderByDayOfWeekAscStartTimeAsc();
 
+    // retrieves all business hours that are open on a specific day of the week, ordered by start time
     List<BusinessHour> findByDayOfWeekOrderByStartTime(byte dayOfWeek);
 
+    // retrieves day of the week for a specific business hour by its id
     @Query("""
         SELECT bh.dayOfWeek
         FROM BusinessHour bh
@@ -23,6 +27,7 @@ public interface BusinessHourRepository extends JpaRepository<BusinessHour, Long
         """)
     byte findDayOfWeekById(@Param("id") Long id);
 
+    // checks if there is an overlapping business hour for a specific day of the week excluding a specific business hour id
     @Query("""
         SELECT CASE WHEN COUNT(bh) > 0 THEN true ELSE false END
         FROM BusinessHour bh
