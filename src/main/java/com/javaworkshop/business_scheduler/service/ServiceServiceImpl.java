@@ -73,7 +73,7 @@ public class ServiceServiceImpl implements ServiceService{
         service.setServiceName(serviceName);
         service.setPrice(price);
         service.setDuration(duration);
-        service.setIsActive(true);
+        service.setIsActive(service.getIsActive());
         service = save(service); // save the service first to generate an ID if it's a new service
 
         // if an image is provided, validate and upload it
