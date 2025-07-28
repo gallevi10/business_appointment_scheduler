@@ -12,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -41,14 +40,8 @@ public class ServiceServiceImpl implements ServiceService{
     @Override
     public Service findById(UUID id) throws RuntimeException {
 
-        Optional<Service> service =
-                serviceRepository.findById(id);
-
-        if (service.isPresent()) {
-            return service.get();
-        } else {
-            throw new RuntimeException("Service not found with id: " + id);
-        }
+        Optional<Service> service = serviceRepository.findById(id);
+        return service.orElse(null);
     }
 
     @Override
@@ -100,19 +93,16 @@ public class ServiceServiceImpl implements ServiceService{
 
     @Transactional // to ensure that the image removal and service update are atomic
     @Override
-    public void removeServiceImage(UUID serviceId) {
+    public void removeServiceImage(UUID serviceId) throws IOException{
         Path folerPath = Paths.get("uploads/services/" + serviceId);
-        try {
-            // clear the folder where the service image is stored
-            ImageStorageUtils.clearFolder(folerPath);
 
-            // update the service to remove the image path
-            Service service = findById(serviceId);
-            service.setImagePath(null);
-            save(service);
-        } catch (IOException e) {
-            throw new RuntimeException("error.image.remove");
-        }
+        // clear the folder where the service image is stored
+        ImageStorageUtils.clearFolder(folerPath);
+
+        // update the service to remove the image path
+        Service service = findById(serviceId);
+        service.setImagePath(null);
+        save(service);
     }
 
 }

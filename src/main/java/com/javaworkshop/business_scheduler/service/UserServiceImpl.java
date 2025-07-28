@@ -31,31 +31,13 @@ public class UserServiceImpl implements UserService{
     @Override
     public User findById(UUID id) {
         Optional<User> userOptional = userRepository.findById(id);
-
-        User user = null;
-
-        if (userOptional.isPresent()) {
-            user = userOptional.get();
-        } else {
-            throw new RuntimeException("Did not find user id - " + id);
-        }
-
-
-        return user;
+        return userOptional.orElse(null);
     }
 
     @Override
     public User findByUsername(String username) {
         Optional<User> userOptional = userRepository.findByUsername(username);
-
-        User user = null;
-
-        if (userOptional.isPresent()) {
-            user = userOptional.get();
-        }
-
-        return user;
-
+        return userOptional.orElse(null);
     }
 
     @Override

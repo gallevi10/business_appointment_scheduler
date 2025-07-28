@@ -50,15 +50,14 @@ public class CustomerController {
                                     Authentication authentication) {
 
         UUID customerId = customerService.findIdByUsername(authentication.getName());
-        try {
-            Appointment appointment = appointmentService.findById(appointmentId);
-
-            // cancel the appointment only if it belongs to the customer
-            if (appointment.getCustomer().getId().equals(customerId)) {
-                appointmentService.deleteById(appointmentId);
-            }
-        } catch (RuntimeException e) {
+        Appointment appointment = appointmentService.findById(appointmentId);
+        if (appointment == null) {
             return "error/404"; // if the appointment does not exist return 404 error page
+        }
+
+        // cancel the appointment only if it belongs to the customer
+        if (appointment.getCustomer().getId().equals(customerId)) {
+            appointmentService.deleteById(appointmentId);
         }
 
         return "redirect:/customer-dashboard/appointments";

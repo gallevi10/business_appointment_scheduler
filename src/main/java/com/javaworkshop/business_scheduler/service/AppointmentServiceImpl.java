@@ -46,12 +46,7 @@ public class AppointmentServiceImpl implements AppointmentService{
     @Override
     public Appointment findById(UUID id) throws RuntimeException {
         Optional<Appointment> appointment = appointmentRepository.findById(id);
-
-        if (appointment.isPresent()) {
-            return appointment.get();
-        } else {
-            throw new RuntimeException("Appointment not found with id: " + id);
-        }
+        return appointment.orElse(null);
     }
 
     @Override

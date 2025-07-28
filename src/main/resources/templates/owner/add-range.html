@@ -39,7 +39,7 @@
                 <input class="btn btn-secondary mt-4" type="submit" name="submit"
                        th:value="${param.bhid != null} ? 'Update' : 'Add'">
                 <input type="hidden" th:field="*{dayOfWeek}" th:value="${param.dow}" />
-                <input type="hidden" name="bhid" th:value="${param.bhid}" />
+                <input th:if="${param.bhid != null}" type="hidden" name="bhid" th:value="${param.bhid}" />
             </form>
         </div>
         <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>

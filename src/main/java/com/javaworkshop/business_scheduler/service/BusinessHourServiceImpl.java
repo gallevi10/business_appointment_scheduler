@@ -27,14 +27,9 @@ public class BusinessHourServiceImpl implements BusinessHourService{
     }
 
     @Override
-    public BusinessHour findById(long id) throws RuntimeException {
+    public BusinessHour findById(long id) {
         Optional<BusinessHour> businessHour = businessHourRepository.findById(id);
-
-        if (businessHour.isPresent()) {
-            return businessHour.get();
-        } else {
-            throw new RuntimeException("BusinessHour not found with id: " + id);
-        }
+        return businessHour.orElse(null);
     }
 
     @Override

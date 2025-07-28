@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.List;
@@ -104,13 +105,13 @@ public class OwnerController {
     // changes the availability of a service
     @GetMapping("/service-manager/change-availability")
     public String changeServiceAvailability(@RequestParam("sid") UUID serviceId) {
-        try {
-            Service service = serviceService.findById(serviceId);
-            service.setIsActive(!service.getIsActive());
-            serviceService.save(service);
-        } catch (RuntimeException e) {
-            return "error/404";
+        Service service = serviceService.findById(serviceId);
+        if (service == null) {
+            return "error/404"; // if the service does not exist return 404 error page
         }
+        service.setIsActive(!service.getIsActive());
+        serviceService.save(service);
+
         return "redirect:/owner-dashboard/service-manager";
     }
 
@@ -125,6 +126,9 @@ public class OwnerController {
     @GetMapping("/service-manager/update-service")
     public String showUpdateService(@RequestParam("sid") UUID serviceId, Model model) {
         Service service = serviceService.findById(serviceId);
+        if (service == null) {
+            return "error/404"; // if the service does not exist return 404 error page
+        }
         NewServiceForm form = new NewServiceForm();
         form.setServiceName(service.getServiceName());
         form.setPrice(service.getPrice());
@@ -139,10 +143,10 @@ public class OwnerController {
     public String removeServiceImage(@RequestParam("sid") UUID serviceId) {
         try {
             serviceService.removeServiceImage(serviceId);
-        } catch (RuntimeException e) {
-            return "error/404";
+        } catch (IOException e) {
+            return "redirect:/owner-dashboard/service-manager/update-service?sid=" + serviceId + "&removeFailure";
         }
-        return "redirect:/owner-dashboard/service-manager/update-service?sid=" + serviceId;
+        return "redirect:/owner-dashboard/service-manager/update-service?sid=" + serviceId + "&removeSuccess";
     }
 
     // processes the adding or updating of a service
@@ -182,7 +186,9 @@ public class OwnerController {
     // shows the add opening hour form
     @GetMapping("/opening-hours/add-range")
     public String showAddOpeningHour(@RequestParam("dow") byte dayOfWeek, Model model) {
-        model.addAttribute("form", new NewRangeForm());
+        NewRangeForm form = new NewRangeForm();
+        form.setDayOfWeek(dayOfWeek);
+        model.addAttribute("form", form);
         return "owner/add-range";
     }
 
@@ -190,6 +196,9 @@ public class OwnerController {
     @GetMapping("/opening-hours/edit-range")
     public String showEditOpeningHour(@RequestParam("bhid") long businessHourId, Model model) {
         BusinessHour businessHour = businessHourService.findById(businessHourId);
+        if (businessHour == null) {
+            return "error/404"; // if the business hour does not exist return 404 error page
+        }
         NewRangeForm form = new NewRangeForm(
                 businessHour.getDayOfWeek(),
                 businessHour.getStartTime(),
@@ -236,6 +245,9 @@ public class OwnerController {
     @GetMapping("/edit-home")
     public String showEditHome(Model model) {
         BusinessInfo businessInfo = businessInfoService.getBusinessInfo();
+        if (businessInfo == null) {
+            return "error/404"; // if the business info does not exist return 404 error page
+        }
         EditHomeForm form = EditHomeForm.fromBusinessInfo(businessInfo);
         model.addAttribute("form", form);
         return "owner/edit-home";
@@ -270,7 +282,11 @@ public class OwnerController {
     // removes the background image
     @GetMapping("/edit-home/remove-background-image")
     public String removeBackgroundImage() {
-        businessInfoService.removeBackgroundImage();
+        try {
+            businessInfoService.removeBackgroundImage();
+        } catch (IOException e) {
+            return "redirect:/owner-dashboard/edit-home?removeFailure";
+        }
         return "redirect:/owner-dashboard/edit-home?removeSuccess";
     }
 

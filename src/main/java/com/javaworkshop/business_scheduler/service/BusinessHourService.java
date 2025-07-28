@@ -10,7 +10,7 @@ public interface BusinessHourService {
 
     List<BusinessHour> findAll();
 
-    BusinessHour findById(long id) throws RuntimeException;
+    BusinessHour findById(long id);
 
     BusinessHour save(BusinessHour businessHour);
 

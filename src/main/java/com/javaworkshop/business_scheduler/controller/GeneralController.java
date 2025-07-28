@@ -2,10 +2,8 @@ package com.javaworkshop.business_scheduler.controller;
 
 import com.javaworkshop.business_scheduler.dto.AppointmentTimeForm;
 import com.javaworkshop.business_scheduler.dto.BookAppointmentForm;
-import com.javaworkshop.business_scheduler.dto.CustomerDetailsForm;
 import com.javaworkshop.business_scheduler.model.Appointment;
 import com.javaworkshop.business_scheduler.model.BusinessInfo;
-import com.javaworkshop.business_scheduler.model.Customer;
 import com.javaworkshop.business_scheduler.model.Service;
 import com.javaworkshop.business_scheduler.service.*;
 import jakarta.validation.Valid;
@@ -31,19 +29,16 @@ public class GeneralController {
 
     private final int PAGE_SIZE = 3;
     private ServiceService serviceService;
-    private CustomerService customerService;
     private AppointmentService appointmentService;
     private BookingService bookingService;
     private BusinessInfoService businessInfoService;
 
     @Autowired
     public GeneralController(ServiceService serviceService,
-                             CustomerService customerService,
                              AppointmentService appointmentService,
                              BookingService bookingService,
                              BusinessInfoService businessInfoService) {
             this.serviceService = serviceService;
-            this.customerService = customerService;
             this.appointmentService = appointmentService;
             this.bookingService = bookingService;
             this.businessInfoService = businessInfoService;
@@ -84,20 +79,23 @@ public class GeneralController {
         Appointment appointment;
         Service selectedService;
         BookAppointmentForm form = new BookAppointmentForm();
-        try {
-            selectedService = serviceService.findById(serviceId);
-            if (appointmentId != null) { // this is a rescheduling request
-                appointment = appointmentService.findById(appointmentId);
-                form.setAppointmentTimeForm( // sets the appointment time form with the existing appointment details
-                        new AppointmentTimeForm(
-                                appointment.getStartTime().toLocalDate(),
-                                appointment.getStartTime().toLocalTime()
-                        )
-                );
-            }
-        } catch (RuntimeException e) {
-            return "error/404"; // if the service or appointment does not exist return 404 error page
+        selectedService = serviceService.findById(serviceId);
+        if (selectedService == null) {
+            return "error/404"; // if the service does not exist return 404 error page
         }
+        if (appointmentId != null) { // this is a rescheduling request
+            appointment = appointmentService.findById(appointmentId);
+            if (appointment == null) {
+                return "error/404"; // if the appointment does not exist or does not belong to the service, return 404 error page
+            }
+            form.setAppointmentTimeForm( // sets the appointment time form with the existing appointment details
+                    new AppointmentTimeForm(
+                            appointment.getStartTime().toLocalDate(),
+                            appointment.getStartTime().toLocalTime()
+                    )
+            );
+        }
+
         model.addAttribute("form", form);
         model.addAttribute("selectedService", selectedService);
 
@@ -114,6 +112,9 @@ public class GeneralController {
                                  Authentication authentication) {
 
         Service service = serviceService.findById(serviceId);
+        if (service == null) {
+            return "error/404"; // if the service does not exist return 404 error page
+        }
         model.addAttribute("selectedService", service);
         String username = authentication != null ? authentication.getName() : null;
 

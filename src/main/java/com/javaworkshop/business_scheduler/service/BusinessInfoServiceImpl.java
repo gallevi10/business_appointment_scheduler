@@ -9,13 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class BusinessInfoServiceImpl implements BusinessInfoService {
@@ -30,12 +26,7 @@ public class BusinessInfoServiceImpl implements BusinessInfoService {
     @Override
     public BusinessInfo getBusinessInfo() {
         Optional<BusinessInfo> businessInfo = businessInfoRepository.findById(1);
-
-        if (businessInfo.isPresent()) {
-            return businessInfo.get();
-        } else {
-            throw new RuntimeException("BusinessInfo not found");
-        }
+        return businessInfo.orElse(null);
     }
 
     @Override
@@ -64,16 +55,12 @@ public class BusinessInfoServiceImpl implements BusinessInfoService {
 
     @Transactional
     @Override
-    public void removeBackgroundImage() {
+    public void removeBackgroundImage() throws IOException {
         BusinessInfo businessInfo = getBusinessInfo();
         Path folderPath = Paths.get("uploads/business_background");
-        try {
-            ImageStorageUtils.clearFolder(folderPath);
-            businessInfo.setBackgroundPath(null);
-            save(businessInfo);
-        } catch (IOException e) {
-            throw new RuntimeException("error.image.remove");
-        }
+        ImageStorageUtils.clearFolder(folderPath);
+        businessInfo.setBackgroundPath(null);
+        save(businessInfo);
     }
 
     @Override

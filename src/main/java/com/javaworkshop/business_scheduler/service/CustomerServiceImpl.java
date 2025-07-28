@@ -28,45 +28,20 @@ public class CustomerServiceImpl implements CustomerService{
 
     @Override
     public Customer findById(UUID id) {
-
         Optional<Customer> customerOptional = customerRepository.findById(id);
-
-        Customer customer = null;
-
-        if (customerOptional.isPresent()) {
-            customer = customerOptional.get();
-        } else {
-            throw new RuntimeException("Did not find customer id - " + id);
-        }
-
-        return customer;
+        return customerOptional.orElse(null);
     }
 
     @Override
     public Customer findByEmailAndPhone(String email, String phone) {
-
         Optional<Customer> customerOptional = customerRepository.findByEmailAndPhone(email, phone);
-
-        Customer customer = null;
-
-        if (customerOptional.isPresent()) {
-            customer = customerOptional.get();
-        }
-
-        return customer;
+        return customerOptional.orElse(null);
     }
 
     @Override
     public Customer findByUsername(String username) {
         Optional<Customer> customerOptional = customerRepository.findByUserUsername(username);
-
-        Customer customer = null;
-
-        if (customerOptional.isPresent()) {
-            customer = customerOptional.get();
-        }
-
-        return customer;
+        return customerOptional.orElse(null);
     }
 
     @Override
