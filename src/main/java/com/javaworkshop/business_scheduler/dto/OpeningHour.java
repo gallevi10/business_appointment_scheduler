@@ -5,6 +5,7 @@ import com.javaworkshop.business_scheduler.model.BusinessHour;
 import java.util.ArrayList;
 import java.util.List;
 
+// This class represents the opening hours of a business for each day of the week.
 public class OpeningHour {
     private static final String[] DAYS = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
@@ -36,6 +37,7 @@ public class OpeningHour {
         this.ranges = ranges;
     }
 
+    // converts a list of BusinessHour objects into a list of OpeningHour objects
     public static List<OpeningHour> fromBusinessHours(List<BusinessHour> businessHours) {
 
         List<OpeningHour> openingHours = new ArrayList<>();

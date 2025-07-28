@@ -5,7 +5,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalTime;
 
-
+// This class represents the form for creating a new time range for the business's operating hours.
 public class NewRangeForm {
 
     private byte dayOfWeek;

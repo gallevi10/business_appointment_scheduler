@@ -3,6 +3,7 @@ package com.javaworkshop.business_scheduler.dto;
 import com.javaworkshop.business_scheduler.model.Customer;
 import jakarta.validation.constraints.*;
 
+// This class represents a form for capturing customer details.
 public class CustomerDetailsForm {
 
     @NotNull(message = "Phone number is required")

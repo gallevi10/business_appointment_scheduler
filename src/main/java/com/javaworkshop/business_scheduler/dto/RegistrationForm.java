@@ -2,6 +2,7 @@ package com.javaworkshop.business_scheduler.dto;
 
 import jakarta.validation.Valid;
 
+// This class represents a form for registration.
 public class RegistrationForm {
 
     @Valid

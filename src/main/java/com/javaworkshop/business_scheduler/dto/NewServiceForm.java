@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 
+// This class represents a form for creating a new service.
 public class NewServiceForm {
 
     @NotBlank(message = "Service name is required")

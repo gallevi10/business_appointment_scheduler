@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+// This class is used to represent an appointment in the dashboard view.
 public class DashboardAppointment {
 
     private UUID appointmentId;
@@ -84,6 +85,7 @@ public class DashboardAppointment {
         isActive = active;
     }
 
+    // converts a list of Appointment objects to a list of DashboardAppointment objects.
     public static List<DashboardAppointment> fromAppointmentList(List<Appointment> customerAppointments) {
 
         List<DashboardAppointment> dashboardAppointments = new ArrayList<>();

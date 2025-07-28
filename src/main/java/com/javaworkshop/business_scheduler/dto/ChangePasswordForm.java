@@ -1,9 +1,9 @@
 package com.javaworkshop.business_scheduler.dto;
 
-import com.javaworkshop.business_scheduler.model.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+// This class represents a form for changing a user's password.
 public class ChangePasswordForm {
 
     @NotBlank(message = "Old password is required")

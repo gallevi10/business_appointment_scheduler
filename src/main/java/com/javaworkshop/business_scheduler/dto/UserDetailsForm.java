@@ -3,6 +3,7 @@ package com.javaworkshop.business_scheduler.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+// This class represents a form for capturing user details.
 public class UserDetailsForm {
 
     @NotBlank(message = "Username is required")

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.springframework.web.multipart.MultipartFile;
 
+// This class represents the form for editing the business home page.
 public class EditHomeForm {
 
     @NotBlank(message = "Business name is required")
@@ -62,6 +63,7 @@ public class EditHomeForm {
         this.backgroundImage = backgroundImage;
     }
 
+    // creates an EditHomeForm from a BusinessInfo object
     public static EditHomeForm fromBusinessInfo(BusinessInfo businessInfo) {
         return new EditHomeForm(
                 businessInfo.getName(),

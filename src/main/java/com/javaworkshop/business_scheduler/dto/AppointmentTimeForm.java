@@ -6,6 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+// This class represents a form for capturing appointment date and time.
 public class AppointmentTimeForm {
 
     @NotNull(message = "Appointment date is required")
