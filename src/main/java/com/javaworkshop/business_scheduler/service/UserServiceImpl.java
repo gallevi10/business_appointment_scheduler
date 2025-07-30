@@ -5,7 +5,6 @@ import com.javaworkshop.business_scheduler.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -84,9 +83,8 @@ public class UserServiceImpl implements UserService{
         userRepository.save(user);
     }
 
-    @Transactional // this ensures that the addition of a new owner user is atomic
     @Override
-    public void addNewOwnerUser(String username, String password, String confirmPassword) {
+    public synchronized void addNewOwnerUser(String username, String password, String confirmPassword) {
 
         validateUser(username, password, confirmPassword);
         User user = new User(username, passwordEncoder.encode(password), "ROLE_OWNER", true);

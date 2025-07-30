@@ -5,7 +5,6 @@ import com.javaworkshop.business_scheduler.repository.BusinessInfoRepository;
 import com.javaworkshop.business_scheduler.util.ImageStorageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -37,9 +36,8 @@ public class BusinessInfoServiceImpl implements BusinessInfoService {
     }
 
     // updates the business information including name, description, and background image
-    @Transactional // ensures that the operation is atomic
     @Override
-    public void updateBusinessInfo(String businessName,
+    public synchronized void updateBusinessInfo(String businessName,
                                    String description,
                                    MultipartFile backgroundImage) {
 
@@ -57,9 +55,8 @@ public class BusinessInfoServiceImpl implements BusinessInfoService {
     }
 
     // removes the background image from the business information
-    @Transactional // ensures that the operation is atomic
     @Override
-    public void removeBackgroundImage() throws IOException {
+    public synchronized void removeBackgroundImage() throws IOException {
         BusinessInfo businessInfo = getBusinessInfo();
         Path folderPath = Paths.get("uploads/business_background");
         ImageStorageUtils.clearFolder(folderPath);

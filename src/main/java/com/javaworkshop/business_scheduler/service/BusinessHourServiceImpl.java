@@ -4,7 +4,6 @@ import com.javaworkshop.business_scheduler.model.BusinessHour;
 import com.javaworkshop.business_scheduler.repository.BusinessHourRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -48,9 +47,8 @@ public class BusinessHourServiceImpl implements BusinessHourService{
         return businessHourRepository.findByDayOfWeekOrderByStartTime(dayOfWeek);
     }
 
-    @Transactional // ensures that the operation is atomic
     @Override
-    public void addOrUpdateBusinessHour(Long businessHourId,
+    public synchronized void addOrUpdateBusinessHour(Long businessHourId,
                                         byte dayOfWeek,
                                         LocalTime startTime,
                                         LocalTime endTime,

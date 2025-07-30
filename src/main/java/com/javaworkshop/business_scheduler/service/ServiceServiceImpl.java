@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.javaworkshop.business_scheduler.model.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -58,9 +57,8 @@ public class ServiceServiceImpl implements ServiceService{
         return servicePage;
     }
 
-    @Transactional // to ensure that the image upload and service creation are atomic
     @Override
-    public void addOrUpdateService(Service existingService, String serviceName, BigDecimal price,
+    public synchronized void addOrUpdateService(Service existingService, String serviceName, BigDecimal price,
                                    int duration, MultipartFile serviceImage) {
 
         // validates service name
@@ -86,9 +84,8 @@ public class ServiceServiceImpl implements ServiceService{
         }
     }
 
-    @Transactional // to ensure that the image removal and service update are atomic
     @Override
-    public void removeServiceImage(UUID serviceId) throws IOException{
+    public synchronized void removeServiceImage(UUID serviceId) throws IOException{
         Path folerPath = Paths.get("uploads/services/" + serviceId);
 
         // clears the folder where the service image is stored

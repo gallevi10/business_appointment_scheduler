@@ -4,7 +4,6 @@ import com.javaworkshop.business_scheduler.model.Appointment;
 import com.javaworkshop.business_scheduler.model.Customer;
 import com.javaworkshop.business_scheduler.model.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -22,8 +21,7 @@ public class BookingService {
         this.appointmentService = appointmentService;
     }
 
-    @Transactional // ensures that the booking operation is atomic
-    public Appointment bookAppointment(String firstName, String lastName, String email, String phone,
+    public synchronized Appointment bookAppointment(String firstName, String lastName, String email, String phone,
                                        String username, Service service, UUID appointmentId,
                                        LocalDateTime startTime, LocalDateTime endTime) {
 
