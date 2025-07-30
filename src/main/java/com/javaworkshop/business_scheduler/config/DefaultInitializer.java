@@ -17,10 +17,10 @@ import java.time.LocalTime;
 @Component
 public class DefaultInitializer implements CommandLineRunner {
 
-    private UserService userService;
-    private BusinessHourService businessHourService;
-    private BusinessInfoService businessInfoService;
-    private PasswordEncoder passwordEncoder;
+    private final UserService userService;
+    private final BusinessHourService businessHourService;
+    private final BusinessInfoService businessInfoService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public DefaultInitializer(UserService userService,

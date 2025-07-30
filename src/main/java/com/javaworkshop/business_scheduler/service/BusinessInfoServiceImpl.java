@@ -18,7 +18,7 @@ import java.util.Optional;
 @Service
 public class BusinessInfoServiceImpl implements BusinessInfoService {
 
-    private BusinessInfoRepository businessInfoRepository;
+    private final BusinessInfoRepository businessInfoRepository;
 
     @Autowired
     public BusinessInfoServiceImpl(BusinessInfoRepository businessInfoRepository) {

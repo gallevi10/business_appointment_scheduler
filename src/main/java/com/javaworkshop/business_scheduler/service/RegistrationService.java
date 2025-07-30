@@ -11,9 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class RegistrationService {
 
-    private UserService userService;
-    private CustomerService customerService;
-    private PasswordEncoder passwordEncoder;
+    private final UserService userService;
+    private final CustomerService customerService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public RegistrationService(UserService userService,

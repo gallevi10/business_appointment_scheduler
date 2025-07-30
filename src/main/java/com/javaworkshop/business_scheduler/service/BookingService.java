@@ -13,8 +13,8 @@ import java.util.UUID;
 @org.springframework.stereotype.Service
 public class BookingService {
 
-    private CustomerService customerService;
-    private AppointmentService appointmentService;
+    private final CustomerService customerService;
+    private final AppointmentService appointmentService;
 
     @Autowired
     public BookingService(CustomerService customerService, AppointmentService appointmentService) {

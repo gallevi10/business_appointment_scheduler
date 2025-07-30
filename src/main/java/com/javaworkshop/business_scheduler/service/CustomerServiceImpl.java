@@ -14,7 +14,7 @@ import java.util.UUID;
 @Service
 public class CustomerServiceImpl implements CustomerService{
 
-    private CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
 
     @Autowired
     public CustomerServiceImpl(CustomerRepository customerRepository) {

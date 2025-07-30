@@ -16,8 +16,8 @@ public class EmailUtil {
     @Value("${spring.mail.username}")
     private String EMAIL_FROM;
 
-    private BusinessInfoService businessInfoService;
-    private JavaMailSender javaMailSender;
+    private final BusinessInfoService businessInfoService;
+    private final JavaMailSender javaMailSender;
 
     @Autowired
     public EmailUtil(JavaMailSender javaMailSender, BusinessInfoService businessInfoService) {

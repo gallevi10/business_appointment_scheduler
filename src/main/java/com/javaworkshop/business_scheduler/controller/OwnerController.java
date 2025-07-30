@@ -30,11 +30,11 @@ import java.util.UUID;
 @RequestMapping("/owner-dashboard")
 public class OwnerController {
 
-    private BusinessHourService businessHourService;
-    private AppointmentService appointmentService;
-    private ServiceService serviceService;
-    private BusinessInfoService businessInfoService;
-    private UserService userService;
+    private final BusinessHourService businessHourService;
+    private final AppointmentService appointmentService;
+    private final ServiceService serviceService;
+    private final BusinessInfoService businessInfoService;
+    private final UserService userService;
 
     @Autowired
     public OwnerController(BusinessHourService businessHourService,

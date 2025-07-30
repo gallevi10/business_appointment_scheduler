@@ -26,8 +26,8 @@ import java.util.UUID;
 public class AppointmentServiceImpl implements AppointmentService{
 
     private final int MINUTE = 60000; // 1 minute in milliseconds
-    private AppointmentRepository appointmentRepository;
-    private EmailUtil emailUtil; // utility for sending emails
+    private final AppointmentRepository appointmentRepository;
+    private final EmailUtil emailUtil; // utility for sending emails
 
     @Autowired
     public AppointmentServiceImpl(AppointmentRepository appointmentRepository,

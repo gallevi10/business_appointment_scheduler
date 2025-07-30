@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-// This class is used to add global model attributes that can be accessed in all views.
+// This class is used to add global model attributes that can be accessed in all templates.
 @ControllerAdvice
 public class GlobalModelAttributes {
 

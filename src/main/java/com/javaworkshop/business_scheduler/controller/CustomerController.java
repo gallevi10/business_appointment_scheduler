@@ -22,8 +22,8 @@ import java.util.UUID;
 @RequestMapping("/customer-dashboard")
 public class CustomerController {
 
-    CustomerService customerService;
-    AppointmentService appointmentService;
+    private final CustomerService customerService;
+    private final AppointmentService appointmentService;
 
     @Autowired
     public CustomerController(CustomerService customerService, AppointmentService appointmentService) {

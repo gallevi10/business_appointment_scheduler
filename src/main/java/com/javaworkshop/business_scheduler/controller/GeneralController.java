@@ -27,11 +27,11 @@ import java.util.UUID;
 @Controller
 public class GeneralController {
 
-    private final int PAGE_SIZE = 3;
-    private ServiceService serviceService;
-    private AppointmentService appointmentService;
-    private BookingService bookingService;
-    private BusinessInfoService businessInfoService;
+    private static final int PAGE_SIZE = 3;
+    private final ServiceService serviceService;
+    private final AppointmentService appointmentService;
+    private final BookingService bookingService;
+    private final BusinessInfoService businessInfoService;
 
     @Autowired
     public GeneralController(ServiceService serviceService,

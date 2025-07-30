@@ -15,7 +15,7 @@ import java.util.Optional;
 @Service
 public class BusinessHourServiceImpl implements BusinessHourService{
 
-    BusinessHourRepository businessHourRepository;
+    private final BusinessHourRepository businessHourRepository;
 
     @Autowired
     public BusinessHourServiceImpl(BusinessHourRepository businessHourRepository) {

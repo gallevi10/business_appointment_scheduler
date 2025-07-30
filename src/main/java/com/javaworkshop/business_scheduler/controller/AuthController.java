@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class AuthController {
 
-    private RegistrationService registrationService;
-    private UserService userService;
+    private final RegistrationService registrationService;
+    private final UserService userService;
 
     @Autowired
     public AuthController(RegistrationService registrationService, UserService userService) {

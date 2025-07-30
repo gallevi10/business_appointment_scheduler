@@ -23,9 +23,9 @@ import java.util.UUID;
 @RequestMapping("/api")
 public class BusinessRestController {
 
-    private ServiceService serviceService;
-    private AppointmentService appointmentService;
-    private BusinessHourService businessHourService;
+    private final ServiceService serviceService;
+    private final AppointmentService appointmentService;
+    private final BusinessHourService businessHourService;
 
     @Autowired
     public BusinessRestController(ServiceService serviceService,

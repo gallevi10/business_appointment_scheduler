@@ -20,7 +20,7 @@ import java.util.*;
 public class ServiceServiceImpl implements ServiceService{
 
 
-    private ServiceRepository serviceRepository;
+    private final ServiceRepository serviceRepository;
 
     @Autowired
     public ServiceServiceImpl(ServiceRepository serviceRepository) {
