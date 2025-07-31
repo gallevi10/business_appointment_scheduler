@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 // This class is a utility for sending emails using JavaMailSender.
@@ -25,6 +26,7 @@ public class EmailUtil {
         this.businessInfoService = businessInfoService;
     }
 
+    @Async
     public void sendMail(String toEmail, String subject, String body) throws Exception {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, false, "UTF-8");
