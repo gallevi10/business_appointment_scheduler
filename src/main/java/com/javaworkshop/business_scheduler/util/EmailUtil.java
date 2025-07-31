@@ -26,7 +26,7 @@ public class EmailUtil {
         this.businessInfoService = businessInfoService;
     }
 
-    @Async
+    @Async // to send emails asynchronously
     public void sendMail(String toEmail, String subject, String body) throws Exception {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, false, "UTF-8");
