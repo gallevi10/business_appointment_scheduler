@@ -24,7 +24,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
     // retrieves all appointments for a specific customer that are not completed, ordered by their start time
     Optional<List<Appointment>> findAppointmentsByCustomerIdAndIsCompletedFalseOrderByStartTime(UUID customerId);
 
-    // retrieves all appointments for a specific employee that are not completed, ordered by their start time
+    // retrieves all appointments that are not completed and end before a specific time
     List<Appointment> findByEndTimeBeforeAndIsCompletedFalse(LocalDateTime time);
 
     // retrieves all appointments that start within a specific time range and are not completed
