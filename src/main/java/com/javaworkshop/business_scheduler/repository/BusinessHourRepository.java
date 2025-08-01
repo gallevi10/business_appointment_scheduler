@@ -43,5 +43,4 @@ public interface BusinessHourRepository extends JpaRepository<BusinessHour, UUID
                           @Param("startTime") LocalTime startTime,
                           @Param("endTime") LocalTime endTime);
 
-    List<BusinessHour> id(UUID id);
 }

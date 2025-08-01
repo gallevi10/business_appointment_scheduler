@@ -13,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -69,8 +68,7 @@ class AppointmentRepositoryTest {
     @Test
     void testFindByOrderByStartTime() {
 
-        List<Appointment> expected = new ArrayList<>(List.of(firstAppointment, secondAppointment, thirdAppointment));
-        expected.sort(Comparator.comparing(Appointment::getStartTime));
+        List<Appointment> expected = new ArrayList<>(List.of(thirdAppointment, firstAppointment, secondAppointment));
 
         List<Appointment> actual = appointmentRepository.findByOrderByStartTime();
 
@@ -85,7 +83,6 @@ class AppointmentRepositoryTest {
         appointmentRepository.save(thirdAppointment);
 
         List<Appointment> expected = new ArrayList<>(List.of(firstAppointment, secondAppointment));
-        expected.sort(Comparator.comparing(Appointment::getStartTime));
 
         List<Appointment> actual = appointmentRepository.findAppointmentsByIsCompletedFalseOrderByStartTime();
 
@@ -108,7 +105,6 @@ class AppointmentRepositoryTest {
         appointmentRepository.save(thirdAppointment);
 
         List<Appointment> expected = new ArrayList<>(List.of(firstAppointment, secondAppointment));
-        expected.sort(Comparator.comparing(Appointment::getStartTime));
 
         List<Appointment> actual = appointmentRepository
                         .findAppointmentsByCustomerIdAndIsCompletedFalseOrderByStartTime(customer.getId())
@@ -170,48 +166,61 @@ class AppointmentRepositoryTest {
     @DisplayName("Test Overlapping Appointments")
     @Test
     void testOverlappingAppointments() {
-        // creates an overlapping firstAppointment time range
-        LocalDateTime overlappingStart = now.plusMinutes(1);
-        LocalDateTime overlappingEnd = overlappingStart.plusMinutes(service.getDuration());
 
-        // creates edge case for overlapping firstAppointment
-        LocalDateTime edgeCaseOverlappingStart = now.plusMinutes(service.getDuration() - 1);
-        LocalDateTime edgeCaseOverlappingEnd = edgeCaseOverlappingStart.plusMinutes(service.getDuration());
+        // creates overlapping times for the first appointment
+        // first case
+        LocalDateTime firstCaseOverlappingStart = firstAppointment.getStartTime().plusMinutes(1);
+        LocalDateTime firstCaseOverlappingEnd = firstAppointment.getEndTime().plusMinutes(1);
 
-        boolean isOverlapping = appointmentRepository.isOverlapping(overlappingStart, overlappingEnd);
-        boolean isEdgeCaseOverlapping = appointmentRepository.isOverlapping(edgeCaseOverlappingStart, edgeCaseOverlappingEnd);
+        // second case
+        LocalDateTime secondCaseOverlappingStart = firstAppointment.getStartTime().plusMinutes(1);
+        LocalDateTime secondCaseOverlappingEnd = firstAppointment.getEndTime().minusMinutes(1);
 
-        assertAll(
-            // checks if the overlapping firstAppointment is found
-            () -> assertTrue(isOverlapping, "Expected overlapping firstAppointment to be found"),
-            // checks if the edge case overlapping firstAppointment is found
-            () -> assertTrue(isEdgeCaseOverlapping, "Expected edge case overlapping firstAppointment to be found")
+        // third case
+        LocalDateTime thirdCaseOverlappingStart = firstAppointment.getStartTime().minusMinutes(1);
+        LocalDateTime thirdOverlappingEnd = firstAppointment.getEndTime().minusMinutes(1);
 
+        // fourth case
+        LocalDateTime forthCaseOverlappingStart = firstAppointment.getStartTime().minusMinutes(1);
+        LocalDateTime forthCaseOverlappingEnd = firstAppointment.getEndTime().plusMinutes(1);
+
+        List<Boolean> allOverlappingCases = List.of(
+            appointmentRepository.isOverlapping(firstCaseOverlappingStart, firstCaseOverlappingEnd),
+            appointmentRepository.isOverlapping(secondCaseOverlappingStart, secondCaseOverlappingEnd),
+            appointmentRepository.isOverlapping(thirdCaseOverlappingStart, thirdOverlappingEnd),
+            appointmentRepository.isOverlapping(forthCaseOverlappingStart, forthCaseOverlappingEnd)
         );
+
+        for (boolean isOverlapping : allOverlappingCases) {
+            assertTrue(isOverlapping, "Expected overlapping appointment to be found");
+        }
     }
 
     @DisplayName("Test Non-Overlapping Appointments")
     @Test
     void testNonOverlappingAppointments() {
 
-        // creates non-overlapping firstAppointment time range
-        LocalDateTime nonOverlappingStart = now.plusMinutes(5L * service.getDuration());
-        LocalDateTime nonOverlappingEnd = nonOverlappingStart.plusMinutes(service.getDuration());
+        // creates non-overlapping times
+        // first case
+        LocalDateTime firstCaseNonOverlappingStart = firstAppointment.getStartTime().minusMinutes(10);
+        LocalDateTime firstCaseNonOverlappingEnd = firstAppointment.getStartTime();
 
-        // creates edge case for non-overlapping firstAppointment
-        LocalDateTime edgeCaseNonOverlappingStart = now.plusMinutes(2L * service.getDuration() + 10);
-        LocalDateTime edgeCaseNonOverlappingEnd = nonOverlappingStart.plusMinutes(service.getDuration());
+        // second case
+        LocalDateTime secondCaseNonOverlappingStart = firstAppointment.getEndTime();
+        LocalDateTime secondCaseNonOverlappingEnd = firstAppointment.getEndTime().plusMinutes(10);
 
-        boolean isOverlapping =
-                appointmentRepository.isOverlapping(nonOverlappingStart, nonOverlappingEnd);
-        boolean isEdgeCaseOverlapping =
-                appointmentRepository.isOverlapping(edgeCaseNonOverlappingStart, edgeCaseNonOverlappingEnd);
+        // third case
+        LocalDateTime thirdCaseNonOverlappingStart = firstAppointment.getStartTime().plusDays(1);
+        LocalDateTime thirdCaseNonOverlappingEnd = firstAppointment.getEndTime().plusDays(1);
 
-        assertAll(
-            // checks if the non-overlapping firstAppointment is not found
-            () -> assertFalse(isOverlapping, "Expected non-overlapping firstAppointment to not be found"),
-            // checks if the edge case non-overlapping firstAppointment is not found
-            () -> assertFalse(isEdgeCaseOverlapping, "Expected edge case non-overlapping firstAppointment to not be found")
+        List<Boolean> allNonOverlappingCases = List.of(
+            appointmentRepository.isOverlapping(firstCaseNonOverlappingStart, firstCaseNonOverlappingEnd),
+            appointmentRepository.isOverlapping(secondCaseNonOverlappingStart, secondCaseNonOverlappingEnd),
+            appointmentRepository.isOverlapping(thirdCaseNonOverlappingStart, thirdCaseNonOverlappingEnd)
         );
+
+        for (boolean isOverlapping : allNonOverlappingCases) {
+            assertFalse(isOverlapping, "Expected no overlapping appointment to be found");
+        }
     }
 }

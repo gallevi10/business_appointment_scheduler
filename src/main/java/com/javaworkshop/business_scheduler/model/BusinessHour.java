@@ -36,11 +36,11 @@ public class BusinessHour {
     public BusinessHour() {
     }
 
-    public BusinessHour(byte dayOfWeek, boolean isOpen, LocalTime endTime, LocalTime startTime) {
+    public BusinessHour(byte dayOfWeek, LocalTime startTime, LocalTime endTime, boolean isOpen) {
         this.dayOfWeek = dayOfWeek;
-        this.isOpen = isOpen;
-        this.endTime = endTime;
         this.startTime = startTime;
+        this.endTime = endTime;
+        this.isOpen = isOpen;
     }
 
     public BusinessHour(UUID id, byte dayOfWeek, LocalTime startTime, LocalTime endTime, boolean isOpen) {
