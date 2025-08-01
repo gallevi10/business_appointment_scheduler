@@ -74,4 +74,14 @@ public class BusinessInfo {
     public void setBackgroundPath(String backgroundPath) {
         this.backgroundPath = backgroundPath;
     }
+
+    @Override
+    public String toString() {
+        return "BusinessInfo{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", backgroundPath='" + backgroundPath + '\'' +
+                '}';
+    }
 }

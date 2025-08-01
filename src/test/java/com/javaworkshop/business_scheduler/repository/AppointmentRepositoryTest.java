@@ -12,6 +12,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -100,5 +103,26 @@ class AppointmentRepositoryTest {
             // checks if the edge case non-overlapping appointment is not found
             () -> assertFalse(isEdgeCaseOverlapping, "Expected edge case non-overlapping appointment to not be found")
         );
+    }
+
+    @DisplayName("Test Find All Appointments Ordered by Start Time")
+    @Test
+    void testFindByOrderByStartTime() {
+        Appointment secondAppointment = new Appointment(customer, service,
+                LocalDateTime.now().plusMinutes(service.getDuration() + 10),
+                LocalDateTime.now().plusMinutes(2L * service.getDuration() + 10), false);
+        Appointment thirdAppointment = new Appointment(customer, service,
+                LocalDateTime.now().minusMinutes(service.getDuration() + 10),
+                LocalDateTime.now().minusMinutes(10), false);
+
+        appointmentRepository.save(secondAppointment);
+        appointmentRepository.save(thirdAppointment);
+
+        List<Appointment> expected = new ArrayList<>(List.of(appointment, thirdAppointment, secondAppointment));
+        expected.sort(Comparator.comparing(Appointment::getStartTime));
+
+        List<Appointment> actual = appointmentRepository.findByOrderByStartTime();
+
+        assertIterableEquals(expected, actual, "Expected appointments to be ordered by start time");
     }
 }

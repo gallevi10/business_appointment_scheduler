@@ -201,7 +201,7 @@ public class OwnerController {
 
     // shows the edit opening hour form with existing details
     @GetMapping("/opening-hours/edit-range")
-    public String showEditOpeningHour(@RequestParam("bhid") long businessHourId, Model model) {
+    public String showEditOpeningHour(@RequestParam("bhid") UUID businessHourId, Model model) {
         BusinessHour businessHour = businessHourService.findById(businessHourId);
         if (businessHour == null) {
             return "error/404"; // if the business hour does not exist return 404 error page
@@ -218,14 +218,14 @@ public class OwnerController {
 
     // deletes an opening hour
     @GetMapping("/opening-hours/delete-range")
-    public String deleteOpeningHour(@RequestParam("bhid") long businessHourId) {
+    public String deleteOpeningHour(@RequestParam("bhid") UUID businessHourId) {
         businessHourService.deleteById(businessHourId);
         return "redirect:/owner-dashboard/opening-hours";
     }
 
     // processes the adding or updating of an opening hour
     @PostMapping("/opening-hours/processNewRange")
-    public String processNewRange(@RequestParam(value = "bhid", required = false) Long businessHourId,
+    public String processNewRange(@RequestParam(value = "bhid", required = false) UUID businessHourId,
                                   @ModelAttribute("form") @Valid NewRangeForm form,
                                   BindingResult result) {
         if (!result.hasErrors()) {

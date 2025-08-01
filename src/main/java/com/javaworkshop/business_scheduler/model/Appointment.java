@@ -113,4 +113,15 @@ public class Appointment {
         this.isCompleted = isCompleted;
     }
 
+    @Override
+    public String toString() {
+        return "Appointment{" +
+                "id=" + id +
+                ", customer=" + customer +
+                ", service=" + service +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", isCompleted=" + isCompleted +
+                '}';
+    }
 }

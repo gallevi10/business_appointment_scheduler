@@ -107,4 +107,15 @@ public class Service {
         this.isActive = isActive;
     }
 
+    @Override
+    public String toString() {
+        return "Service{" +
+                "id=" + id +
+                ", serviceName='" + serviceName + '\'' +
+                ", price=" + price +
+                ", duration=" + duration +
+                ", imagePath='" + imagePath + '\'' +
+                ", isActive=" + isActive +
+                '}';
+    }
 }

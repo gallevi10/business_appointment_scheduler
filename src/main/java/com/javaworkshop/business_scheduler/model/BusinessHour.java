@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalTime;
+import java.util.UUID;
 
 // This class represents a business hour entity in the business scheduler application.
 @Entity
@@ -12,9 +13,9 @@ import java.time.LocalTime;
 public class BusinessHour {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     @Column(name = "id", nullable = false)
-    private long id;
+    private UUID id;
 
     @NotNull
     @Column(name = "day_of_week", nullable = false)
@@ -42,18 +43,18 @@ public class BusinessHour {
         this.startTime = startTime;
     }
 
-    public BusinessHour(long id, byte dayOfWeek, LocalTime startTime, LocalTime endTime, boolean isOpen) {
+    public BusinessHour(UUID id, byte dayOfWeek, LocalTime startTime, LocalTime endTime, boolean isOpen) {
         this.id = id;
         this.dayOfWeek = dayOfWeek;
         this.startTime = startTime;
         this.endTime = endTime;
         this.isOpen = isOpen;
     }
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -89,4 +90,14 @@ public class BusinessHour {
         this.isOpen = isOpen;
     }
 
+    @Override
+    public String toString() {
+        return "BusinessHour{" +
+                "id=" + id +
+                ", dayOfWeek=" + dayOfWeek +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", isOpen=" + isOpen +
+                '}';
+    }
 }

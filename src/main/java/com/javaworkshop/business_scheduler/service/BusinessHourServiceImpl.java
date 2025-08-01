@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 // This class implements the BusinessHourService interface providing methods
 // for managing business hours in the business scheduler application.
@@ -27,7 +28,7 @@ public class BusinessHourServiceImpl implements BusinessHourService{
     }
 
     @Override
-    public BusinessHour findById(long id) {
+    public BusinessHour findById(UUID id) {
         Optional<BusinessHour> businessHour = businessHourRepository.findById(id);
         return businessHour.orElse(null);
     }
@@ -38,7 +39,7 @@ public class BusinessHourServiceImpl implements BusinessHourService{
     }
 
     @Override
-    public void deleteById(long id) {
+    public void deleteById(UUID id) {
         businessHourRepository.deleteById(id);
     }
 
@@ -48,7 +49,7 @@ public class BusinessHourServiceImpl implements BusinessHourService{
     }
 
     @Override
-    public synchronized void addOrUpdateBusinessHour(Long businessHourId,
+    public synchronized void addOrUpdateBusinessHour(UUID businessHourId,
                                         byte dayOfWeek,
                                         LocalTime startTime,
                                         LocalTime endTime,
@@ -73,7 +74,7 @@ public class BusinessHourServiceImpl implements BusinessHourService{
     }
 
     @Override
-    public Byte findDayOfWeekById(long id) {
+    public Byte findDayOfWeekById(UUID id) {
         return businessHourRepository.findDayOfWeekById(id);
     }
 

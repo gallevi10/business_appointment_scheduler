@@ -8,10 +8,11 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 
 // This interface defines the repository for managing BusinessHour entities.
 @Repository
-public interface BusinessHourRepository extends JpaRepository<BusinessHour, Long> {
+public interface BusinessHourRepository extends JpaRepository<BusinessHour, UUID> {
 
     // retrieves all business hours ordered by day of the week and start time
     List<BusinessHour> findAllByOrderByDayOfWeekAscStartTimeAsc();
@@ -25,7 +26,7 @@ public interface BusinessHourRepository extends JpaRepository<BusinessHour, Long
         FROM BusinessHour bh
         WHERE bh.id = :id
         """)
-    byte findDayOfWeekById(@Param("id") Long id);
+    byte findDayOfWeekById(@Param("id") UUID id);
 
     // checks if there is an overlapping business hour for a specific day of the week excluding a specific business hour id
     @Query("""
@@ -37,8 +38,10 @@ public interface BusinessHourRepository extends JpaRepository<BusinessHour, Long
         AND bh.startTime < :endTime
         AND bh.endTime > :startTime
     """)
-    boolean isOverlapping(@Param("bhid") Long bhid,
+    boolean isOverlapping(@Param("bhid") UUID bhid,
                           @Param("dayOfWeek") byte dayOfWeek,
                           @Param("startTime") LocalTime startTime,
                           @Param("endTime") LocalTime endTime);
+
+    List<BusinessHour> id(UUID id);
 }
