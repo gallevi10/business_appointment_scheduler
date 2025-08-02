@@ -64,9 +64,9 @@ class AppointmentRepositoryTest {
         serviceRepository.deleteAll();
     }
 
-    @DisplayName("Test Find All Appointments Ordered by Start Time")
+    @DisplayName("Find All Appointments Ordered by Start Time")
     @Test
-    void testFindByOrderByStartTime() {
+    void findAllAppointmentsOrderedByStartTime() {
 
         List<Appointment> expected = new ArrayList<>(List.of(thirdAppointment, firstAppointment, secondAppointment));
 
@@ -76,9 +76,9 @@ class AppointmentRepositoryTest {
     }
 
 
-    @DisplayName("Test Find All Uncompleted Appointments Ordered by Start Time")
+    @DisplayName("Find All Uncompleted Appointments Ordered by Start Time")
     @Test
-    void testFindAppointmentsByIsCompletedFalseOrderByStartTime() {
+    void FindAllUncompletedAppointmentsOrderedByStartTime() {
         thirdAppointment.setIsCompleted(true);
         appointmentRepository.save(thirdAppointment);
 
@@ -97,9 +97,9 @@ class AppointmentRepositoryTest {
 
     }
 
-    @DisplayName("Test Find All Uncompleted Appointments by Customer ID Ordered by Start Time")
+    @DisplayName("Find All Uncompleted Appointments by Customer id Ordered by Start Time")
     @Test
-    void testFindAppointmentsByCustomerIdAndIsCompletedFalseOrderByStartTime() {
+    void findAllUncompletedAppointmentsByCustomerIdOrderedByStartTime() {
 
         thirdAppointment.setIsCompleted(true);
         appointmentRepository.save(thirdAppointment);
@@ -121,9 +121,9 @@ class AppointmentRepositoryTest {
 
     }
 
-    @DisplayName("Test Find Uncompleted Appointments That End Before a Specific Time")
+    @DisplayName("Find Uncompleted Appointments That End Before a Specific Time")
     @Test
-    void testFindByEndTimeBeforeAndIsCompletedFalse() {
+    void findUncompletedAppointmentsThatEndBeforeASpecificTime() {
         // creates a time that is after the third appointment end time
         LocalDateTime time = now;
 
@@ -141,9 +141,9 @@ class AppointmentRepositoryTest {
         );
     }
 
-    @DisplayName("Test Find Appointments that Start Between Two Ranges of Time and Are Not Completed")
+    @DisplayName("Find Appointments That Start Between Two Ranges of Time and Are Not Completed")
     @Test
-    void testFindAppointmentsByStartTimeBetweenAndIsCompletedFalse() {
+    void findAppointmentsThatStartBetweenTwoRangesOfTimeAndAreNotCompleted() {
         // creates a time range that includes the first and second appointments
         LocalDateTime start = now;
         LocalDateTime end = start.plusMinutes(2L * service.getDuration());
@@ -163,9 +163,9 @@ class AppointmentRepositoryTest {
         );
     }
 
-    @DisplayName("Test Overlapping Appointments")
+    @DisplayName("Overlapping Appointments")
     @Test
-    void testOverlappingAppointments() {
+    void overlappingAppointments() {
 
         // creates overlapping times for the first appointment
         // first case
@@ -196,9 +196,9 @@ class AppointmentRepositoryTest {
         }
     }
 
-    @DisplayName("Test Non-Overlapping Appointments")
+    @DisplayName("Non-Overlapping Appointments")
     @Test
-    void testNonOverlappingAppointments() {
+    void nonOverlappingAppointments() {
 
         // creates non-overlapping times
         // first case

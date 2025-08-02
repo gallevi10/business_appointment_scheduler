@@ -3,7 +3,7 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-    <head th:replace="~{fragments :: head('Customer Dashboard - My Appointments')}"></head>
+    <head th:replace="~{fragments :: head('Book an Appointment')}"></head>
 
     <body>
         <div sec:authorize="!isAuthenticated()"
@@ -15,7 +15,7 @@
         </div>
 
         <div th:if="${selectedService.isActive}">
-            <div th:replace="${param.aid != null} ? ~{fragments :: heading('Update The Appointment')} : ~{fragments :: heading('Book An Appointment')}"></div>
+            <div th:replace="${param.aid != null} ? ~{fragments :: heading('Update The Appointment')} : ~{fragments :: heading('Book an Appointment')}"></div>
             <div class="container mt-4 w-100">
                 <p class="fs-4 text-center">
                     Hi

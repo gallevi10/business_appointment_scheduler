@@ -143,7 +143,10 @@ public class OwnerController {
     public String removeServiceImage(@RequestParam("sid") UUID serviceId) {
         try {
             serviceService.removeServiceImage(serviceId);
-        } catch (IOException e) {
+        } catch (RuntimeException e){
+            return "redirect:/owner-dashboard/service-manager/update-service?sid=" + serviceId + "&removedAlready";
+        }
+        catch (IOException e) {
             return "redirect:/owner-dashboard/service-manager/update-service?sid=" + serviceId + "&removeFailure";
         }
         return "redirect:/owner-dashboard/service-manager/update-service?sid=" + serviceId + "&removeSuccess";
@@ -291,6 +294,8 @@ public class OwnerController {
     public String removeBackgroundImage() {
         try {
             businessInfoService.removeBackgroundImage();
+        } catch (RuntimeException e){
+            return "redirect:/owner-dashboard/service-manager/update-service?sid=" + "&removedAlready";
         } catch (IOException e) {
             return "redirect:/owner-dashboard/edit-home?removeFailure";
         }

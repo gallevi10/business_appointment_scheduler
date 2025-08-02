@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -20,6 +19,7 @@ class BusinessHourRepositoryTest {
     @Autowired
     private BusinessHourRepository businessHourRepository;
 
+    private static final int[] MINUTES_TO_ADD = {5, -5};
     private BusinessHour firstBusinessHour, secondBusinessHour, thirdBusinessHour;
 
     @BeforeEach
@@ -46,9 +46,9 @@ class BusinessHourRepositoryTest {
         businessHourRepository.deleteAll();
     }
 
-    @DisplayName("Test Find All Business Hours Ordered by Day of Week and Start Time")
+    @DisplayName("Find All Business Hours Ordered By Day of Week And Start Time")
     @Test
-    void testFindAllByOrderByDayOfWeekAscStartTimeAsc() {
+    void findAllBusinessHoursOrderedByDayOfWeekAndStartTime() {
 
         List<BusinessHour> expected = List.of(secondBusinessHour, firstBusinessHour, thirdBusinessHour);
 
@@ -63,9 +63,9 @@ class BusinessHourRepositoryTest {
 
     }
 
-    @DisplayName("Test Find Business Hours by Day of Week Ordered by Start Time")
+    @DisplayName("Find Business Hours By Day of Week Ordered By Start Time")
     @Test
-    void testFindByDayOfWeekOrderByStartTime() {
+    void findBusinessHoursByDayOfWeekOrderedByStartTime() {
         // adding another range for Monday to test the method
         BusinessHour anotherBusinessHour = new BusinessHour((byte) 1, // Monday
                 LocalTime.of(18, 30), // 06:30 PM
@@ -89,9 +89,9 @@ class BusinessHourRepositoryTest {
 
     }
 
-    @DisplayName("Test Find Day of Week by ID")
-    @Test()
-    void testFindDayOfWeekById() {
+    @DisplayName("Find Day of Week by ID")
+    @Test
+    void findDayOfWeekById() {
         List<BusinessHour> businessHours = List.of(firstBusinessHour, secondBusinessHour, thirdBusinessHour);
 
         for (BusinessHour businessHour : businessHours) {
@@ -104,59 +104,69 @@ class BusinessHourRepositoryTest {
         }
     }
 
-    @DisplayName("Test If Business Hour is Overlapping when no id is provided")
+    @DisplayName("Overlapping Business Hours When No Id Is Provided")
     @Test
-    void testIfBusinessHourIsOverlappingWhenNoIdIsProvided() {
-        // creates overlapping times for the first business hour
-        // first case
-        LocalTime firstCaseOverlappingStart = firstBusinessHour.getStartTime().plusMinutes(1);
-        LocalTime firstCaseOverlappingEnd = firstBusinessHour.getEndTime().plusMinutes(1);
+    void OverlappingBusinessHoursWhenNoIdIsProvided() {
+        // checks all the cases for overlapping business hours when no id is provided
+        for (int minuteToAddForStart : MINUTES_TO_ADD) {
+            for (int minuteToAddForEnd : MINUTES_TO_ADD) {
+                LocalTime startTime = firstBusinessHour.getStartTime().plusMinutes(minuteToAddForStart);
+                LocalTime endTime = firstBusinessHour.getEndTime().plusMinutes(minuteToAddForEnd);
 
-        // second case
-        LocalTime secondCaseOverlappingStart = firstBusinessHour.getStartTime().plusMinutes(1);
-        LocalTime secondCaseOverlappingEnd = firstBusinessHour.getEndTime().minusMinutes(1);
+                boolean isOverlapping = businessHourRepository.isOverlapping(
+                        null, firstBusinessHour.getDayOfWeek(), startTime, endTime);
 
-        // third case
-        LocalTime thirdCaseOverlappingStart = firstBusinessHour.getStartTime().minusMinutes(1);
-        LocalTime thirdOverlappingEnd = firstBusinessHour.getEndTime().minusMinutes(1);
-
-        // fourth case
-        LocalTime forthCaseOverlappingStart = firstBusinessHour.getStartTime().minusMinutes(1);
-        LocalTime forthCaseOverlappingEnd = firstBusinessHour.getEndTime().plusMinutes(1);
-
-        List<Boolean> allOverlappingCases = List.of(
-                businessHourRepository.isOverlapping(null, firstBusinessHour.getDayOfWeek(),
-                        firstCaseOverlappingStart, firstCaseOverlappingEnd),
-                businessHourRepository.isOverlapping(null, firstBusinessHour.getDayOfWeek(),
-                        secondCaseOverlappingStart, secondCaseOverlappingEnd),
-                businessHourRepository.isOverlapping(null, firstBusinessHour.getDayOfWeek(),
-                        thirdCaseOverlappingStart, thirdOverlappingEnd),
-                businessHourRepository.isOverlapping(null, firstBusinessHour.getDayOfWeek(),
-                        forthCaseOverlappingStart, forthCaseOverlappingEnd)
-        );
-
-        for (boolean isOverlapping : allOverlappingCases) {
-            assertTrue(isOverlapping, "Expected overlapping business hour to be found");
+                assertTrue(isOverlapping, "Expected overlapping business hour to be found");
+            }
         }
 
     }
 
-    @DisplayName("Test If Business Hour is Overlapping when id is provided")
+    @DisplayName("Non-Overlapping Business Hours When Id Is Provided")
     @Test
-    void testIfBusinessHourIsOverlappingIdIsProvided() {
+    void NonOverlappingBusinessHoursWhenIdIsProvided() {
 
-        // checks if the first business hour overlaps with itself
-        boolean isOverlappingWithItself = businessHourRepository.isOverlapping(
-                firstBusinessHour.getId(), firstBusinessHour.getDayOfWeek(),
-                firstBusinessHour.getStartTime(), firstBusinessHour.getEndTime());
+        // checks all the cases for non-overlapping business hours when id is provided
+        // it should not overlap with itself
+        for (int minuteToAddForStart : MINUTES_TO_ADD) {
+            for (int minuteToAddForEnd : MINUTES_TO_ADD) {
+                LocalTime startTime = firstBusinessHour.getStartTime().plusMinutes(minuteToAddForStart);
+                LocalTime endTime = firstBusinessHour.getEndTime().plusMinutes(minuteToAddForEnd);
 
-        assertFalse(isOverlappingWithItself, "Expected that business hour does not overlap with itself");
+                boolean isOverlapping = businessHourRepository.isOverlapping(
+                        firstBusinessHour.getId(), firstBusinessHour.getDayOfWeek(),
+                        startTime, endTime);
+
+                assertFalse(isOverlapping, "Expected that the new range for the first business hour" +
+                        " does not overlap with itself");
+            }
+        }
 
     }
 
-    @DisplayName("Test If Business Hour is Not Overlapping")
+    @DisplayName("Overlapping Business Hours When Id Is Provided")
     @Test
-    void testIfBusinessHourIsNotOverlapping() {
+    void OverlappingBusinessHoursWhenIdIsProvided() {
+
+        // check for all the cases for overlapping business hours when id is provided
+        for (int minuteToAddForStart : MINUTES_TO_ADD) {
+            for (int minuteToAddForEnd : MINUTES_TO_ADD) {
+                LocalTime startTime = secondBusinessHour.getStartTime().plusMinutes(minuteToAddForStart);
+                LocalTime endTime = secondBusinessHour.getEndTime().plusMinutes(minuteToAddForEnd);
+
+                boolean isOverlapping = businessHourRepository.isOverlapping(
+                        firstBusinessHour.getId(), secondBusinessHour.getDayOfWeek(),
+                        startTime, endTime);
+
+                assertTrue(isOverlapping, "Expected that the new range for the first business hour" +
+                        " overlaps with the second business hour");
+            }
+        }
+    }
+
+    @DisplayName("Non-Overlapping Business Hours When No Id Is Provided")
+    @Test
+    void NonOverlappingBusinessHoursWhenNoIdIsProvided() {
         // creates non-overlapping times
         // first case
         LocalTime firstCaseNonOverlappingStart = firstBusinessHour.getStartTime().minusMinutes(10);

@@ -2,7 +2,7 @@
 <html data-bs-theme="light" lang="en"
       xmlns:th="http://www.thymeleaf.org">
 
-    <head th:replace="~{fragments :: head('Edit Home')}"></head>
+    <head th:replace="~{fragments :: head('Owner Dashboard - Edit Home')}"></head>
 
     <body>
         <div th:replace="~{fragments :: authenticatedNavbar('edit-home')}"></div>
@@ -27,6 +27,9 @@
                 </div>
                 <div th:if="${param.removeFailure}">
                     <div class="alert alert-danger">Failed to remove the background image!</div>
+                </div>
+                <div th:if="${param.removedAlready}">
+                    <div class="alert alert-danger">Another owner has already removed the background image at the moment!</div>
                 </div>
                 <div class="row">
                     <div class="col-md-5">

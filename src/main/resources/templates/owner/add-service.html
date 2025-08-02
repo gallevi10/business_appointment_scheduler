@@ -26,6 +26,9 @@
                 <div th:if="${param.removeFailure}">
                     <div class="alert alert-danger">Failed to remove the service image!</div>
                 </div>
+                <div th:if="${param.removedAlready}">
+                    <div class="alert alert-danger">Another owner has already removed the image at the moment!</div>
+                </div>
                 <div class="row">
                     <div class="col-md-5">
                         <label class="col-form-label">Service Name:</label>

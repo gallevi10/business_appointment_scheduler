@@ -58,6 +58,9 @@ public class BusinessInfoServiceImpl implements BusinessInfoService {
     @Override
     public synchronized void removeBackgroundImage() throws IOException {
         BusinessInfo businessInfo = getBusinessInfo();
+        if (businessInfo.getBackgroundPath() == null) { // if the remove has more than one asynchronous call
+            throw new RuntimeException();
+        }
         Path folderPath = Paths.get("uploads/business_background");
         ImageStorageUtils.clearFolder(folderPath);
         businessInfo.setBackgroundPath(null);
