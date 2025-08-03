@@ -39,7 +39,7 @@ public class SecurityConfig {
                                 "/processRegistrationForm",
                                 "/pick-service",
                                 "/book/**",
-                                "api/general/*",
+                                "/api/general/*",
                                 "/css/**",
                                 "/bootstrap/**",
                                 "/js/**",
@@ -48,7 +48,7 @@ public class SecurityConfig {
                         .requestMatchers("/customer-dashboard/**").hasRole("CUSTOMER")
                         .requestMatchers(
                                 "/owner-dashboard/**",
-                                "api/owner/**").hasRole("OWNER")
+                                "/api/owner/**").hasRole("OWNER")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
