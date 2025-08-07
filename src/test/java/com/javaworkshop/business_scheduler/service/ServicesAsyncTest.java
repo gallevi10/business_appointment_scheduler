@@ -38,6 +38,9 @@ public class ServicesAsyncTest {
     @Autowired
     private ServiceRepository serviceRepository;
 
+    @Autowired
+    private RegistrationService registrationService;
+
     private final int threadCount = 5;
 
     private List<Throwable> exceptions;
@@ -132,6 +135,35 @@ public class ServicesAsyncTest {
 
         assertEquals(threadCount - 1, exceptions.size(),
                 "Should throw an exception for null image path in " + (threadCount - 1) + " threads");
+    }
+
+    @DisplayName("Asynchronous Case For Registering New User")
+    @Test
+    void asynchronousCaseForRegisteringNewUser() {
+        String newUserUsername = "newUserUsername";
+        String newUserPassword = "newUserPassword";
+        String newUserEmail = "newUserEmail@someservice.com";
+        String newUserPhone = "0541234567";
+        String newUserFirstName = "New";
+        String newUserLastName = "User";
+
+        Runnable task = () -> {
+            try {
+                registrationService.registerNewCustomer(
+                        newUserUsername, newUserPassword,
+                        newUserPassword, newUserEmail,
+                        newUserPhone, newUserFirstName, newUserLastName
+                );
+            } catch (RuntimeException e) {
+                exceptions.add(e);
+            }
+        };
+
+        runAsyncTask(task);
+
+        assertEquals(threadCount - 1, exceptions.size(),
+                "Should throw an exception for existing user in " + (threadCount - 1) + " threads");
+
     }
 
     private void runAsyncTask(Runnable task) {
