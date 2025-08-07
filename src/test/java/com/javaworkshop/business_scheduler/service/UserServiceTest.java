@@ -2,7 +2,6 @@ package com.javaworkshop.business_scheduler.service;
 
 import com.javaworkshop.business_scheduler.model.User;
 import com.javaworkshop.business_scheduler.repository.UserRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,23 +41,19 @@ class UserServiceTest {
                 passwordEncoder.encode("333333333"), "ROLE_OWNER", true);
     }
 
-    @AfterEach
-    void tearDown() {
-    }
-
     @DisplayName("Find All Users")
     @Test
     void findAllUsers() {
-        List<User> users = List.of(firstUser, secondUser, thirdUser);
+        List<User> expected = List.of(firstUser, secondUser, thirdUser);
 
-        when(userRepository.findAll()).thenReturn(users);
+        when(userRepository.findAll()).thenReturn(expected);
 
         List<User> foundUsers = userService.findAll();
 
         assertAll(
                 () -> assertNotNull(foundUsers, "User list should not be null"),
                 () -> assertEquals(3, foundUsers.size(), "User list size should be 3"),
-                () -> assertIterableEquals(users, foundUsers, "User lists should be equal")
+                () -> assertIterableEquals(expected, foundUsers, "User lists should be equal")
         );
 
         verify(userRepository).findAll();

@@ -87,13 +87,13 @@ public class ServiceServiceImpl implements ServiceService{
     @Override
     public synchronized void removeServiceImage(UUID serviceId) throws IOException{
         Service service = findById(serviceId);
-        if (service.getImagePath() == null) { // if the remove has more than one asynchronous call
+        if (service.getImagePath() == null) { // if the removal is attempted on a service without an image
             throw new RuntimeException();
         }
-        Path folerPath = Paths.get("uploads/services/" + serviceId);
+        Path folderPath = Paths.get("uploads/services/" + serviceId);
 
         // clears the folder where the service image is stored
-        ImageStorageUtils.clearFolder(folerPath);
+        ImageStorageUtils.clearFolder(folderPath);
 
         // updates the service to remove the image path
         service.setImagePath(null);
