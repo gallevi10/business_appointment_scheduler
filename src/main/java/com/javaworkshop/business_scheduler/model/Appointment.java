@@ -55,8 +55,8 @@ public class Appointment {
         this.isCompleted = isCompleted;
     }
 
-    public Appointment(UUID id, Customer customer, Service service,
-                       LocalDateTime endTime, boolean isCompleted, LocalDateTime startTime) {
+    public Appointment(UUID id, Customer customer, Service service, LocalDateTime startTime,
+                       LocalDateTime endTime, boolean isCompleted) {
         this.id = id;
         this.customer = customer;
         this.service = service;

@@ -6,6 +6,7 @@ import com.javaworkshop.business_scheduler.model.Service;
 import com.javaworkshop.business_scheduler.repository.BusinessHourRepository;
 import com.javaworkshop.business_scheduler.repository.ServiceRepository;
 import com.javaworkshop.business_scheduler.repository.UserRepository;
+import com.javaworkshop.business_scheduler.util.EmailUtil;
 import com.javaworkshop.business_scheduler.util.ImageStorageUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,11 +15,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,6 +49,12 @@ public class ServicesAsyncTest {
     private BusinessHourService businessHourService;
 
     @Autowired
+    private BookingService bookingService;
+
+    @Autowired
+    private CustomerService customerService;
+
+    @Autowired
     private BusinessHourRepository businessHourRepository;
 
     @Autowired
@@ -53,6 +62,9 @@ public class ServicesAsyncTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @MockitoBean
+    private EmailUtil emailUtil;
 
     private final int threadCount = 5;
 
@@ -291,6 +303,42 @@ public class ServicesAsyncTest {
 
         assertEquals(0, exceptions.size(),
                 "Should not throw any exceptions during the update process");
+    }
+
+    @DisplayName("Asynchronous Case For Booking An Appointment")
+    @Test
+    void asynchronousCaseForBookingAppointment() {
+        Service service = serviceService.save(new Service(
+                "Service",
+                BigDecimal.valueOf(50),
+                30,
+                null,
+                true
+        ));
+        String firstName = "firstName";
+        String lastName = "lastName";
+        String email = "gallvi10@walla.com";
+        String phone = "0541234567";
+        LocalDateTime startTime = LocalDateTime
+                .now()
+                .plusDays(1)
+                .withHour(9)
+                .withMinute(0);
+        LocalDateTime endTime = startTime.plusMinutes(service.getDuration());
+
+        Runnable task = () -> {
+            try {
+                bookingService.bookAppointment(firstName, lastName, email, phone,
+                        null, service, null, startTime, endTime);
+            } catch (RuntimeException e) {
+                exceptions.add(e);
+            }
+        };
+
+        runAsyncTask(task);
+
+        assertEquals(threadCount - 1, exceptions.size(),
+                "Should throw an exception for Overlapping appointment in " + (threadCount - 1) + " threads");
     }
 
     private void runAsyncTask(Runnable task) {
