@@ -1,6 +1,8 @@
 package com.javaworkshop.business_scheduler.service;
 
+import com.javaworkshop.business_scheduler.model.BusinessInfo;
 import com.javaworkshop.business_scheduler.model.Service;
+import com.javaworkshop.business_scheduler.repository.BusinessInfoRepository;
 import com.javaworkshop.business_scheduler.repository.ServiceRepository;
 import com.javaworkshop.business_scheduler.repository.UserRepository;
 import com.javaworkshop.business_scheduler.util.ImageStorageUtils;
@@ -30,24 +32,33 @@ public class ServicesAsyncTest {
     private UserService userService;
 
     @Autowired
-    private UserRepository userRepository;
+    private ServiceService serviceService;
 
     @Autowired
-    private ServiceService serviceService;
+    private RegistrationService registrationService;
+
+    @Autowired
+    private BusinessInfoService businessInfoService;
+
+    @Autowired
+    private BusinessInfoRepository businessInfoRepository;
 
     @Autowired
     private ServiceRepository serviceRepository;
 
     @Autowired
-    private RegistrationService registrationService;
+    private UserRepository userRepository;
 
     private final int threadCount = 5;
+
+    private Thread[] threads;
 
     private List<Throwable> exceptions;
 
     @BeforeEach
     void setUp() {
         exceptions = Collections.synchronizedList(new ArrayList<>());
+        threads = new Thread[threadCount];
     }
 
     @AfterEach
@@ -166,8 +177,60 @@ public class ServicesAsyncTest {
 
     }
 
+    @DisplayName("Asynchronous Case For Remove Background Image")
+    @Test
+    void asynchronousCaseForRemoveBackgroundImage() {
+
+        // getting the business info to remove its background image (initialized in DefaultInitializer)
+        BusinessInfo businessInfo = businessInfoService.getBusinessInfo();
+
+        // setting the background path to a non-null value to simulate an existing background image
+        businessInfo.setBackgroundPath("uploads/business_background/background_image.jpg");
+        businessInfoRepository.save(businessInfo);
+
+        Runnable task = () -> {
+            try {
+                try (MockedStatic<ImageStorageUtils> mockedStatic = mockStatic(ImageStorageUtils.class)) {
+                    businessInfoService.removeBackgroundImage();
+                    Path expectedPath = Paths.get("uploads/business_background");
+                    mockedStatic.verify(() -> ImageStorageUtils.clearFolder(expectedPath));
+                } catch (IOException ignored) {} // since we are mocking the IO operation, we can ignore this exception
+            } catch (RuntimeException e) {
+                exceptions.add(e);
+            }
+        };
+
+        runAsyncTask(task);
+
+        assertNull(businessInfoService.getBusinessInfo().getBackgroundPath(),
+                "Background image should not exist");
+
+        assertEquals(threadCount - 1, exceptions.size(),
+                "Should throw an exception for null image path in " + (threadCount - 1) + " threads");
+    }
+
+    @DisplayName("Asynchronous Case For Update Business Info")
+    @Test
+    void asynchronousCaseForUpdateBusinessInfo() {
+
+        String newBusinessName = "Updated Business Name";
+        String newDescription = "Updated Business Description";
+
+        Runnable task = () -> {
+            try {
+                businessInfoService.updateBusinessInfo(newBusinessName, newDescription, null);
+            } catch (RuntimeException e) {
+                exceptions.add(e);
+            }
+        };
+
+        runAsyncTask(task);
+
+        assertEquals(0, exceptions.size(),
+                "Should not throw any exceptions during the update process");
+    }
+
     private void runAsyncTask(Runnable task) {
-        Thread[] threads = new Thread[threadCount];
 
         for (int i = 0; i < threads.length; i++) {
             threads[i] = new Thread(task);
