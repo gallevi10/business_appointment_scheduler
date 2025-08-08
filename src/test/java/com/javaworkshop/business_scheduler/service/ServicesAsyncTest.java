@@ -1,8 +1,9 @@
 package com.javaworkshop.business_scheduler.service;
 
+import com.javaworkshop.business_scheduler.model.BusinessHour;
 import com.javaworkshop.business_scheduler.model.BusinessInfo;
 import com.javaworkshop.business_scheduler.model.Service;
-import com.javaworkshop.business_scheduler.repository.BusinessInfoRepository;
+import com.javaworkshop.business_scheduler.repository.BusinessHourRepository;
 import com.javaworkshop.business_scheduler.repository.ServiceRepository;
 import com.javaworkshop.business_scheduler.repository.UserRepository;
 import com.javaworkshop.business_scheduler.util.ImageStorageUtils;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,7 +43,10 @@ public class ServicesAsyncTest {
     private BusinessInfoService businessInfoService;
 
     @Autowired
-    private BusinessInfoRepository businessInfoRepository;
+    private BusinessHourService businessHourService;
+
+    @Autowired
+    private BusinessHourRepository businessHourRepository;
 
     @Autowired
     private ServiceRepository serviceRepository;
@@ -65,6 +70,7 @@ public class ServicesAsyncTest {
     void tearDown() {
         userRepository.deleteAll();
         serviceRepository.deleteAll();
+        businessHourRepository.deleteAll();
     }
 
     @DisplayName("Asynchronous Case For Add New Owner User")
@@ -186,7 +192,7 @@ public class ServicesAsyncTest {
 
         // setting the background path to a non-null value to simulate an existing background image
         businessInfo.setBackgroundPath("uploads/business_background/background_image.jpg");
-        businessInfoRepository.save(businessInfo);
+        businessInfoService.save(businessInfo);
 
         Runnable task = () -> {
             try {
@@ -218,7 +224,64 @@ public class ServicesAsyncTest {
 
         Runnable task = () -> {
             try {
-                businessInfoService.updateBusinessInfo(newBusinessName, newDescription, null);
+                // updates the business info initialized in DefaultInitializer
+                businessInfoService.updateBusinessInfo(newBusinessName, newDescription,
+                        null);
+            } catch (RuntimeException e) {
+                exceptions.add(e);
+            }
+        };
+
+        runAsyncTask(task);
+
+        assertEquals(0, exceptions.size(),
+                "Should not throw any exceptions during the update process");
+    }
+
+    @DisplayName("Asynchronous Case For Add New Business Hour")
+    @Test
+    void asynchronousCaseForAddNewBusinessHour() {
+        byte newDayOfWeek = 0; // sunday
+        LocalTime newStartTime = LocalTime.of(18, 30);
+        LocalTime newEndTime = LocalTime.of(20, 30);
+        boolean newIsOpen = true;
+
+        Runnable task = () -> {
+            try {
+                businessHourService.addOrUpdateBusinessHour(null, newDayOfWeek,
+                        newStartTime, newEndTime, newIsOpen);
+            } catch (RuntimeException e) {
+                exceptions.add(e);
+            }
+        };
+
+        runAsyncTask(task);
+
+        assertEquals(threadCount - 1, exceptions.size(),
+                "Should throw an exception for existing service name in " + (threadCount - 1) + " threads");
+
+    }
+
+    @DisplayName("Asynchronous Case For Update Business Hour")
+    @Test
+    void asynchronousCaseForUpdateBusinessHour() {
+
+        BusinessHour existingBusinessHour = businessHourService.save(new BusinessHour(
+                (byte) 0,
+                LocalTime.of(18, 30),
+                LocalTime.of(19, 30),
+                true
+        ));
+
+        byte newDayOfWeek = 1;
+        LocalTime newStartTime = LocalTime.of(18, 30);
+        LocalTime newEndTime = LocalTime.of(20, 30);
+        boolean newIsOpen = true;
+
+        Runnable task = () -> {
+            try {
+                businessHourService.addOrUpdateBusinessHour(existingBusinessHour.getId(),
+                        newDayOfWeek, newStartTime, newEndTime, newIsOpen);
             } catch (RuntimeException e) {
                 exceptions.add(e);
             }

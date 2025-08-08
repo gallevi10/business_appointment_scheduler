@@ -26,7 +26,7 @@ public interface BusinessHourRepository extends JpaRepository<BusinessHour, UUID
         FROM BusinessHour bh
         WHERE bh.id = :id
         """)
-    byte findDayOfWeekById(@Param("id") UUID id);
+    Byte findDayOfWeekById(@Param("id") UUID id);
 
     // checks if there is an overlapping business hour for a specific day of the week excluding a specific business hour id
     @Query("""
