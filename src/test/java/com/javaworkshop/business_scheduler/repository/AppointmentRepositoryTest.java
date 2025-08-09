@@ -39,18 +39,18 @@ class AppointmentRepositoryTest {
     void setUp() {
         // initializes the database with two appointments
         customer = new Customer(null, "David", "Cohen",
-                "david@someserver.com", "0541111111");
+            "david@someserver.com", "0541111111");
         service = new Service("Service", BigDecimal.valueOf(50),
-                30, null, true);
+            30, null, true);
         now = LocalDateTime.now().withNano(0);
         firstAppointment = new Appointment(customer, service, now,
-                now.plusMinutes(service.getDuration()), false);
+            now.plusMinutes(service.getDuration()), false);
         secondAppointment = new Appointment(customer, service,
-                now.plusMinutes(service.getDuration() + 10),
-                now.plusMinutes(2L * service.getDuration() + 10), false);
+            now.plusMinutes(service.getDuration() + 10),
+            now.plusMinutes(2L * service.getDuration() + 10), false);
         thirdAppointment = new Appointment(customer, service,
-                now.minusMinutes(service.getDuration() + 10),
-                now.minusMinutes(10), false);
+            now.minusMinutes(service.getDuration() + 10),
+            now.minusMinutes(10), false);
         customerRepository.save(customer);
         serviceRepository.save(service);
         appointmentRepository.saveAll(List.of(firstAppointment, secondAppointment, thirdAppointment));
@@ -87,12 +87,12 @@ class AppointmentRepositoryTest {
         List<Appointment> actual = appointmentRepository.findAppointmentsByIsCompletedFalseOrderByStartTime();
 
         assertAll(
-                () -> assertEquals(expected.size(), actual.size(),
-                        "Expected the same number of uncompleted appointments as in the expected list"),
-                () -> assertIterableEquals(expected, actual,
-                        "Expected uncompleted appointments to be ordered by start time"),
-                () -> assertFalse(actual.contains(thirdAppointment),
-                        "Expected completed thirdAppointment to not be included in the result")
+            () -> assertEquals(expected.size(), actual.size(),
+                "Expected the same number of uncompleted appointments as in the expected list"),
+            () -> assertIterableEquals(expected, actual,
+                "Expected uncompleted appointments to be ordered by start time"),
+            () -> assertFalse(actual.contains(thirdAppointment),
+                "Expected completed thirdAppointment to not be included in the result")
         );
 
     }
@@ -107,16 +107,16 @@ class AppointmentRepositoryTest {
         List<Appointment> expected = new ArrayList<>(List.of(firstAppointment, secondAppointment));
 
         List<Appointment> actual = appointmentRepository
-                        .findAppointmentsByCustomerIdAndIsCompletedFalseOrderByStartTime(customer.getId())
-                        .orElse(new ArrayList<>());
+            .findAppointmentsByCustomerIdAndIsCompletedFalseOrderByStartTime(customer.getId())
+            .orElse(new ArrayList<>());
 
         assertAll(
-                () -> assertEquals(expected.size(), actual.size(),
-                        "Expected the same number of uncompleted appointments as in the expected list"),
-                () -> assertIterableEquals(expected, actual,
-                        "Expected uncompleted appointments to be ordered by start time"),
-                () -> assertFalse(actual.contains(thirdAppointment),
-                        "Expected completed thirdAppointment to not be included in the result")
+            () -> assertEquals(expected.size(), actual.size(),
+                "Expected the same number of uncompleted appointments as in the expected list"),
+            () -> assertIterableEquals(expected, actual,
+                "Expected uncompleted appointments to be ordered by start time"),
+            () -> assertFalse(actual.contains(thirdAppointment),
+                "Expected completed thirdAppointment to not be included in the result")
         );
 
     }
@@ -133,11 +133,11 @@ class AppointmentRepositoryTest {
 
         assertAll(
             () -> assertEquals(expected.size(), actual.size(),
-                    "Expected the same number of appointments as in the expected list"),
+                "Expected the same number of appointments as in the expected list"),
             () -> assertIterableEquals(expected, actual,
-                    "Expected appointments to be the same as in the expected list"),
+                "Expected appointments to be the same as in the expected list"),
             () -> assertFalse(actual.contains(firstAppointment) || actual.contains(secondAppointment),
-                    "Expected firstAppointment and secondAppointment to not be included in the result")
+                "Expected firstAppointment and secondAppointment to not be included in the result")
         );
     }
 
@@ -151,15 +151,15 @@ class AppointmentRepositoryTest {
         List<Appointment> expected = new ArrayList<>(List.of(firstAppointment, secondAppointment));
 
         List<Appointment> actual =
-                appointmentRepository.findAppointmentsByStartTimeBetweenAndIsCompletedFalse(start, end);
+            appointmentRepository.findAppointmentsByStartTimeBetweenAndIsCompletedFalse(start, end);
 
         assertAll(
-                () -> assertEquals(expected.size(), actual.size(),
-                        "Expected the same number of appointments as in the expected list"),
-                () -> assertIterableEquals(expected, actual,
-                        "Expected appointments to be the same as in the expected list"),
-                () -> assertFalse(actual.contains(thirdAppointment),
-                        "Expected thirdAppointment to not be included in the result")
+            () -> assertEquals(expected.size(), actual.size(),
+                "Expected the same number of appointments as in the expected list"),
+            () -> assertIterableEquals(expected, actual,
+                "Expected appointments to be the same as in the expected list"),
+            () -> assertFalse(actual.contains(thirdAppointment),
+                "Expected thirdAppointment to not be included in the result")
         );
     }
 

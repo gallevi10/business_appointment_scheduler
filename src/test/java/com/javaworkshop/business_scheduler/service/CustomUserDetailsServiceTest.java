@@ -54,7 +54,7 @@ class CustomUserDetailsServiceTest {
             () -> assertEquals(existingUsername, userDetails.getUsername(), "Username should match"),
             () -> assertEquals(password, userDetails.getPassword(), "Password should match"),
             () -> assertTrue(userDetails.getAuthorities().stream()
-                .anyMatch(authority -> authority.getAuthority().equals(role)),
+                    .anyMatch(authority -> authority.getAuthority().equals(role)),
                 "User should have the correct role"
             )
         );

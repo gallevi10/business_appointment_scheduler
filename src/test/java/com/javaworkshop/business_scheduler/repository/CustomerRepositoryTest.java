@@ -43,18 +43,18 @@ class CustomerRepositoryTest {
     void findExistsCustomerByEmailAndPhone() {
 
         Customer firstExists = customerRepository
-                .findByEmailAndPhone("david@server.com", "0541111111")
-                .orElse(null);
+            .findByEmailAndPhone("david@server.com", "0541111111")
+            .orElse(null);
 
         Customer secondExists = customerRepository
-                .findByEmailAndPhone("moshe@server.com", "0542222222")
-                .orElse(null);
+            .findByEmailAndPhone("moshe@server.com", "0542222222")
+            .orElse(null);
 
         assertAll(
-                () -> assertNotNull(firstExists, "First customer should exist"),
-                () -> assertNotNull(secondExists, "Second customer should exist"),
-                () -> assertEquals(firstCustomer, firstExists, "First customer should match"),
-                () -> assertEquals(secondCustomer, secondExists, "Second customer should match")
+            () -> assertNotNull(firstExists, "First customer should exist"),
+            () -> assertNotNull(secondExists, "Second customer should exist"),
+            () -> assertEquals(firstCustomer, firstExists, "First customer should match"),
+            () -> assertEquals(secondCustomer, secondExists, "Second customer should match")
         );
 
     }
@@ -64,8 +64,8 @@ class CustomerRepositoryTest {
     void findNotExistsCustomerByEmailAndPhone() {
 
         Customer exists = customerRepository
-                .findByEmailAndPhone("Avi@server.com", "0543333333")
-                .orElse(null);
+            .findByEmailAndPhone("Avi@server.com", "0543333333")
+            .orElse(null);
 
         assertNull(exists, "The customer should not exist");
 
@@ -75,12 +75,12 @@ class CustomerRepositoryTest {
     @Test
     void findExistsCustomerByUserUsername() {
         Customer exists = customerRepository
-                .findByUserUsername("user")
-                .orElse(null);
+            .findByUserUsername("user")
+            .orElse(null);
 
         assertAll(
-                () -> assertNotNull(exists, "Customer should exist"),
-                () -> assertEquals(firstCustomer, exists, "Customer should match")
+            () -> assertNotNull(exists, "Customer should exist"),
+            () -> assertEquals(firstCustomer, exists, "Customer should match")
         );
     }
 
@@ -88,8 +88,8 @@ class CustomerRepositoryTest {
     @Test
     void findNotExistsCustomerByUserUsername() {
         Customer exists = customerRepository
-                .findByUserUsername("nonexistent")
-                .orElse(null);
+            .findByUserUsername("nonexistent")
+            .orElse(null);
 
         assertNull(exists, "Customer should not exist");
     }

@@ -31,13 +31,13 @@ class CustomerServiceTest {
     @BeforeEach
     void setUp() {
         firstCustomer = new Customer(UUID.randomUUID(), null,
-                "First", "First", "first@someservice.com", "0541111111");
+            "First", "First", "first@someservice.com", "0541111111");
         secondCustomer = new Customer(UUID.randomUUID(), null,
-                "Second", "Second", "second@someservice.com", "0542222222");
+            "Second", "Second", "second@someservice.com", "0542222222");
         User user = new User(UUID.randomUUID(), "user",
-                "password123", "ROLE_CUSTOMER", true);
+            "password123", "ROLE_CUSTOMER", true);
         thirdCustomer = new Customer(UUID.randomUUID(), user,
-                "Third", "Third", "third@someservice.com", "0543333333");
+            "Third", "Third", "third@someservice.com", "0543333333");
     }
 
     @DisplayName("Find All Customers")
@@ -67,7 +67,7 @@ class CustomerServiceTest {
         UUID notExistingId = UUID.randomUUID();
         when(customerRepository.findById(notExistingId)).thenReturn(Optional.empty());
         assertNull(customerService.findById(notExistingId),
-                "Expected null when customer id does not exist");
+            "Expected null when customer id does not exist");
         verify(customerRepository).findById(notExistingId);
     }
 
@@ -77,21 +77,21 @@ class CustomerServiceTest {
         List<Customer> customers = List.of(firstCustomer, secondCustomer, thirdCustomer);
 
         customers.forEach(customer -> {
-                    when(customerRepository.findByEmailAndPhone(customer.getEmail(), customer.getPhone()))
-                            .thenReturn(Optional.of(customer));
-                    assertEquals(customer, customerService.findByEmailAndPhone(
-                            customer.getEmail(), customer.getPhone())
-                    );
-                    verify(customerRepository).findByEmailAndPhone(customer.getEmail(), customer.getPhone());
-                }
+                when(customerRepository.findByEmailAndPhone(customer.getEmail(), customer.getPhone()))
+                    .thenReturn(Optional.of(customer));
+                assertEquals(customer, customerService.findByEmailAndPhone(
+                    customer.getEmail(), customer.getPhone())
+                );
+                verify(customerRepository).findByEmailAndPhone(customer.getEmail(), customer.getPhone());
+            }
         );
 
         String nonExistentEmail = "nonexistent@someserver.com";
         String nonExistentPhone = "0549999999";
         when(customerRepository.findByEmailAndPhone(nonExistentEmail, nonExistentPhone))
-                .thenReturn(Optional.empty());
+            .thenReturn(Optional.empty());
         assertNull(customerService.findByEmailAndPhone(nonExistentEmail, nonExistentPhone),
-                "Expected null when email and phone do not match any customer");
+            "Expected null when email and phone do not match any customer");
         verify(customerRepository).findByEmailAndPhone(nonExistentEmail, nonExistentPhone);
     }
 
@@ -100,19 +100,19 @@ class CustomerServiceTest {
     void findCustomerByUsername() {
 
         when(customerRepository.findByUserUsername(thirdCustomer.getUser().getUsername()))
-                .thenReturn(Optional.of(thirdCustomer));
+            .thenReturn(Optional.of(thirdCustomer));
         assertEquals(thirdCustomer, customerService.findByUsername(
-                thirdCustomer.getUser().getUsername())
+            thirdCustomer.getUser().getUsername())
         );
         verify(customerRepository).findByUserUsername(
-                thirdCustomer.getUser().getUsername()
+            thirdCustomer.getUser().getUsername()
         );
 
         String nonExistentUsername = "nonexistentUser";
         when(customerRepository.findByUserUsername(nonExistentUsername))
-                .thenReturn(Optional.empty());
+            .thenReturn(Optional.empty());
         assertNull(customerService.findByUsername(nonExistentUsername),
-                "Expected null when username does not match any customer");
+            "Expected null when username does not match any customer");
         verify(customerRepository).findByUserUsername(nonExistentUsername);
     }
 
@@ -120,19 +120,19 @@ class CustomerServiceTest {
     @Test
     void findCustomerIdByUsername() {
         when(customerRepository.findByUserUsername(thirdCustomer.getUser().getUsername()))
-                .thenReturn(Optional.of(thirdCustomer));
+            .thenReturn(Optional.of(thirdCustomer));
         assertEquals(thirdCustomer.getId(), customerService.findIdByUsername(
-                thirdCustomer.getUser().getUsername())
+            thirdCustomer.getUser().getUsername())
         );
         verify(customerRepository).findByUserUsername(
-                thirdCustomer.getUser().getUsername()
+            thirdCustomer.getUser().getUsername()
         );
 
         String nonExistentUsername = "nonexistentUser";
         when(customerRepository.findByUserUsername(nonExistentUsername))
-                .thenReturn(Optional.empty());
+            .thenReturn(Optional.empty());
         assertNull(customerService.findIdByUsername(nonExistentUsername),
-                "Expected null when username does not match any customer");
+            "Expected null when username does not match any customer");
         verify(customerRepository).findByUserUsername(nonExistentUsername);
     }
 
@@ -144,7 +144,7 @@ class CustomerServiceTest {
         customers.forEach(customer -> {
             when(customerRepository.save(customer)).thenReturn(customer);
             assertEquals(customer, customerService.save(customer),
-                    "Expected saved customer to match the original");
+                "Expected saved customer to match the original");
             verify(customerRepository).save(customer);
         });
     }
@@ -168,33 +168,33 @@ class CustomerServiceTest {
         String nonExistentPhone = "0549999999";
 
         when(customerRepository.existsByEmail(null, existingEmail))
-                .thenThrow(new RuntimeException());
+            .thenThrow(new RuntimeException());
 
         when(customerRepository.existsByPhone(null, existingPhone))
-                .thenThrow(new RuntimeException());
+            .thenThrow(new RuntimeException());
 
         when(customerRepository.existsByEmail(null, nonExistentEmail))
-                .thenReturn(false);
+            .thenReturn(false);
 
         when(customerRepository.existsByPhone(null, nonExistentPhone))
-                .thenReturn(false);
+            .thenReturn(false);
 
         assertAll(
             () -> assertThrows(RuntimeException.class,
-                    () -> customerService.getValidCustomer(
-                            null, existingEmail, existingPhone,
-                            "New", "Customer", null)
-            , "Expected exception for existing email and phone"),
+                () -> customerService.getValidCustomer(
+                    null, existingEmail, existingPhone,
+                    "New", "Customer", null)
+                , "Expected exception for existing email and phone"),
             () -> assertThrows(RuntimeException.class,
-                    () -> customerService.getValidCustomer(
-                            null, nonExistentEmail, existingPhone,
-                            "New", "Customer", null)
-            , "Expected exception for existing phone"),
+                () -> customerService.getValidCustomer(
+                    null, nonExistentEmail, existingPhone,
+                    "New", "Customer", null)
+                , "Expected exception for existing phone"),
             () -> assertThrows(RuntimeException.class,
-                    () -> customerService.getValidCustomer(
-                            null, existingEmail, nonExistentPhone,
-                            "New", "Customer", null)
-            , "Expected exception for existing email")
+                () -> customerService.getValidCustomer(
+                    null, existingEmail, nonExistentPhone,
+                    "New", "Customer", null)
+                , "Expected exception for existing email")
         );
         verify(customerRepository, times(2)).existsByEmail(null, existingEmail);
         verify(customerRepository).existsByPhone(null, existingPhone);
@@ -210,34 +210,34 @@ class CustomerServiceTest {
         String notMatchingLastName = "NotMatchingLastName";
 
         when(customerRepository.existsByEmail(existingCustomer, existingCustomer.getEmail()))
-                .thenReturn(false);
+            .thenReturn(false);
         when(customerRepository.existsByPhone(existingCustomer, existingCustomer.getPhone()))
-                .thenReturn(false);
+            .thenReturn(false);
 
         assertAll(
-                () -> assertThrows(RuntimeException.class,
-                        () -> customerService.getValidCustomer(
-                                existingCustomer, existingCustomer.getEmail(),
-                                existingCustomer.getPhone(), notMatchingFirstName,
-                                notMatchingLastName, null)
+            () -> assertThrows(RuntimeException.class,
+                () -> customerService.getValidCustomer(
+                    existingCustomer, existingCustomer.getEmail(),
+                    existingCustomer.getPhone(), notMatchingFirstName,
+                    notMatchingLastName, null)
                 , "Expected exception for existing customer with completely different name"),
-                () -> assertThrows(RuntimeException.class,
-                        () -> customerService.getValidCustomer(
-                                existingCustomer, existingCustomer.getEmail(),
-                                existingCustomer.getPhone(), existingCustomer.getFirstName(),
-                                notMatchingLastName, null)
+            () -> assertThrows(RuntimeException.class,
+                () -> customerService.getValidCustomer(
+                    existingCustomer, existingCustomer.getEmail(),
+                    existingCustomer.getPhone(), existingCustomer.getFirstName(),
+                    notMatchingLastName, null)
                 , "Expected exception for existing customer with different last name"),
-                () -> assertThrows(RuntimeException.class,
-                        () -> customerService.getValidCustomer(
-                                existingCustomer, existingCustomer.getEmail(),
-                                existingCustomer.getPhone(), notMatchingFirstName,
-                                existingCustomer.getLastName(), null)
+            () -> assertThrows(RuntimeException.class,
+                () -> customerService.getValidCustomer(
+                    existingCustomer, existingCustomer.getEmail(),
+                    existingCustomer.getPhone(), notMatchingFirstName,
+                    existingCustomer.getLastName(), null)
                 , "Expected exception for existing customer with different first name")
         );
         verify(customerRepository, times(3))
-                .existsByEmail(existingCustomer, existingCustomer.getEmail());
+            .existsByEmail(existingCustomer, existingCustomer.getEmail());
         verify(customerRepository, times(3))
-                .existsByPhone(existingCustomer, existingCustomer.getPhone());
+            .existsByPhone(existingCustomer, existingCustomer.getPhone());
     }
 
     @DisplayName("Exception on Get Valid Customer - Existing Customer With Different Username")
@@ -247,9 +247,9 @@ class CustomerServiceTest {
         String notMatchingUsername = "NotMatchingUsername";
 
         when(customerRepository.existsByEmail(existingCustomer, existingCustomer.getEmail()))
-                .thenReturn(false);
+            .thenReturn(false);
         when(customerRepository.existsByPhone(existingCustomer, existingCustomer.getPhone()))
-                .thenReturn(false);
+            .thenReturn(false);
 
         assertThrows(RuntimeException.class,
             () -> customerService.getValidCustomer(
@@ -270,9 +270,9 @@ class CustomerServiceTest {
 
         customers.forEach(existingCustomer -> {
             when(customerRepository.existsByEmail(existingCustomer, existingCustomer.getEmail()))
-                    .thenReturn(false);
+                .thenReturn(false);
             when(customerRepository.existsByPhone(existingCustomer, existingCustomer.getPhone()))
-                    .thenReturn(false);
+                .thenReturn(false);
 
             assertDoesNotThrow(() -> customerService.getValidCustomer(
                 existingCustomer, existingCustomer.getEmail(),
@@ -298,9 +298,9 @@ class CustomerServiceTest {
         );
 
         when(customerRepository.existsByEmail(null, newCustomer.getEmail()))
-                .thenReturn(false);
+            .thenReturn(false);
         when(customerRepository.existsByPhone(null, newCustomer.getPhone()))
-                .thenReturn(false);
+            .thenReturn(false);
 
         assertDoesNotThrow(() -> customerService.getValidCustomer(
             null, newCustomer.getEmail(),
@@ -325,30 +325,30 @@ class CustomerServiceTest {
 
         customers.forEach(customer -> {
             when(customerRepository.existsByEmail(customer, existingEmail))
-                    .thenThrow(new RuntimeException());
+                .thenThrow(new RuntimeException());
 
             when(customerRepository.existsByPhone(customer, existingPhone))
-                    .thenThrow(new RuntimeException());
+                .thenThrow(new RuntimeException());
             when(customerRepository.existsByEmail(customer, nonExistentEmail))
-                    .thenReturn(false);
+                .thenReturn(false);
             when(customerRepository.existsByPhone(customer, nonExistentPhone))
-                    .thenReturn(false);
+                .thenReturn(false);
             assertAll(
-                    () -> assertThrows(RuntimeException.class,
-                            () -> customerService.updateCustomerDetails(
-                                    customer, existingEmail, existingPhone,
-                                    customer.getFirstName(), customer.getLastName())
-                            , "Expected exception for existing email and phone"),
-                    () -> assertThrows(RuntimeException.class,
-                            () ->  customerService.updateCustomerDetails(
-                                    customer, nonExistentEmail, existingPhone,
-                                    customer.getFirstName(), customer.getLastName())
-                            , "Expected exception for existing phone"),
-                    () -> assertThrows(RuntimeException.class,
-                            () ->  customerService.updateCustomerDetails(
-                                    customer, existingEmail, nonExistentPhone,
-                                    customer.getFirstName(), customer.getLastName())
-                            , "Expected exception for existing email")
+                () -> assertThrows(RuntimeException.class,
+                    () -> customerService.updateCustomerDetails(
+                        customer, existingEmail, existingPhone,
+                        customer.getFirstName(), customer.getLastName())
+                    , "Expected exception for existing email and phone"),
+                () -> assertThrows(RuntimeException.class,
+                    () -> customerService.updateCustomerDetails(
+                        customer, nonExistentEmail, existingPhone,
+                        customer.getFirstName(), customer.getLastName())
+                    , "Expected exception for existing phone"),
+                () -> assertThrows(RuntimeException.class,
+                    () -> customerService.updateCustomerDetails(
+                        customer, existingEmail, nonExistentPhone,
+                        customer.getFirstName(), customer.getLastName())
+                    , "Expected exception for existing email")
             );
             verify(customerRepository, times(2)).existsByEmail(customer, existingEmail);
             verify(customerRepository).existsByPhone(customer, existingPhone);
@@ -366,14 +366,14 @@ class CustomerServiceTest {
         String newLastName = "UpdatedLastName";
 
         when(customerRepository.existsByEmail(customerToUpdate, firstCustomer.getEmail()))
-                .thenReturn(false);
+            .thenReturn(false);
         when(customerRepository.existsByPhone(customerToUpdate, firstCustomer.getPhone()))
-                .thenReturn(false);
+            .thenReturn(false);
 
         assertDoesNotThrow(() -> customerService.updateCustomerDetails(
-                customerToUpdate, customerToUpdate.getEmail(),
-                customerToUpdate.getPhone(), newFirstName, newLastName
-                ), "Expected no exception for existing customer with matching details");
+            customerToUpdate, customerToUpdate.getEmail(),
+            customerToUpdate.getPhone(), newFirstName, newLastName
+        ), "Expected no exception for existing customer with matching details");
         verify(customerRepository).existsByEmail(customerToUpdate, customerToUpdate.getEmail());
         verify(customerRepository).existsByPhone(customerToUpdate, customerToUpdate.getPhone());
     }
@@ -389,12 +389,12 @@ class CustomerServiceTest {
         String newLastName = "UpdatedLastName";
 
         when(customerRepository.existsByEmail(customerToUpdate, newEmail))
-                .thenReturn(false);
+            .thenReturn(false);
         when(customerRepository.existsByPhone(customerToUpdate, newPhone))
-                .thenReturn(false);
+            .thenReturn(false);
 
         assertDoesNotThrow(() -> customerService.updateCustomerDetails(
-                customerToUpdate, newEmail, newPhone, newFirstName, newLastName
+            customerToUpdate, newEmail, newPhone, newFirstName, newLastName
         ), "Expected no exception for updating customer details with unique email and phone");
         verify(customerRepository).existsByEmail(customerToUpdate, newEmail);
         verify(customerRepository).existsByPhone(customerToUpdate, newPhone);

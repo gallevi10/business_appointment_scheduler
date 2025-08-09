@@ -19,9 +19,13 @@ public class BusinessInfoServiceImpl implements BusinessInfoService {
 
     private final BusinessInfoRepository businessInfoRepository;
 
+    private final ImageStorageUtils imageStorageUtils;
+
     @Autowired
-    public BusinessInfoServiceImpl(BusinessInfoRepository businessInfoRepository) {
+    public BusinessInfoServiceImpl(BusinessInfoRepository businessInfoRepository,
+                                   ImageStorageUtils imageStorageUtils) {
         this.businessInfoRepository = businessInfoRepository;
+        this.imageStorageUtils = imageStorageUtils;
     }
 
     @Override
@@ -47,7 +51,7 @@ public class BusinessInfoServiceImpl implements BusinessInfoService {
 
         if (backgroundImage != null && !backgroundImage.isEmpty()) {
             Path uploadPath = Paths.get("uploads/business_background");
-            String imagePath = ImageStorageUtils.saveImage(backgroundImage, "background_image", uploadPath);
+            String imagePath = imageStorageUtils.saveImage(backgroundImage, "background_image", uploadPath);
             businessInfo.setBackgroundPath(imagePath);
         }
         save(businessInfo);
@@ -62,7 +66,7 @@ public class BusinessInfoServiceImpl implements BusinessInfoService {
             throw new RuntimeException();
         }
         Path folderPath = Paths.get("uploads/business_background");
-        ImageStorageUtils.clearFolder(folderPath);
+        imageStorageUtils.clearFolder(folderPath);
         businessInfo.setBackgroundPath(null);
         save(businessInfo);
     }

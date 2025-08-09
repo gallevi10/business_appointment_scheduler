@@ -4,6 +4,7 @@ import com.javaworkshop.business_scheduler.model.BusinessHour;
 import com.javaworkshop.business_scheduler.model.BusinessInfo;
 import com.javaworkshop.business_scheduler.model.Service;
 import com.javaworkshop.business_scheduler.repository.BusinessHourRepository;
+import com.javaworkshop.business_scheduler.repository.CustomerRepository;
 import com.javaworkshop.business_scheduler.repository.ServiceRepository;
 import com.javaworkshop.business_scheduler.repository.UserRepository;
 import com.javaworkshop.business_scheduler.util.EmailUtil;
@@ -12,7 +13,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 public class ServicesAsyncTest {
@@ -58,10 +58,16 @@ public class ServicesAsyncTest {
     private ServiceRepository serviceRepository;
 
     @Autowired
+    private CustomerRepository customerRepository;
+
+    @Autowired
     private UserRepository userRepository;
 
     @MockitoBean
     private EmailUtil emailUtil;
+
+    @MockitoBean
+    private ImageStorageUtils imageStorageUtils;
 
     private final int threadCount = 5;
 
@@ -80,6 +86,7 @@ public class ServicesAsyncTest {
         userRepository.deleteAll();
         serviceRepository.deleteAll();
         businessHourRepository.deleteAll();
+        customerRepository.deleteAll();
     }
 
     @DisplayName("Asynchronous Case For Add New Owner User")
@@ -99,10 +106,10 @@ public class ServicesAsyncTest {
         runAsyncTask(task);
 
         assertTrue(userRepository.existsByUsername(newOwnerUsername),
-                "Username should exist after one of the threads successfully added it");
+            "Username should exist after one of the threads successfully added it");
 
         assertEquals(threadCount - 1, exceptions.size(),
-                "Should throw an exception for existing username in " + (threadCount - 1) + " threads");
+            "Should throw an exception for existing username in " + (threadCount - 1) + " threads");
 
     }
 
@@ -116,7 +123,7 @@ public class ServicesAsyncTest {
         Runnable task = () -> {
             try {
                 serviceService.addOrUpdateService(null, newServiceName,
-                        newServicePrice, newServiceDuration, null);
+                    newServicePrice, newServiceDuration, null);
             } catch (RuntimeException e) {
                 exceptions.add(e);
             }
@@ -125,10 +132,10 @@ public class ServicesAsyncTest {
         runAsyncTask(task);
 
         assertTrue(serviceRepository.existsByServiceName(null, newServiceName),
-                "Service name should exist after one of the threads successfully added it");
+            "Service name should exist after one of the threads successfully added it");
 
         assertEquals(threadCount - 1, exceptions.size(),
-                "Should throw an exception for existing service name in " + (threadCount - 1) + " threads");
+            "Should throw an exception for existing service name in " + (threadCount - 1) + " threads");
 
     }
 
@@ -137,30 +144,32 @@ public class ServicesAsyncTest {
     void asynchronousCaseForRemoveServiceImage() {
 
         Service serviceToRemoveImage = new Service(
-                "serviceToRemoveImage",
-                BigDecimal.valueOf(50),
-                15,
-                "path/to/image.jpg",
-                true
+            "serviceToRemoveImage",
+            BigDecimal.valueOf(50),
+            15,
+            "path/to/image.jpg",
+            true
         );
         serviceRepository.save(serviceToRemoveImage);
 
         Runnable task = () -> {
             try {
-                try (MockedStatic<ImageStorageUtils> mockedStatic = mockStatic(ImageStorageUtils.class)) {
-                    serviceService.removeServiceImage(serviceToRemoveImage.getId());
-                    Path expectedPath = Paths.get("uploads/services/" + serviceToRemoveImage.getId());
-                    mockedStatic.verify(() -> ImageStorageUtils.clearFolder(expectedPath));
-                } catch (IOException ignored) {} // since we are mocking the IO operation, we can ignore this exception
+                serviceService.removeServiceImage(serviceToRemoveImage.getId());
+                Path expectedPath = Paths.get("uploads/services/" + serviceToRemoveImage.getId());
+                verify(imageStorageUtils).clearFolder(expectedPath);
             } catch (RuntimeException e) {
                 exceptions.add(e);
-            }
+            } catch (IOException ignored) {
+            } // since we are mocking the IO operation, we can ignore this exception
         };
 
         runAsyncTask(task);
 
+        assertNull(serviceRepository.findById(serviceToRemoveImage.getId())
+            .get().getImagePath(), "Service image path should be null after removal");
+
         assertEquals(threadCount - 1, exceptions.size(),
-                "Should throw an exception for null image path in " + (threadCount - 1) + " threads");
+            "Should throw an exception for null image path in " + (threadCount - 1) + " threads");
     }
 
     @DisplayName("Asynchronous Case For Registering New User")
@@ -176,9 +185,9 @@ public class ServicesAsyncTest {
         Runnable task = () -> {
             try {
                 registrationService.registerNewCustomer(
-                        newUserUsername, newUserPassword,
-                        newUserPassword, newUserEmail,
-                        newUserPhone, newUserFirstName, newUserLastName
+                    newUserUsername, newUserPassword,
+                    newUserPassword, newUserEmail,
+                    newUserPhone, newUserFirstName, newUserLastName
                 );
             } catch (RuntimeException e) {
                 exceptions.add(e);
@@ -188,7 +197,7 @@ public class ServicesAsyncTest {
         runAsyncTask(task);
 
         assertEquals(threadCount - 1, exceptions.size(),
-                "Should throw an exception for existing user in " + (threadCount - 1) + " threads");
+            "Should throw an exception for existing user in " + (threadCount - 1) + " threads");
 
     }
 
@@ -205,23 +214,22 @@ public class ServicesAsyncTest {
 
         Runnable task = () -> {
             try {
-                try (MockedStatic<ImageStorageUtils> mockedStatic = mockStatic(ImageStorageUtils.class)) {
-                    businessInfoService.removeBackgroundImage();
-                    Path expectedPath = Paths.get("uploads/business_background");
-                    mockedStatic.verify(() -> ImageStorageUtils.clearFolder(expectedPath));
-                } catch (IOException ignored) {} // since we are mocking the IO operation, we can ignore this exception
+                businessInfoService.removeBackgroundImage();
+                Path expectedPath = Paths.get("uploads/business_background");
+                verify(imageStorageUtils).clearFolder(expectedPath);
             } catch (RuntimeException e) {
                 exceptions.add(e);
-            }
+            } catch (IOException ignored) {
+            } // since we are mocking the IO operation, we can ignore this exception
         };
 
         runAsyncTask(task);
 
         assertNull(businessInfoService.getBusinessInfo().getBackgroundPath(),
-                "Background image should not exist");
+            "Background image should not exist");
 
         assertEquals(threadCount - 1, exceptions.size(),
-                "Should throw an exception for null image path in " + (threadCount - 1) + " threads");
+            "Should throw an exception for null image path in " + (threadCount - 1) + " threads");
     }
 
     @DisplayName("Asynchronous Case For Update Business Info")
@@ -235,7 +243,7 @@ public class ServicesAsyncTest {
             try {
                 // updates the business info initialized in DefaultInitializer
                 businessInfoService.updateBusinessInfo(newBusinessName, newDescription,
-                        null);
+                    null);
             } catch (RuntimeException e) {
                 exceptions.add(e);
             }
@@ -244,7 +252,7 @@ public class ServicesAsyncTest {
         runAsyncTask(task);
 
         assertEquals(0, exceptions.size(),
-                "Should not throw any exceptions during the update process");
+            "Should not throw any exceptions during the update process");
     }
 
     @DisplayName("Asynchronous Case For Add New Business Hour")
@@ -258,7 +266,7 @@ public class ServicesAsyncTest {
         Runnable task = () -> {
             try {
                 businessHourService.addOrUpdateBusinessHour(null, newDayOfWeek,
-                        newStartTime, newEndTime, newIsOpen);
+                    newStartTime, newEndTime, newIsOpen);
             } catch (RuntimeException e) {
                 exceptions.add(e);
             }
@@ -267,7 +275,7 @@ public class ServicesAsyncTest {
         runAsyncTask(task);
 
         assertEquals(threadCount - 1, exceptions.size(),
-                "Should throw an exception for existing service name in " + (threadCount - 1) + " threads");
+            "Should throw an exception for existing service name in " + (threadCount - 1) + " threads");
 
     }
 
@@ -276,10 +284,10 @@ public class ServicesAsyncTest {
     void asynchronousCaseForUpdateBusinessHour() {
 
         BusinessHour existingBusinessHour = businessHourService.save(new BusinessHour(
-                (byte) 0,
-                LocalTime.of(18, 30),
-                LocalTime.of(19, 30),
-                true
+            (byte) 0,
+            LocalTime.of(18, 30),
+            LocalTime.of(19, 30),
+            true
         ));
 
         byte newDayOfWeek = 1;
@@ -290,7 +298,7 @@ public class ServicesAsyncTest {
         Runnable task = () -> {
             try {
                 businessHourService.addOrUpdateBusinessHour(existingBusinessHour.getId(),
-                        newDayOfWeek, newStartTime, newEndTime, newIsOpen);
+                    newDayOfWeek, newStartTime, newEndTime, newIsOpen);
             } catch (RuntimeException e) {
                 exceptions.add(e);
             }
@@ -299,34 +307,34 @@ public class ServicesAsyncTest {
         runAsyncTask(task);
 
         assertEquals(0, exceptions.size(),
-                "Should not throw any exceptions during the update process");
+            "Should not throw any exceptions during the update process");
     }
 
     @DisplayName("Asynchronous Case For Booking An Appointment")
     @Test
     void asynchronousCaseForBookingAppointment() {
         Service service = serviceService.save(new Service(
-                "Service",
-                BigDecimal.valueOf(50),
-                30,
-                null,
-                true
+            "Service",
+            BigDecimal.valueOf(50),
+            30,
+            null,
+            true
         ));
         String firstName = "firstName";
         String lastName = "lastName";
         String email = "gallvi10@walla.com";
         String phone = "0541234567";
         LocalDateTime startTime = LocalDateTime
-                .now()
-                .plusDays(1)
-                .withHour(9)
-                .withMinute(0);
+            .now()
+            .plusDays(1)
+            .withHour(9)
+            .withMinute(0);
         LocalDateTime endTime = startTime.plusMinutes(service.getDuration());
 
         Runnable task = () -> {
             try {
                 bookingService.bookAppointment(firstName, lastName, email, phone,
-                        null, service, null, startTime, endTime);
+                    null, service, null, startTime, endTime);
             } catch (RuntimeException e) {
                 exceptions.add(e);
             }
@@ -335,7 +343,7 @@ public class ServicesAsyncTest {
         runAsyncTask(task);
 
         assertEquals(threadCount - 1, exceptions.size(),
-                "Should throw an exception for Overlapping appointment in " + (threadCount - 1) + " threads");
+            "Should throw an exception for Overlapping appointment in " + (threadCount - 1) + " threads");
     }
 
     private void runAsyncTask(Runnable task) {

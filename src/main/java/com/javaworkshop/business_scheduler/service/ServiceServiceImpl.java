@@ -21,9 +21,13 @@ public class ServiceServiceImpl implements ServiceService{
 
     private final ServiceRepository serviceRepository;
 
+    private final ImageStorageUtils imageStorageUtils;
+
     @Autowired
-    public ServiceServiceImpl(ServiceRepository serviceRepository) {
+    public ServiceServiceImpl(ServiceRepository serviceRepository,
+                              ImageStorageUtils imageStorageUtils) {
         this.serviceRepository = serviceRepository;
+        this.imageStorageUtils = imageStorageUtils;
     }
 
     @Override
@@ -78,7 +82,7 @@ public class ServiceServiceImpl implements ServiceService{
         if (serviceImage != null && !serviceImage.isEmpty()) {
             Path uploadPath = Paths.get("uploads/services/" + service.getId());
             String fileName = String.join("_", serviceName.split(" ")).toLowerCase(Locale.ROOT);
-            String imagePath = ImageStorageUtils.saveImage(serviceImage, fileName, uploadPath);
+            String imagePath = imageStorageUtils.saveImage(serviceImage, fileName, uploadPath);
             service.setImagePath(imagePath);
             save(service);
         }
@@ -93,7 +97,7 @@ public class ServiceServiceImpl implements ServiceService{
         Path folderPath = Paths.get("uploads/services/" + serviceId);
 
         // clears the folder where the service image is stored
-        ImageStorageUtils.clearFolder(folderPath);
+        imageStorageUtils.clearFolder(folderPath);
 
         // updates the service to remove the image path
         service.setImagePath(null);

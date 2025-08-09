@@ -38,11 +38,11 @@ class BookingServiceTest {
     @BeforeEach
     void setUp() {
         User user = new User(UUID.randomUUID(), "user",
-                "123456789", "ROLE_CUSTOMER", true);
+            "123456789", "ROLE_CUSTOMER", true);
         customer = new Customer(UUID.randomUUID(), user, "Customer",
-                "Customer", "email@someserver.com", "05411111111");
+            "Customer", "email@someserver.com", "05411111111");
         service = new Service(UUID.randomUUID(), "Service",
-                BigDecimal.valueOf(50), 100, null, true);
+            BigDecimal.valueOf(50), 100, null, true);
     }
 
     @DisplayName("Exception when booking an appointment with invalid start time")
@@ -55,14 +55,14 @@ class BookingServiceTest {
 
         Exception firstException = assertThrows(RuntimeException.class, () ->
             bookingService.bookAppointment(customer.getFirstName(), customer.getLastName(),
-                    customer.getEmail(), customer.getPhone(), null, service, null,
-                    firstWrongStartTime, firstEndTime)
+                customer.getEmail(), customer.getPhone(), null, service, null,
+                firstWrongStartTime, firstEndTime)
         );
 
         Exception secondException = assertThrows(RuntimeException.class, () ->
             bookingService.bookAppointment(customer.getFirstName(), customer.getLastName(),
-                    customer.getEmail(), customer.getPhone(), null, service, null,
-                    secondWrongStartTime, secondEndTime)
+                customer.getEmail(), customer.getPhone(), null, service, null,
+                secondWrongStartTime, secondEndTime)
         );
 
         assertAll(
@@ -76,20 +76,20 @@ class BookingServiceTest {
     @Test
     void exceptionWhenBookingAnAppointmentWithOverlappingTime() {
         LocalDateTime startTime = LocalDateTime
-                .now()
-                .plusDays(1)
-                .withHour(9)
-                .withMinute(0)
-                .withSecond(0)
-                .withNano(0);
+            .now()
+            .plusDays(1)
+            .withHour(9)
+            .withMinute(0)
+            .withSecond(0)
+            .withNano(0);
         LocalDateTime endTime = startTime.plusMinutes(service.getDuration());
 
         when(appointmentService.isSlotAvailable(startTime, endTime)).thenReturn(false);
 
         Exception exception = assertThrows(RuntimeException.class, () ->
-                bookingService.bookAppointment(customer.getFirstName(), customer.getLastName(),
-                        customer.getEmail(), customer.getPhone(), null,
-                        service, null, startTime, endTime)
+            bookingService.bookAppointment(customer.getFirstName(), customer.getLastName(),
+                customer.getEmail(), customer.getPhone(), null,
+                service, null, startTime, endTime)
         );
 
         assertEquals("error.appointmentTime.taken", exception.getMessage());
@@ -102,40 +102,40 @@ class BookingServiceTest {
     @Test
     void successfullyBookingAnAppointmentAsExistingCustomerByUsername() {
         LocalDateTime startTime = LocalDateTime
-                .now()
-                .plusDays(1)
-                .withHour(9)
-                .withMinute(0)
-                .withSecond(0)
-                .withNano(0);
+            .now()
+            .plusDays(1)
+            .withHour(9)
+            .withMinute(0)
+            .withSecond(0)
+            .withNano(0);
         LocalDateTime endTime = startTime.plusMinutes(service.getDuration());
 
         when(appointmentService.isSlotAvailable(startTime, endTime)).thenReturn(true);
         when(customerService.findByUsername(customer.getUser().getUsername()))
-                .thenReturn(customer);
+            .thenReturn(customer);
         when(appointmentService.save(any(Appointment.class)))
-                .thenAnswer(inv -> inv.getArguments()[0]);
+            .thenAnswer(inv -> inv.getArguments()[0]);
 
         // new appointment case
         assertDoesNotThrow(() -> bookingService.bookAppointment(
-                customer.getFirstName(), customer.getLastName(),
-                customer.getEmail(), customer.getPhone(),
-                customer.getUser().getUsername(), service,
-                null, startTime, endTime
+            customer.getFirstName(), customer.getLastName(),
+            customer.getEmail(), customer.getPhone(),
+            customer.getUser().getUsername(), service,
+            null, startTime, endTime
         ));
 
         // updating existing appointment case
         Appointment existingAppointment = new Appointment(
-                UUID.randomUUID(), customer, service, startTime, endTime, false
+            UUID.randomUUID(), customer, service, startTime, endTime, false
         );
         when(appointmentService.findById(existingAppointment.getId()))
-                .thenReturn(existingAppointment);
+            .thenReturn(existingAppointment);
 
         assertDoesNotThrow(() -> bookingService.bookAppointment(
-                customer.getFirstName(), customer.getLastName(),
-                customer.getEmail(), customer.getPhone(),
-                customer.getUser().getUsername(), service,
-                existingAppointment.getId(), startTime, endTime
+            customer.getFirstName(), customer.getLastName(),
+            customer.getEmail(), customer.getPhone(),
+            customer.getUser().getUsername(), service,
+            existingAppointment.getId(), startTime, endTime
         ));
 
         verify(appointmentService, times(2)).isSlotAvailable(startTime, endTime);
@@ -148,52 +148,52 @@ class BookingServiceTest {
     @Test
     void successfullyBookingAnAppointmentAsExistingCustomerByEmailAndPhone() {
         LocalDateTime startTime = LocalDateTime
-                .now()
-                .plusDays(1)
-                .withHour(9)
-                .withMinute(0)
-                .withSecond(0)
-                .withNano(0);
+            .now()
+            .plusDays(1)
+            .withHour(9)
+            .withMinute(0)
+            .withSecond(0)
+            .withNano(0);
         LocalDateTime endTime = startTime.plusMinutes(service.getDuration());
 
         when(appointmentService.isSlotAvailable(startTime, endTime)).thenReturn(true);
         when(customerService.findByEmailAndPhone(customer.getEmail(), customer.getPhone()))
-                .thenReturn(customer);
+            .thenReturn(customer);
         when(customerService.getValidCustomer(customer, customer.getEmail(), customer.getPhone(),
-                customer.getFirstName(), customer.getLastName(), null))
-                .thenReturn(customer);
+            customer.getFirstName(), customer.getLastName(), null))
+            .thenReturn(customer);
         when(appointmentService.save(any(Appointment.class)))
-                .thenAnswer(inv -> inv.getArguments()[0]);
+            .thenAnswer(inv -> inv.getArguments()[0]);
 
         // new appointment case
         assertDoesNotThrow(() -> bookingService.bookAppointment(
-                customer.getFirstName(), customer.getLastName(),
-                customer.getEmail(), customer.getPhone(),
-                null, service,
-                null, startTime, endTime
+            customer.getFirstName(), customer.getLastName(),
+            customer.getEmail(), customer.getPhone(),
+            null, service,
+            null, startTime, endTime
         ));
 
         // updating existing appointment case
         Appointment existingAppointment = new Appointment(
-                UUID.randomUUID(), customer, service, startTime, endTime, false
+            UUID.randomUUID(), customer, service, startTime, endTime, false
         );
         when(appointmentService.findById(existingAppointment.getId()))
-                .thenReturn(existingAppointment);
+            .thenReturn(existingAppointment);
 
         assertDoesNotThrow(() -> bookingService.bookAppointment(
-                customer.getFirstName(), customer.getLastName(),
-                customer.getEmail(), customer.getPhone(),
-                null, service,
-                existingAppointment.getId(), startTime, endTime
+            customer.getFirstName(), customer.getLastName(),
+            customer.getEmail(), customer.getPhone(),
+            null, service,
+            existingAppointment.getId(), startTime, endTime
         ));
 
         verify(appointmentService, times(2))
-                .isSlotAvailable(startTime, endTime);
+            .isSlotAvailable(startTime, endTime);
         verify(customerService, times(2))
-                .findByEmailAndPhone(customer.getEmail(), customer.getPhone());
+            .findByEmailAndPhone(customer.getEmail(), customer.getPhone());
         verify(customerService, times(2)).getValidCustomer(
-                customer, customer.getEmail(), customer.getPhone(),
-                customer.getFirstName(), customer.getLastName(), null
+            customer, customer.getEmail(), customer.getPhone(),
+            customer.getFirstName(), customer.getLastName(), null
         );
         verify(appointmentService, times(2)).save(any(Appointment.class));
         verify(appointmentService).findById(existingAppointment.getId());
@@ -203,36 +203,36 @@ class BookingServiceTest {
     @Test
     void successfullyBookingAnAppointmentAsANewCustomer() {
         LocalDateTime startTime = LocalDateTime
-                .now()
-                .plusDays(1)
-                .withHour(9)
-                .withMinute(0)
-                .withSecond(0)
-                .withNano(0);
+            .now()
+            .plusDays(1)
+            .withHour(9)
+            .withMinute(0)
+            .withSecond(0)
+            .withNano(0);
         LocalDateTime endTime = startTime.plusMinutes(service.getDuration());
 
         when(appointmentService.isSlotAvailable(startTime, endTime)).thenReturn(true);
         when(customerService.findByEmailAndPhone(customer.getEmail(), customer.getPhone()))
-                .thenReturn(null);
+            .thenReturn(null);
         when(customerService.getValidCustomer(null, customer.getEmail(), customer.getPhone(),
-                customer.getFirstName(), customer.getLastName(), null))
-                .thenReturn(customer);
+            customer.getFirstName(), customer.getLastName(), null))
+            .thenReturn(customer);
         when(customerService.save(customer)).thenReturn(customer);
         when(appointmentService.save(any(Appointment.class)))
-                .thenAnswer(inv -> inv.getArguments()[0]);
+            .thenAnswer(inv -> inv.getArguments()[0]);
 
         assertDoesNotThrow(() -> bookingService.bookAppointment(
-                customer.getFirstName(), customer.getLastName(),
-                customer.getEmail(), customer.getPhone(),
-                null, service,
-                null, startTime, endTime
+            customer.getFirstName(), customer.getLastName(),
+            customer.getEmail(), customer.getPhone(),
+            null, service,
+            null, startTime, endTime
         ));
 
         verify(appointmentService).isSlotAvailable(startTime, endTime);
         verify(customerService).findByEmailAndPhone(customer.getEmail(), customer.getPhone());
         verify(customerService).getValidCustomer(
-                null, customer.getEmail(), customer.getPhone(),
-                customer.getFirstName(), customer.getLastName(), null
+            null, customer.getEmail(), customer.getPhone(),
+            customer.getFirstName(), customer.getLastName(), null
         );
         verify(customerService).save(customer);
         verify(appointmentService).save(any(Appointment.class));

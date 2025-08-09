@@ -26,17 +26,17 @@ class BusinessHourRepositoryTest {
     void setUp() {
         // initializes the database with three business hours
         firstBusinessHour = new BusinessHour((byte) 1, // Monday
-                LocalTime.of(9, 0), // 09:00 AM
-                LocalTime.of(17, 0), // 05:00 PM
-                true); // isOpen
+            LocalTime.of(9, 0), // 09:00 AM
+            LocalTime.of(17, 0), // 05:00 PM
+            true); // isOpen
         secondBusinessHour = new BusinessHour((byte) 0, // Sunday
-                LocalTime.of(10, 0), // 10:00 AM
-                LocalTime.of(18, 0), // 06:00 PM
-                true);
+            LocalTime.of(10, 0), // 10:00 AM
+            LocalTime.of(18, 0), // 06:00 PM
+            true);
         thirdBusinessHour = new BusinessHour((byte) 4, // Thursday
-                LocalTime.of(11, 0), // 11:00 AM
-                LocalTime.of(19, 0), // 07:00 PM
-                true);
+            LocalTime.of(11, 0), // 11:00 AM
+            LocalTime.of(19, 0), // 07:00 PM
+            true);
         businessHourRepository.saveAll(List.of(firstBusinessHour, secondBusinessHour, thirdBusinessHour));
     }
 
@@ -56,9 +56,9 @@ class BusinessHourRepositoryTest {
 
         assertAll(
             () -> assertEquals(expected.size(), actual.size(),
-                    "The size of the list should match the expected size"),
+                "The size of the list should match the expected size"),
             () -> assertIterableEquals(actual, expected,
-                    "The actual list should match the expected list")
+                "The actual list should match the expected list")
         );
 
     }
@@ -68,9 +68,9 @@ class BusinessHourRepositoryTest {
     void findBusinessHoursByDayOfWeekOrderedByStartTime() {
         // adding another range for Monday to test the method
         BusinessHour anotherBusinessHour = new BusinessHour((byte) 1, // Monday
-                LocalTime.of(18, 30), // 06:30 PM
-                LocalTime.of(21, 0), // 09:00 PM
-                true);
+            LocalTime.of(18, 30), // 06:30 PM
+            LocalTime.of(21, 0), // 09:00 PM
+            true);
 
         businessHourRepository.save(anotherBusinessHour);
 
@@ -80,11 +80,11 @@ class BusinessHourRepositoryTest {
 
         assertAll(
             () -> assertEquals(expected.size(), actual.size(),
-                    "The size of the list should match the expected size"),
+                "The size of the list should match the expected size"),
             () -> assertIterableEquals(actual, expected,
-                    "The actual list should match the expected list"),
+                "The actual list should match the expected list"),
             () -> assertFalse(actual.contains(secondBusinessHour) || actual.contains(thirdBusinessHour),
-                        "The list should not contain business hours for other days")
+                "The list should not contain business hours for other days")
         );
 
     }
@@ -100,7 +100,7 @@ class BusinessHourRepositoryTest {
             byte actual = businessHourRepository.findDayOfWeekById(businessHour.getId());
 
             assertEquals(expected, actual,
-                    "The day of week should match the expected value for the given ID");
+                "The day of week should match the expected value for the given ID");
         }
     }
 
@@ -114,7 +114,7 @@ class BusinessHourRepositoryTest {
                 LocalTime endTime = firstBusinessHour.getEndTime().plusMinutes(minuteToAddForEnd);
 
                 boolean isOverlapping = businessHourRepository.isOverlapping(
-                        null, firstBusinessHour.getDayOfWeek(), startTime, endTime);
+                    null, firstBusinessHour.getDayOfWeek(), startTime, endTime);
 
                 assertTrue(isOverlapping, "Expected overlapping business hour to be found");
             }
@@ -134,11 +134,11 @@ class BusinessHourRepositoryTest {
                 LocalTime endTime = firstBusinessHour.getEndTime().plusMinutes(minuteToAddForEnd);
 
                 boolean isOverlapping = businessHourRepository.isOverlapping(
-                        firstBusinessHour.getId(), firstBusinessHour.getDayOfWeek(),
-                        startTime, endTime);
+                    firstBusinessHour.getId(), firstBusinessHour.getDayOfWeek(),
+                    startTime, endTime);
 
                 assertFalse(isOverlapping, "Expected that the new range for the first business hour" +
-                        " does not overlap with itself");
+                    " does not overlap with itself");
             }
         }
 
@@ -155,11 +155,11 @@ class BusinessHourRepositoryTest {
                 LocalTime endTime = secondBusinessHour.getEndTime().plusMinutes(minuteToAddForEnd);
 
                 boolean isOverlapping = businessHourRepository.isOverlapping(
-                        firstBusinessHour.getId(), secondBusinessHour.getDayOfWeek(),
-                        startTime, endTime);
+                    firstBusinessHour.getId(), secondBusinessHour.getDayOfWeek(),
+                    startTime, endTime);
 
                 assertTrue(isOverlapping, "Expected that the new range for the first business hour" +
-                        " overlaps with the second business hour");
+                    " overlaps with the second business hour");
             }
         }
     }
@@ -177,10 +177,10 @@ class BusinessHourRepositoryTest {
         LocalTime secondCaseNonOverlappingEnd = firstBusinessHour.getEndTime().plusMinutes(10);
 
         List<Boolean> allNonOverlappingCases = List.of(
-                businessHourRepository.isOverlapping(null, firstBusinessHour.getDayOfWeek(),
-                        firstCaseNonOverlappingStart, firstCaseNonOverlappingEnd),
-                businessHourRepository.isOverlapping(null, firstBusinessHour.getDayOfWeek(),
-                        secondCaseNonOverlappingStart, secondCaseNonOverlappingEnd)
+            businessHourRepository.isOverlapping(null, firstBusinessHour.getDayOfWeek(),
+                firstCaseNonOverlappingStart, firstCaseNonOverlappingEnd),
+            businessHourRepository.isOverlapping(null, firstBusinessHour.getDayOfWeek(),
+                secondCaseNonOverlappingStart, secondCaseNonOverlappingEnd)
         );
 
         for (boolean isOverlapping : allNonOverlappingCases) {

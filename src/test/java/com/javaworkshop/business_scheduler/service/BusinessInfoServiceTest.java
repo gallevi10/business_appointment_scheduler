@@ -7,23 +7,27 @@ import com.javaworkshop.business_scheduler.util.ImageStorageUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class BusinessInfoServiceTest {
 
     @MockitoBean
     private DefaultInitializer defaultInitializer;
+
+    @MockitoBean
+    private ImageStorageUtils imageStorageUtils;
 
     @MockitoBean
     private BusinessInfoRepository businessInfoRepository;
@@ -36,7 +40,7 @@ class BusinessInfoServiceTest {
     @BeforeEach
     void setUp() {
         businessInfo = new BusinessInfo(1, "Business Name", "Business Description",
-                "uploads/business_background/background_image.jpg");
+            "uploads/business_background/background_image.jpg");
     }
 
     @DisplayName("Get Business Info")
@@ -45,7 +49,7 @@ class BusinessInfoServiceTest {
         when(businessInfoRepository.findById(1)).thenReturn(Optional.of(businessInfo));
 
         assertEquals(businessInfo, businessInfoService.getBusinessInfo(),
-                "Business info should match the expected business info");
+            "Business info should match the expected business info");
 
         verify(businessInfoRepository).findById(1);
     }
@@ -56,7 +60,7 @@ class BusinessInfoServiceTest {
         when(businessInfoRepository.save(businessInfo)).thenReturn(businessInfo);
 
         assertEquals(businessInfo, businessInfoService.save(businessInfo),
-                "Saved business info should match the expected business info");
+            "Saved business info should match the expected business info");
 
         verify(businessInfoRepository).save(businessInfo);
     }
@@ -87,33 +91,32 @@ class BusinessInfoServiceTest {
 
         businessInfo.setBackgroundPath(null);
         when(businessInfoRepository.findById(1))
-                .thenReturn(Optional.of(businessInfo));
+            .thenReturn(Optional.of(businessInfo));
 
         assertThrows(RuntimeException.class, () ->
-                        businessInfoService.removeBackgroundImage(),
-                "Expected RuntimeException for null image path");
+                businessInfoService.removeBackgroundImage(),
+            "Expected RuntimeException for null image path");
 
         verify(businessInfoRepository).findById(1);
     }
 
     @DisplayName("Remove Background Image Successfully")
     @Test
-    void removeBackgroundImageSuccessfully(){
+    void removeBackgroundImageSuccessfully() {
 
         when(businessInfoRepository.findById(1))
-                .thenReturn(Optional.of(businessInfo));
+            .thenReturn(Optional.of(businessInfo));
 
-        // mocking the static method ImageStorageUtils.clearFolder
-        try (MockedStatic<ImageStorageUtils> mockedStatic = mockStatic(ImageStorageUtils.class)) {
-            assertDoesNotThrow(() -> businessInfoService.removeBackgroundImage(),
-                    "Should not throw an exception for non-null image path");
-
+        assertDoesNotThrow(() -> businessInfoService.removeBackgroundImage(),
+            "Should not throw an exception for non-null image path");
+        try {
             Path expectedPath = Paths.get("uploads/business_background");
-            mockedStatic.verify(() -> ImageStorageUtils.clearFolder(expectedPath));
-        }
+            verify(imageStorageUtils).clearFolder(expectedPath);
+        } catch (IOException ignored) {
+        } // we are mocking the IO operation.
 
         assertNull(businessInfo.getBackgroundPath(),
-                "Background image path should be null after removal");
+            "Background image path should be null after removal");
 
         verify(businessInfoRepository).findById(1);
         verify(businessInfoRepository).save(businessInfo);
@@ -126,7 +129,7 @@ class BusinessInfoServiceTest {
         when(businessInfoRepository.existsById(1)).thenReturn(true);
 
         assertTrue(businessInfoService.isThereBusinessInfo(),
-                "Business info should exist in the database");
+            "Business info should exist in the database");
 
         verify(businessInfoRepository).existsById(1);
     }

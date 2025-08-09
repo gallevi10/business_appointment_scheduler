@@ -1,30 +1,35 @@
 package com.javaworkshop.business_scheduler.service;
 
+import com.javaworkshop.business_scheduler.config.DefaultInitializer;
 import com.javaworkshop.business_scheduler.model.User;
 import com.javaworkshop.business_scheduler.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class UserServiceTest {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     @MockitoBean
     private UserRepository userRepository;
+
+    @MockitoBean
+    private DefaultInitializer defaultInitializer;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private UserService userService;
@@ -33,12 +38,12 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        firstUser = new User(UUID.randomUUID(),"firstUser",
-                passwordEncoder.encode("111111111"), "ROLE_CUSTOMER", true);
+        firstUser = new User(UUID.randomUUID(), "firstUser",
+            passwordEncoder.encode("111111111"), "ROLE_CUSTOMER", true);
         secondUser = new User(UUID.randomUUID(), "secondUser",
-                passwordEncoder.encode("222222222"), "ROLE_CUSTOMER", true);
+            passwordEncoder.encode("222222222"), "ROLE_CUSTOMER", true);
         thirdUser = new User(UUID.randomUUID(), "thirdUser",
-                passwordEncoder.encode("333333333"), "ROLE_OWNER", true);
+            passwordEncoder.encode("333333333"), "ROLE_OWNER", true);
     }
 
     @DisplayName("Find All Users")
@@ -51,9 +56,9 @@ class UserServiceTest {
         List<User> foundUsers = userService.findAll();
 
         assertAll(
-                () -> assertNotNull(foundUsers, "User list should not be null"),
-                () -> assertEquals(3, foundUsers.size(), "User list size should be 3"),
-                () -> assertIterableEquals(expected, foundUsers, "User lists should be equal")
+            () -> assertNotNull(foundUsers, "User list should not be null"),
+            () -> assertEquals(3, foundUsers.size(), "User list size should be 3"),
+            () -> assertIterableEquals(expected, foundUsers, "User lists should be equal")
         );
 
         verify(userRepository).findAll();
@@ -63,19 +68,25 @@ class UserServiceTest {
     @Test
     void findUserById() {
         Map<UUID, Optional<User>> userMap = Map.of(
-                firstUser.getId(), Optional.of(firstUser),
-                secondUser.getId(), Optional.of(secondUser),
-                thirdUser.getId(), Optional.of(thirdUser)
+            firstUser.getId(), Optional.of(firstUser),
+            secondUser.getId(), Optional.of(secondUser),
+            thirdUser.getId(), Optional.of(thirdUser)
         );
 
         userMap.forEach(
             (id, optionalUser) -> {
                 when(userRepository.findById(id)).thenReturn(optionalUser);
                 assertEquals(optionalUser.orElse(null), userService.findById(id),
-                        "User should be found by id: " + id);
+                    "User should be found by id: " + id);
                 verify(userRepository).findById(id);
             }
         );
+
+        UUID nonExistentId = UUID.randomUUID();
+        when(userRepository.findById(nonExistentId)).thenReturn(Optional.empty());
+        assertNull(userService.findById(nonExistentId),
+            "User should not be found for non-existent id: " + nonExistentId);
+        verify(userRepository).findById(nonExistentId);
 
     }
 
@@ -83,18 +94,18 @@ class UserServiceTest {
     @Test
     void findByUsername() {
         Map<String, Optional<User>> userMap = Map.of(
-                firstUser.getUsername(), Optional.of(firstUser),
-                secondUser.getUsername(), Optional.of(secondUser),
-                thirdUser.getUsername(), Optional.of(thirdUser)
+            firstUser.getUsername(), Optional.of(firstUser),
+            secondUser.getUsername(), Optional.of(secondUser),
+            thirdUser.getUsername(), Optional.of(thirdUser)
         );
 
         userMap.forEach(
-                (username, optionalUser) -> {
-                    when(userRepository.findByUsername(username)).thenReturn(optionalUser);
-                    assertEquals(optionalUser.orElse(null), userService.findByUsername(username),
-                            "User should be found by username: " + username);
-                    verify(userRepository).findByUsername(username);
-                }
+            (username, optionalUser) -> {
+                when(userRepository.findByUsername(username)).thenReturn(optionalUser);
+                assertEquals(optionalUser.orElse(null), userService.findByUsername(username),
+                    "User should be found by username: " + username);
+                verify(userRepository).findByUsername(username);
+            }
         );
 
     }
@@ -105,11 +116,11 @@ class UserServiceTest {
         List<User> users = List.of(firstUser, secondUser, thirdUser);
 
         users.forEach(
-                user -> {
-                    when(userRepository.save(user)).thenReturn(user);
-                    assertEquals(userService.save(user), user, "Should be equal to: " + user);
-                    verify(userRepository).save(user);
-                }
+            user -> {
+                when(userRepository.save(user)).thenReturn(user);
+                assertEquals(userService.save(user), user, "Should be equal to: " + user);
+                verify(userRepository).save(user);
+            }
         );
 
     }
@@ -127,15 +138,17 @@ class UserServiceTest {
     @DisplayName("Invalid Inputs For User Validation")
     @Test
     void invalidInputsForUserValidation() {
-        // exists username case
+        // existing username case
         List<User> users = List.of(firstUser, secondUser, thirdUser);
 
         users.forEach(
             user -> {
                 when(userRepository.existsByUsername(user.getUsername())).thenReturn(true);
-                assertThrows(RuntimeException.class, () ->
+                Exception exception = assertThrows(RuntimeException.class, () ->
                         userService.validateUser(user.getUsername(), "", ""),
-                        "Should throw an exception for existing username");
+                    "Should throw an exception for existing username");
+                assertEquals("error.user.username.conflict", exception.getMessage(),
+                    "Exception message should match");
                 verify(userRepository).existsByUsername(user.getUsername());
             }
         );
@@ -145,19 +158,21 @@ class UserServiceTest {
         String password = "123456789";
         String wrongConfirmPassword = "111111111";
 
-        assertThrows(RuntimeException.class, () ->
+        Exception exception = assertThrows(RuntimeException.class, () ->
                 userService.validateUser("", password, wrongConfirmPassword),
-                "Should throw an exception for password confirmation mismatch");
+            "Should throw an exception for password confirmation mismatch");
+        assertEquals("error.user.password.confirmation.mismatch", exception.getMessage(),
+            "Exception message should match");
     }
 
     @DisplayName("Valid Inputs For User Validation")
     @Test
     void validInputsForUserValidation() {
-        // nonexistent username case
+        // non-existent username case
         String username = "nonexistentusername";
         when(userRepository.existsByUsername(username)).thenReturn(false);
         assertDoesNotThrow(() -> userService.validateUser(username, "", ""),
-                "Should not throw an exception for nonexistent username");
+            "Should not throw an exception for nonexistent username");
         verify(userRepository).existsByUsername(username);
 
         // password match case
@@ -176,7 +191,7 @@ class UserServiceTest {
             user -> {
                 when(userRepository.existsByUsername(user.getUsername())).thenReturn(true);
                 assertTrue(userService.usernameExists(user.getUsername()),
-                        "Username should exist: " + user.getUsername());
+                    "Username should exist: " + user.getUsername());
                 verify(userRepository).existsByUsername(user.getUsername());
             }
         );
@@ -186,7 +201,7 @@ class UserServiceTest {
         String username = "nonexistentusername";
         when(userRepository.existsByUsername(username)).thenReturn(false);
         assertFalse(userService.usernameExists(username),
-                "Username should not exist");
+            "Username should not exist");
         verify(userRepository).existsByUsername(username);
     }
 
@@ -199,14 +214,27 @@ class UserServiceTest {
         String newPassword = "123456789";
 
         // old password mismatch case
-        assertThrows(RuntimeException.class, () ->
-                userService.changePassword(firstUser, wrongPassword, newPassword,  newPassword),
-                "Should throw an exception for incorrect old password");
+        Exception incorrectOldPasswordException = assertThrows(RuntimeException.class, () ->
+                userService.changePassword(firstUser, wrongPassword, newPassword, newPassword),
+            "Should throw an exception for incorrect old password");
+
+        assertEquals("error.user.old.password.incorrect",
+            incorrectOldPasswordException.getMessage(),
+            "Exception message should match");
 
         // new password mismatch case
-        assertThrows(RuntimeException.class, () ->
-                userService.changePassword(firstUser, oldPassword, wrongPassword,  newPassword),
-                "Should throw an exception for new password mismatch");
+        Exception newPasswordMismatchException = assertThrows(RuntimeException.class, () ->
+                userService.changePassword(firstUser, oldPassword, wrongPassword, newPassword),
+            "Should throw an exception for new password mismatch");
+
+        assertEquals("error.user.password.confirmation.mismatch",
+            newPasswordMismatchException.getMessage(),
+            "Exception message should match");
+
+        assertTrue(passwordEncoder.matches(oldPassword, firstUser.getPassword()),
+            "Password should remain unchanged");
+
+        verify(userRepository, times(0)).save(any(User.class));
 
     }
 
@@ -214,26 +242,21 @@ class UserServiceTest {
     @Test
     void validInputsForChangePassword() {
 
+        User userToChangePassword = firstUser;
         String oldPassword = "111111111";
         String newPassword = "123456789";
-        User newFirstUser = new User(
-                firstUser.getId(),
-                firstUser.getUsername(),
-                passwordEncoder.encode(newPassword),
-                "ROLE_CUSTOMER",
-                true
-        );
 
-        when(userRepository.save(newFirstUser)).thenReturn(newFirstUser);
-
+        when(userRepository.save(userToChangePassword))
+            .thenReturn(userToChangePassword);
 
         assertDoesNotThrow(() ->
-                userService.changePassword(firstUser, oldPassword, newPassword,  newPassword),
-                "Should not throw an exception on valid inputs");
+                userService.changePassword(userToChangePassword, oldPassword, newPassword, newPassword),
+            "Should not throw an exception on valid inputs");
 
-        assertEquals(userService.save(newFirstUser), newFirstUser, "Should be equal to: " + newFirstUser);
+        assertTrue(passwordEncoder.matches(newPassword, userToChangePassword.getPassword()),
+            "Password should be updated to the new password");
 
-        verify(userRepository).save(newFirstUser);
+        verify(userRepository).save(userToChangePassword);
     }
 
     @DisplayName("Valid Case For Add New Owner User")
@@ -241,22 +264,14 @@ class UserServiceTest {
     void validCaseForAddNewOwnerUser() {
         String newOwnerUsername = "newOwnerUsername";
         String newOwnerPassword = "newOwnerPassword";
-        User newOwnerUser = new User(
-                UUID.randomUUID(),
-                newOwnerUsername,
-                passwordEncoder.encode(newOwnerPassword),
-                "ROLE_OWNER",
-                true
-        );
 
-        when(userRepository.save(newOwnerUser)).thenReturn(newOwnerUser);
+        when(userRepository.save(any(User.class)))
+            .thenAnswer(inv -> inv.getArgument(0));
 
         assertDoesNotThrow(() -> userService.addNewOwnerUser(newOwnerUsername, newOwnerPassword, newOwnerPassword),
-                "Should not throw an exception on valid inputs");
+            "Should not throw an exception on valid inputs");
 
-        assertEquals(userService.save(newOwnerUser), newOwnerUser, "Should be equal to: " + newOwnerUser);
-
-        verify(userRepository).save(newOwnerUser);
+        verify(userRepository).save(any(User.class));
     }
 
 }

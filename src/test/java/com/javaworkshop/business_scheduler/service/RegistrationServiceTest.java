@@ -43,13 +43,13 @@ class RegistrationServiceTest {
     @Test
     void invalidUserRegistrationUsernameConflict() {
         doThrow(new RuntimeException())
-                .when(userService)
-                .validateUser(username, password, password);
+            .when(userService)
+            .validateUser(username, password, password);
 
         assertThrows(RuntimeException.class, () ->
-            registrationService.registerNewCustomer(username, password, password,
+                registrationService.registerNewCustomer(username, password, password,
                     email, phone, firstName, lastName)
-        , "Expected validateUser to throw an exception for existing username");
+            , "Expected validateUser to throw an exception for existing username");
 
     }
 
@@ -60,13 +60,13 @@ class RegistrationServiceTest {
         String wrongPassword = "wrongPassword123";
 
         doThrow(new RuntimeException())
-                .when(userService)
-                .validateUser(username, password, wrongPassword);
+            .when(userService)
+            .validateUser(username, password, wrongPassword);
 
         assertThrows(RuntimeException.class, () ->
-                        registrationService.registerNewCustomer(username, password, password,
-                                email, phone, firstName, lastName)
-                , "Expected validateUser to throw an exception for password confirmation mismatch");
+                registrationService.registerNewCustomer(username, password, password,
+                    email, phone, firstName, lastName)
+            , "Expected validateUser to throw an exception for password confirmation mismatch");
 
     }
 
@@ -79,32 +79,32 @@ class RegistrationServiceTest {
         String wrongLastName = "WrongLast";
 
         when(customerService.findByEmailAndPhone(email, phone))
-                .thenReturn(existingCustomer);
+            .thenReturn(existingCustomer);
 
         when(customerService.getValidCustomer(existingCustomer, email, phone, wrongFirstName, lastName, username))
-                .thenThrow(new RuntimeException());
+            .thenThrow(new RuntimeException());
 
         when(customerService.getValidCustomer(existingCustomer, email, phone, firstName, wrongLastName, username))
-                .thenThrow(new RuntimeException());
+            .thenThrow(new RuntimeException());
 
         when(customerService.getValidCustomer(existingCustomer, email, phone, wrongFirstName, wrongLastName, username))
-                .thenThrow(new RuntimeException());
+            .thenThrow(new RuntimeException());
 
         assertAll(
             () -> assertThrows(RuntimeException.class, () ->
                     registrationService.registerNewCustomer(username, password, password,
-                            email, phone, wrongFirstName, lastName),
-                    "Expected getValidCustomer to throw an exception for existing customer with different first name"
+                        email, phone, wrongFirstName, lastName),
+                "Expected getValidCustomer to throw an exception for existing customer with different first name"
             ),
             () -> assertThrows(RuntimeException.class, () ->
                     registrationService.registerNewCustomer(username, password, password,
-                            email, phone, firstName, wrongLastName),
-                    "Expected getValidCustomer to throw an exception for existing customer with different last name"
+                        email, phone, firstName, wrongLastName),
+                "Expected getValidCustomer to throw an exception for existing customer with different last name"
             ),
             () -> assertThrows(RuntimeException.class, () ->
                     registrationService.registerNewCustomer(username, password, password,
-                            email, phone, wrongFirstName, wrongLastName),
-                    "Expected getValidCustomer to throw an exception for existing customer with different first and last names"
+                        email, phone, wrongFirstName, wrongLastName),
+                "Expected getValidCustomer to throw an exception for existing customer with different first and last names"
             )
         );
     }
@@ -115,20 +115,20 @@ class RegistrationServiceTest {
 
         User existingUser = new User(username, password, "ROLE_CUSTOMER", true);
         Customer existingCustomer = new Customer(UUID.randomUUID(), existingUser,
-                firstName, lastName, email, phone);
+            firstName, lastName, email, phone);
 
         String wrongUsername = "WrongUsername";
 
         when(customerService.findByEmailAndPhone(email, phone))
-                .thenReturn(existingCustomer);
+            .thenReturn(existingCustomer);
 
         when(customerService.getValidCustomer(existingCustomer, email, phone, firstName, lastName, wrongUsername))
-                .thenThrow(new RuntimeException());
+            .thenThrow(new RuntimeException());
 
         assertThrows(RuntimeException.class, () ->
-            registrationService.registerNewCustomer(wrongUsername, password, password,
+                registrationService.registerNewCustomer(wrongUsername, password, password,
                     email, phone, firstName, lastName),
-    "Expected getValidCustomer to throw an exception for existing customer with different username"
+            "Expected getValidCustomer to throw an exception for existing customer with different username"
         );
     }
 
@@ -137,22 +137,22 @@ class RegistrationServiceTest {
     void successfulUserRegistrationWhenCustomerExists() {
 
         Customer existingCustomer = new Customer(UUID.randomUUID(), null,
-                firstName, lastName, email, phone);
+            firstName, lastName, email, phone);
         User newUser = new User(username, password,
-                "ROLE_CUSTOMER", true);
+            "ROLE_CUSTOMER", true);
 
         when(customerService.findByEmailAndPhone(email, phone))
-                .thenReturn(existingCustomer);
+            .thenReturn(existingCustomer);
 
         when(customerService.getValidCustomer(existingCustomer, email, phone, firstName, lastName, username))
-                .thenReturn(existingCustomer);
+            .thenReturn(existingCustomer);
 
         when(userService.save(newUser)).thenReturn(newUser);
         existingCustomer.setUser(newUser);
         when(customerService.save(existingCustomer)).thenReturn(existingCustomer);
 
         assertDoesNotThrow(() ->
-            registrationService.registerNewCustomer(username, password, password,
+                registrationService.registerNewCustomer(username, password, password,
                     email, phone, firstName, lastName),
             "Expected no exception during successful user registration when customer already exists"
         );
@@ -167,19 +167,19 @@ class RegistrationServiceTest {
         Customer newCustomer = new Customer(null, firstName, lastName, email, phone);
 
         when(customerService.findByEmailAndPhone(email, phone))
-                .thenReturn(null);
+            .thenReturn(null);
 
         when(customerService.getValidCustomer(null, email, phone, firstName, lastName, username))
-                .thenReturn(newCustomer);
+            .thenReturn(newCustomer);
 
         when(userService.save(newUser)).thenReturn(newUser);
         newCustomer.setUser(newUser);
         when(customerService.save(newCustomer)).thenReturn(newCustomer);
 
         assertDoesNotThrow(() ->
-            registrationService.registerNewCustomer(username, password, password,
+                registrationService.registerNewCustomer(username, password, password,
                     email, phone, firstName, lastName),
-    "Expected no exception during successful user registration when customer does not exist"
+            "Expected no exception during successful user registration when customer does not exist"
         );
 
     }

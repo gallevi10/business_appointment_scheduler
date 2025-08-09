@@ -28,11 +28,11 @@ class ServiceRepositoryTest {
     @BeforeEach
     void setUp() {
         firstService = new Service("First Service", BigDecimal.valueOf(50),
-                30, null, true);
+            30, null, true);
         secondService = new Service("Second Service", BigDecimal.valueOf(75),
-                45, null, true);
+            45, null, true);
         thirdService = new Service("Third Service", BigDecimal.valueOf(100),
-                60, null, false);
+            60, null, false);
         serviceRepository.saveAll(List.of(firstService, secondService, thirdService));
     }
 
@@ -52,20 +52,20 @@ class ServiceRepositoryTest {
         Page<Service> actual = serviceRepository.findByIsActiveTrue(pageable);
 
         assertAll(
-                () -> assertEquals(expected.getTotalElements(), actual.getTotalElements(),
-                        "The total number of services should match the expected count"),
-                () -> assertEquals(expected.getTotalPages(), actual.getTotalPages(),
-                        "The total number of pages should match the expected count"),
-                () -> assertEquals(expected.getNumber(), actual.getNumber(),
-                        "The current page number should match the expected page number"),
-                () -> assertEquals(expected.getSize(), actual.getSize(),
-                        "The page size should match the expected size"),
-                () -> assertEquals(expected.getContent().size(), actual.getContent().size(),
-                        "The number of services in the page should match the expected count"),
-                () -> assertIterableEquals(expected.getContent(), actual.getContent(),
-                        "The content of the page should match the expected services"),
-                () -> assertTrue(actual.getContent().containsAll(expected.getContent()),
-                        "The content of the page should match the expected services")
+            () -> assertEquals(expected.getTotalElements(), actual.getTotalElements(),
+                "The total number of services should match the expected count"),
+            () -> assertEquals(expected.getTotalPages(), actual.getTotalPages(),
+                "The total number of pages should match the expected count"),
+            () -> assertEquals(expected.getNumber(), actual.getNumber(),
+                "The current page number should match the expected page number"),
+            () -> assertEquals(expected.getSize(), actual.getSize(),
+                "The page size should match the expected size"),
+            () -> assertEquals(expected.getContent().size(), actual.getContent().size(),
+                "The number of services in the page should match the expected count"),
+            () -> assertIterableEquals(expected.getContent(), actual.getContent(),
+                "The content of the page should match the expected services"),
+            () -> assertTrue(actual.getContent().containsAll(expected.getContent()),
+                "The content of the page should match the expected services")
         );
     }
 
@@ -103,6 +103,6 @@ class ServiceRepositoryTest {
         boolean exists = serviceRepository.existsByServiceName(firstService, serviceName);
 
         assertTrue(exists, "Should be true since the service exists in the" +
-                " database and it is not the same as the provided service");
+            " database and it is not the same as the provided service");
     }
 }
