@@ -52,9 +52,6 @@ public class ServicesAsyncTest {
     private BookingService bookingService;
 
     @Autowired
-    private CustomerService customerService;
-
-    @Autowired
     private BusinessHourRepository businessHourRepository;
 
     @Autowired
