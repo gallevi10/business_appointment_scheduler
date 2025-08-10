@@ -164,7 +164,8 @@ class ServiceServiceTest {
     @DisplayName("Exception on Add Service with Existing Name")
     @Test
     void exceptionOnAddServiceWithExistingName() {
-        when(serviceRepository.existsByServiceName(null, "someExistingService")).thenReturn(true);
+        when(serviceRepository.existsByServiceName(null,
+            "someExistingService")).thenReturn(true);
 
         Exception existingServiceNameException = assertThrows(RuntimeException.class, () ->
                 serviceService.addOrUpdateService(
@@ -182,7 +183,8 @@ class ServiceServiceTest {
     @DisplayName("Exception on Update Service with Existing Name")
     @Test
     void exceptionOnUpdateServiceWithExistingName() {
-        when(serviceRepository.existsByServiceName(firstService, "someExistingService")).thenReturn(true);
+        when(serviceRepository.existsByServiceName(firstService,
+            "someExistingService")).thenReturn(true);
 
         Exception existingServiceNameException = assertThrows(RuntimeException.class, () ->
                 serviceService.addOrUpdateService(
@@ -309,8 +311,7 @@ class ServiceServiceTest {
             try {
                 Path expectedPath = Paths.get("uploads/services/" + service.getId());
                 verify(imageStorageUtils).clearFolder(expectedPath);
-            } catch (IOException ignored) {
-            } // we are mocking the IO operation.
+            } catch (IOException ignored) {} // we are mocking the IO operation.
 
             assertNull(service.getImagePath(),
                 "Image path should be null after removal");

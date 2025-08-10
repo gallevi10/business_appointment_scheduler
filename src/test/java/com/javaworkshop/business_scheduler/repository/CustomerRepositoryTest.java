@@ -64,7 +64,7 @@ class CustomerRepositoryTest {
     void findNotExistsCustomerByEmailAndPhone() {
 
         Customer exists = customerRepository
-            .findByEmailAndPhone("Avi@server.com", "0543333333")
+            .findByEmailAndPhone("avi@server.com", "0543333333")
             .orElse(null);
 
         assertNull(exists, "The customer should not exist");

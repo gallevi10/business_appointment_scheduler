@@ -1,5 +1,6 @@
 package com.javaworkshop.business_scheduler.config;
 
+import com.javaworkshop.business_scheduler.model.BusinessInfo;
 import com.javaworkshop.business_scheduler.service.BusinessInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -18,6 +19,7 @@ public class GlobalModelAttributes {
 
     @ModelAttribute("backgroundPath")
     public String getBackgroundPath() {
-        return businessInfoService.getBusinessInfo().getBackgroundPath();
+        BusinessInfo businessInfo = businessInfoService.getBusinessInfo();
+        return businessInfo != null ? businessInfo.getBackgroundPath() : null;
     }
 }
