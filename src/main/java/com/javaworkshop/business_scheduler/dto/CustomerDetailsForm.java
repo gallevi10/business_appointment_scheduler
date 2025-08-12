@@ -3,6 +3,8 @@ package com.javaworkshop.business_scheduler.dto;
 import com.javaworkshop.business_scheduler.model.Customer;
 import jakarta.validation.constraints.*;
 
+import java.util.Objects;
+
 // This class represents a form for capturing customer details.
 public class CustomerDetailsForm {
 
@@ -76,4 +78,18 @@ public class CustomerDetailsForm {
         this.lastName = lastName;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        CustomerDetailsForm other = (CustomerDetailsForm) o;
+        return phoneNumber.equals(other.phoneNumber) &&
+            email.equals(other.email) &&
+            firstName.equals(other.firstName) &&
+            lastName.equals(other.lastName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(phoneNumber, email, firstName, lastName);
+    }
 }

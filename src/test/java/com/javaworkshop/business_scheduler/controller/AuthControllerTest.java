@@ -24,6 +24,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.ModelAndViewAssert.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @AutoConfigureMockMvc
@@ -92,7 +93,7 @@ class AuthControllerTest {
         ModelAndView mav = mvcResult.getModelAndView();
 
         assertNotNull(mav, "ModelAndView should not be null");
-        ModelAndViewAssert.assertViewName(mvcResult.getModelAndView(), "auth/register");
+        assertViewName(mav, "auth/register");
     }
 
     @DisplayName("Successfully Process Registration Form")
@@ -153,7 +154,7 @@ class AuthControllerTest {
         ModelAndView mav = mvcResult.getModelAndView();
 
         assertNotNull(mav, "ModelAndView should not be null");
-        ModelAndViewAssert.assertViewName(mvcResult.getModelAndView(), "auth/register");
+        assertViewName(mav, "auth/register");
 
         verify(registrationService, times(0)).registerNewCustomer(
             anyString(), anyString(), anyString(),
@@ -197,7 +198,7 @@ class AuthControllerTest {
             ModelAndView mav = mvcResult.getModelAndView();
 
             assertNotNull(mav, "ModelAndView should not be null");
-            ModelAndViewAssert.assertViewName(mvcResult.getModelAndView(), "auth/register");
+            assertViewName(mav, "auth/register");
 
             BindingResult bindingResult =
                 (BindingResult) mav.getModel().get(BindingResult.MODEL_KEY_PREFIX + "form");
@@ -224,7 +225,7 @@ class AuthControllerTest {
         ModelAndView mav = mvcResult.getModelAndView();
 
         assertNotNull(mav, "ModelAndView should not be null");
-        ModelAndViewAssert.assertViewName(mvcResult.getModelAndView(), "auth/change-password");
+        assertViewName(mav, "auth/change-password");
     }
 
     @DisplayName("Unauthenticated Show Change Password Form")
@@ -272,7 +273,7 @@ class AuthControllerTest {
         ModelAndView mav = mvcResult.getModelAndView();
 
         assertNotNull(mav, "ModelAndView should not be null");
-        ModelAndViewAssert.assertViewName(mvcResult.getModelAndView(), "auth/change-password");
+        assertViewName(mav, "auth/change-password");
         verify(userService, times(0)).changePassword(
             any(User.class), anyString(), anyString(), anyString()
         );
@@ -306,7 +307,7 @@ class AuthControllerTest {
             ModelAndView mav = mvcResult.getModelAndView();
 
             assertNotNull(mav, "ModelAndView should not be null");
-            ModelAndViewAssert.assertViewName(mvcResult.getModelAndView(), "auth/change-password");
+            assertViewName(mav, "auth/change-password");
 
             BindingResult bindingResult =
                 (BindingResult) mav.getModel().get(BindingResult.MODEL_KEY_PREFIX + "form");
@@ -404,7 +405,7 @@ class AuthControllerTest {
         ModelAndView mav = mvcResult.getModelAndView();
 
         assertNotNull(mav, "ModelAndView should not be null");
-        ModelAndViewAssert.assertViewName(mvcResult.getModelAndView(), "error/404");
+        assertViewName(mav, "error/404");
 
         verify(userService, times(0)).findByUsername(defaultOwnerUser.getUsername());
         verify(userService, times(0)).deleteById(defaultOwnerUser.getId());
@@ -420,7 +421,7 @@ class AuthControllerTest {
         ModelAndView mav = mvcResult.getModelAndView();
 
         assertNotNull(mav, "ModelAndView should not be null");
-        ModelAndViewAssert.assertViewName(mvcResult.getModelAndView(), "auth/login");
+        assertViewName(mav, "auth/login");
 
     }
 }

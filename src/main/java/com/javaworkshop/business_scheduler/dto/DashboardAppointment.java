@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 // This class is used to represent an appointment in the dashboard view.
@@ -104,5 +105,22 @@ public class DashboardAppointment {
 
         return dashboardAppointments;
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        DashboardAppointment other = (DashboardAppointment) o;
+        return isActive == other.isActive &&
+                appointmentId.equals(other.appointmentId) &&
+                customer.equals(other.customer)&&
+                service.equals(other.service) &&
+                date.equals(other.date) &&
+                time.equals(other.time);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(appointmentId, customer, service, date, time, isActive);
     }
 }
