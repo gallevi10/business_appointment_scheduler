@@ -48,8 +48,6 @@ public class BusinessRestController {
         byte dayOfWeek = (byte) (date.getDayOfWeek().getValue() % 7); // converts to 0-6 range for Sunday-Saturday
         List<BusinessHour> businessHours = businessHourService.findAllRangesByDayOfWeek(dayOfWeek);
         return appointmentService.getAvailableSlots(service, date, businessHours);
-
-
     }
 
 }
