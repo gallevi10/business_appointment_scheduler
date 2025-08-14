@@ -85,7 +85,7 @@ public class GeneralController {
         }
         if (appointmentId != null) { // this is a rescheduling request
             appointment = appointmentService.findById(appointmentId);
-            if (appointment == null) {
+            if (appointment == null || !appointment.getService().getId().equals(serviceId)) {
                 return "error/404"; // if the appointment does not exist or does not belong to the service, return 404 error page
             }
             form.setAppointmentTimeForm( // sets the appointment time form with the existing appointment details

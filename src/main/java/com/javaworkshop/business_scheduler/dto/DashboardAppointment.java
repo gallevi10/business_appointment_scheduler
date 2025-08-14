@@ -112,11 +112,11 @@ public class DashboardAppointment {
         if (o == null || getClass() != o.getClass()) return false;
         DashboardAppointment other = (DashboardAppointment) o;
         return isActive == other.isActive &&
-                appointmentId.equals(other.appointmentId) &&
-                customer.equals(other.customer)&&
-                service.equals(other.service) &&
-                date.equals(other.date) &&
-                time.equals(other.time);
+                Objects.equals(appointmentId, other.appointmentId) &&
+                Objects.equals(customer, other.customer) &&
+                Objects.equals(service, other.service) &&
+                Objects.equals(date, other.date) &&
+                Objects.equals(time, other.time);
     }
 
     @Override

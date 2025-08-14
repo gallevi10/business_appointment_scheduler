@@ -5,6 +5,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Objects;
 
 // This class represents a form for capturing appointment date and time.
 public class AppointmentTimeForm {
@@ -39,5 +40,26 @@ public class AppointmentTimeForm {
 
     public void setAppointmentTime(LocalTime appointmentTime) {
         this.appointmentTime = appointmentTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        AppointmentTimeForm other = (AppointmentTimeForm) o;
+        return Objects.equals(appointmentDate, other.appointmentDate) &&
+            Objects.equals(appointmentTime, other.appointmentTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(appointmentDate, appointmentTime);
+    }
+
+    @Override
+    public String toString() {
+        return "AppointmentTimeForm{" +
+            "appointmentDate=" + appointmentDate +
+            ", appointmentTime=" + appointmentTime +
+            '}';
     }
 }

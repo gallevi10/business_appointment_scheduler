@@ -82,14 +82,24 @@ public class CustomerDetailsForm {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         CustomerDetailsForm other = (CustomerDetailsForm) o;
-        return phoneNumber.equals(other.phoneNumber) &&
-            email.equals(other.email) &&
-            firstName.equals(other.firstName) &&
-            lastName.equals(other.lastName);
+        return Objects.equals(phoneNumber, other.phoneNumber) &&
+            Objects.equals(email, other.email) &&
+            Objects.equals(firstName, other.firstName) &&
+            Objects.equals(lastName, other.lastName);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(phoneNumber, email, firstName, lastName);
+    }
+
+    @Override
+    public String toString() {
+        return "CustomerDetailsForm{" +
+            "phoneNumber='" + phoneNumber + '\'' +
+            ", email='" + email + '\'' +
+            ", firstName='" + firstName + '\'' +
+            ", lastName='" + lastName + '\'' +
+            '}';
     }
 }
