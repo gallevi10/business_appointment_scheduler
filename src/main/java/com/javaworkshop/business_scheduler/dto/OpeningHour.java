@@ -4,6 +4,7 @@ import com.javaworkshop.business_scheduler.model.BusinessHour;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 // This class represents the opening hours of a business for each day of the week.
 public class OpeningHour {
@@ -11,13 +12,16 @@ public class OpeningHour {
 
     private String day;
 
+    private byte dayOfWeek;
+
     private List<BusinessHour> ranges;
 
     public OpeningHour() {
     }
 
-    public OpeningHour(String day, List<BusinessHour> ranges) {
+    public OpeningHour(String day, byte dayOfWeek, List<BusinessHour> ranges) {
         this.day = day;
+        this.dayOfWeek = dayOfWeek;
         this.ranges = ranges;
     }
 
@@ -27,6 +31,14 @@ public class OpeningHour {
 
     public void setDay(String day) {
         this.day = day;
+    }
+
+    public int getDayOfWeek() {
+        return dayOfWeek;
+    }
+
+    public void setDayOfWeek(byte dayOfWeek) {
+        this.dayOfWeek = dayOfWeek;
     }
 
     public List<BusinessHour> getRanges() {
@@ -52,9 +64,24 @@ public class OpeningHour {
                 j++;
             }
 
-            openingHours.add(new OpeningHour(day, ranges));
+            openingHours.add(new OpeningHour(day, (byte) i, ranges));
         }
 
         return openingHours;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        OpeningHour other = (OpeningHour) o;
+        return dayOfWeek == other.dayOfWeek &&
+            Objects.equals(day, other.day) &&
+            Objects.equals(ranges, other.ranges);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(day, dayOfWeek, ranges);
     }
 }

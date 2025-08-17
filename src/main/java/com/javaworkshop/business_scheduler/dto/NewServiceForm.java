@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 // This class represents a form for creating a new service.
 public class NewServiceForm {
@@ -78,5 +79,19 @@ public class NewServiceForm {
         this.imagePath = imagePath;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        NewServiceForm other = (NewServiceForm) o;
+        return duration == other.duration &&
+            Objects.equals(serviceName, other.serviceName) &&
+            Objects.equals(price, other.price) &&
+            Objects.equals(imagePath, other.imagePath) &&
+            Objects.equals(serviceImage, other.serviceImage);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(serviceName, price, duration, imagePath, serviceImage);
+    }
 }

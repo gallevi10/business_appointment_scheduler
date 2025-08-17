@@ -138,7 +138,7 @@ class CustomerControllerTest {
         assertViewName(mav, "error/404");
 
         verify(customerService).findIdByUsername(customerUser.getUsername());
-        verify(appointmentService, times(0)).deleteById(nonExistentUUID);
+        verify(appointmentService, never()).deleteById(nonExistentUUID);
 
     }
 
@@ -168,7 +168,7 @@ class CustomerControllerTest {
             .andExpect(redirectedUrl("/customer-dashboard/appointments"));
 
         verify(customerService).findIdByUsername(customerUser.getUsername());
-        verify(appointmentService, times(0)).deleteById(notMatchingAppointment.getId());
+        verify(appointmentService, never()).deleteById(notMatchingAppointment.getId());
 
     }
 
@@ -246,7 +246,7 @@ class CustomerControllerTest {
         assertViewName(mav, "customer/profile");
 
         verify(customerService).findByUsername(customerUser.getUsername());
-        verify(customerService, times(0)).updateCustomerDetails(
+        verify(customerService, never()).updateCustomerDetails(
             eq(customer), anyString(), anyString(), anyString(), anyString()
         );
     }

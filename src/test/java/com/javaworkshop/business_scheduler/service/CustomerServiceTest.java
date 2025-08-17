@@ -1,5 +1,6 @@
 package com.javaworkshop.business_scheduler.service;
 
+import com.javaworkshop.business_scheduler.model.Appointment;
 import com.javaworkshop.business_scheduler.model.Customer;
 import com.javaworkshop.business_scheduler.model.User;
 import com.javaworkshop.business_scheduler.repository.CustomerRepository;
@@ -28,6 +29,8 @@ class CustomerServiceTest {
 
     private Customer firstCustomer, secondCustomer, thirdCustomer;
 
+    private Appointment firstAppointment, secondAppointment, thirdAppointment;
+
     @BeforeEach
     void setUp() {
         firstCustomer = new Customer(UUID.randomUUID(), null,
@@ -38,6 +41,7 @@ class CustomerServiceTest {
             "password123", "ROLE_CUSTOMER", true);
         thirdCustomer = new Customer(UUID.randomUUID(), user,
             "Third", "Third", "third@someservice.com", "0543333333");
+
     }
 
     @DisplayName("Find All Customers")
@@ -199,7 +203,7 @@ class CustomerServiceTest {
         verify(customerRepository, times(2)).existsByEmail(null, existingEmail);
         verify(customerRepository).existsByPhone(null, existingPhone);
         verify(customerRepository).existsByEmail(null, nonExistentEmail);
-        verify(customerRepository, times(0)).existsByPhone(null, nonExistentPhone);
+        verify(customerRepository, never()).existsByPhone(null, nonExistentPhone);
     }
 
     @DisplayName("Exception on Get Valid Customer - Existing Customer With Different Name")
@@ -353,7 +357,7 @@ class CustomerServiceTest {
             verify(customerRepository, times(2)).existsByEmail(customer, existingEmail);
             verify(customerRepository).existsByPhone(customer, existingPhone);
             verify(customerRepository).existsByEmail(customer, nonExistentEmail);
-            verify(customerRepository, times(0)).existsByPhone(customer, nonExistentPhone);
+            verify(customerRepository, never()).existsByPhone(customer, nonExistentPhone);
         });
     }
 

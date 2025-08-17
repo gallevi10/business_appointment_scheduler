@@ -144,7 +144,7 @@ public class OwnerController {
         try {
             serviceService.removeServiceImage(serviceId);
         } catch (RuntimeException e){
-            return "redirect:/owner-dashboard/service-manager/update-service?sid=" + serviceId + "&removedAlready";
+            return "redirect:/owner-dashboard/service-manager/update-service?sid=" + serviceId + "&noImage";
         }
         catch (IOException e) {
             return "redirect:/owner-dashboard/service-manager/update-service?sid=" + serviceId + "&removeFailure";
@@ -222,7 +222,12 @@ public class OwnerController {
     // deletes an opening hour
     @GetMapping("/opening-hours/delete-range")
     public String deleteOpeningHour(@RequestParam("bhid") UUID businessHourId) {
-        businessHourService.deleteById(businessHourId);
+        Byte dayOfWeek = businessHourService.findDayOfWeekById(businessHourId);
+        if (dayOfWeek != null) {
+            if (businessHourService.findAllRangesByDayOfWeek(dayOfWeek).size() > 1) {
+                businessHourService.deleteById(businessHourId);
+            }
+        }
         return "redirect:/owner-dashboard/opening-hours";
     }
 
@@ -295,7 +300,7 @@ public class OwnerController {
         try {
             businessInfoService.removeBackgroundImage();
         } catch (RuntimeException e){
-            return "redirect:/owner-dashboard/service-manager/update-service?sid=" + "&removedAlready";
+            return "redirect:/owner-dashboard/edit-home?noImage";
         } catch (IOException e) {
             return "redirect:/owner-dashboard/edit-home?removeFailure";
         }

@@ -3,6 +3,8 @@ package com.javaworkshop.business_scheduler.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import java.util.Objects;
+
 // This class represents a form for capturing user details.
 public class UserDetailsForm {
 
@@ -49,5 +51,19 @@ public class UserDetailsForm {
 
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        UserDetailsForm other = (UserDetailsForm) o;
+        return Objects.equals(username, other.username) &&
+            Objects.equals(password, other.password) &&
+            Objects.equals(confirmPassword, other.confirmPassword);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username, password, confirmPassword);
     }
 }

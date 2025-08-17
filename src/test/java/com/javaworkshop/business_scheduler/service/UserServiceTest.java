@@ -234,7 +234,7 @@ class UserServiceTest {
         assertTrue(passwordEncoder.matches(oldPassword, firstUser.getPassword()),
             "Password should remain unchanged");
 
-        verify(userRepository, times(0)).save(any(User.class));
+        verify(userRepository, never()).save(any(User.class));
 
     }
 

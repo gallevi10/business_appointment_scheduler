@@ -156,7 +156,7 @@ class AuthControllerTest {
         assertNotNull(mav, "ModelAndView should not be null");
         assertViewName(mav, "auth/register");
 
-        verify(registrationService, times(0)).registerNewCustomer(
+        verify(registrationService, never()).registerNewCustomer(
             anyString(), anyString(), anyString(),
             anyString(), anyString(), anyString(), anyString()
         );
@@ -274,7 +274,7 @@ class AuthControllerTest {
 
         assertNotNull(mav, "ModelAndView should not be null");
         assertViewName(mav, "auth/change-password");
-        verify(userService, times(0)).changePassword(
+        verify(userService, never()).changePassword(
             any(User.class), anyString(), anyString(), anyString()
         );
     }
@@ -407,8 +407,8 @@ class AuthControllerTest {
         assertNotNull(mav, "ModelAndView should not be null");
         assertViewName(mav, "error/404");
 
-        verify(userService, times(0)).findByUsername(defaultOwnerUser.getUsername());
-        verify(userService, times(0)).deleteById(defaultOwnerUser.getId());
+        verify(userService, never()).findByUsername(defaultOwnerUser.getUsername());
+        verify(userService, never()).deleteById(defaultOwnerUser.getId());
 
     }
 
