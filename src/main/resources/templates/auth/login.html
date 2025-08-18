@@ -26,7 +26,9 @@
                         <input class="form-control" type="text" name="username" placeholder="Username" style="margin-bottom: 20px;" required>
                         <input class="form-control" type="password" name="password" placeholder="Password" required>
                         <input class="btn btn-secondary" type="submit" name="submit" value="Login" style="margin-top: 20px;">
-                        <p style="margin-top: 10px;">Don't have an account?&nbsp;<a th:href="@{register}" style="color: var(--bs-secondary);">Register now</a></p>
+                        <p class="mt-2">Don't have an account?&nbsp;
+                            <a class="link-secondary" th:href="@{register}">Register now</a>
+                        </p>
                     </form>
                 </div>
             </div>
