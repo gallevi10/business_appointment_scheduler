@@ -25,7 +25,7 @@ opening hours, and upcoming appointments through an admin dashboard.
 
 ### Other Features
 - Email notifications when booking and on appointment day at 7 AM.
-- Asynchronous Operations
+- Asynchronous Operations.
 - Responsive and clean interface (Bootstrap + Thymeleaf).
 - Forms with validation.
 
