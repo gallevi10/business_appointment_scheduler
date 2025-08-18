@@ -73,7 +73,7 @@ business_appointment_scheduler/
 
 1. **Clone the repo**
    ```bash
-   git clone https://github.com/<your-username>/business_appointment_scheduler.git
+   git clone https://github.com/gallevi10/business_appointment_scheduler.git
    cd business_appointment_scheduler
 
  3. **Set environment variables**
