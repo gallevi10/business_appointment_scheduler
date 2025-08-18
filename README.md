@@ -52,6 +52,8 @@ business_appointment_scheduler/
  ├── src/
  │   ├── main/
  │   │   ├── java/com/javaworkshop/business_scheduler/
+ │   │   │   ├── config/        # Application Configurations
+ │   │   │   ├── dto/           # Application DTOs
  │   │   │   ├── controller/    # Controllers
  │   │   │   ├── service/       # Business logic
  │   │   │   ├── repository/    # JPA repositories
