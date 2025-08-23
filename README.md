@@ -25,7 +25,7 @@ opening hours, and upcoming appointments through an admin dashboard.
 
 ### Other Features
 - Email notifications when booking and on appointment day at 7 AM.
-- Asynchronous Operations
+- Asynchronous Operations.
 - Responsive and clean interface (Bootstrap + Thymeleaf).
 - Forms with validation.
 
@@ -52,6 +52,8 @@ business_appointment_scheduler/
  ├── src/
  │   ├── main/
  │   │   ├── java/com/javaworkshop/business_scheduler/
+ │   │   │   ├── config/        # Application Configurations
+ │   │   │   ├── dto/           # Application DTOs
  │   │   │   ├── controller/    # Controllers
  │   │   │   ├── service/       # Business logic
  │   │   │   ├── repository/    # JPA repositories
