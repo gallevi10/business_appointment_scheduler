@@ -21,7 +21,7 @@
             </p>
         </div>
 
-        <div sec:authorize="!hasRole('ROLE_OWNER')" class="container text-center mt-4">
+        <div sec:authorize="!hasRole('OWNER')" class="container text-center mt-4">
             <div class="row">
                 <div class="col" id="book">
                     <a class="btn btn-secondary fs-2" th:href="@{/pick-service}"

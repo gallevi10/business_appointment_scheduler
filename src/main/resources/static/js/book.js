@@ -23,9 +23,14 @@ timeSelect.addEventListener('change', () => submitBtn.classList.remove('disabled
 function fetchTimes() {
     const serviceId = document.getElementById('sid-input').value;
     const date = dateInput.value;
+    timeSelect.disabled = true;
+    timeSelect.innerHTML = '<option disabled selected>Loading…</option>';
 
-    fetch(`/api/general/available-slots?sid=${serviceId}&d=${date}`)
-        .then(response => response.json())
+    fetch(`/api/general/available-slots?sid=${encodeURIComponent(serviceId)}&d=${encodeURIComponent(date)}`)
+        .then(response => {
+            if (!response.ok) throw new Error();
+            return response.json();
+        })
         .then(times => {
             submitBtn.classList.add('disabled');
             if (!Array.isArray(times) || times.length === 0) { // check if there are available times
@@ -39,6 +44,12 @@ function fetchTimes() {
                 option.textContent = time.substring(0, 5); // format time to HH:mm
                 timeSelect.appendChild(option);
             });
+        })
+        .catch(() => {
+            timeSelect.innerHTML = '<option disabled selected>Failed to load times</option>';
+        })
+        .finally(() => {
+            timeSelect.disabled = false;
         });
 
 }

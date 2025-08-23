@@ -70,14 +70,14 @@
                     <div id="navcol-3" class="collapse navbar-collapse">
                         <ul class="navbar-nav me-auto">
                             <li class="nav-item">
-                                <a sec:authorize="hasRole('ROLE_CUSTOMER')"
+                                <a sec:authorize="hasRole('CUSTOMER')"
                                    class="nav-link fs-5" data-bss-hover-animate="pulse"
                                    th:classappend="${activePage == 'appointments' ?
                                     'active fw-bold border rounded-pill shadow' : ''}"
                                    th:href="@{/customer-dashboard/appointments}">
                                     My Appointments
                                 </a>
-                                <a sec:authorize="hasRole('ROLE_OWNER')"
+                                <a sec:authorize="hasRole('OWNER')"
                                    class="nav-link fs-5" data-bss-hover-animate="pulse"
                                    th:classappend="${activePage == 'appointments' ?
                                     'active fw-bold border rounded-pill shadow' : ''}"
@@ -85,7 +85,7 @@
                                     Scheduled Appointments
                                 </a>
                             </li>
-                            <li sec:authorize="hasRole('ROLE_OWNER')" class="nav-item">
+                            <li sec:authorize="hasRole('OWNER')" class="nav-item">
                                 <a class="nav-link fs-5" data-bss-hover-animate="pulse"
                                    th:classappend="${activePage == 'service-manager' ?
                                     'active fw-bold border rounded-pill shadow' : ''}"
@@ -93,7 +93,7 @@
                                     Service Manager
                                 </a>
                             </li>
-                            <li sec:authorize="hasRole('ROLE_OWNER')" class="nav-item">
+                            <li sec:authorize="hasRole('OWNER')" class="nav-item">
                                 <a class="nav-link fs-5" data-bss-hover-animate="pulse"
                                    th:classappend="${activePage == 'opening-hours-manager' ?
                                     'active fw-bold border rounded-pill shadow' : ''}"
@@ -101,7 +101,7 @@
                                     Opening Hours Manager
                                 </a>
                             </li>
-                            <li sec:authorize="hasRole('ROLE_OWNER')" class="nav-item">
+                            <li sec:authorize="hasRole('OWNER')" class="nav-item">
                                 <a class="nav-link fs-5" data-bss-hover-animate="pulse"
                                    th:classappend="${activePage == 'edit-home' ?
                                     'active fw-bold border rounded-pill shadow' : ''}"
@@ -115,11 +115,11 @@
                             <a class="dropdown-toggle fs-5 text-decoration-none link-secondary"
                                th:text="'Welcome, ' + ${#authentication.name}" aria-expanded="false" data-bs-toggle="dropdown" href="#"></a>
                             <div class="dropdown-menu text-center bg-secondary-subtle" style="min-width: 0;">
-                                <a class="btn link-secondary fs-5" sec:authorize="hasRole('ROLE_CUSTOMER')"
+                                <a class="btn link-secondary fs-5" sec:authorize="hasRole('CUSTOMER')"
                                    th:href="@{/customer-dashboard/profile}"
                                    data-bss-hover-animate="pulse"
                                    role="button">Profile</a>
-                                <a class="btn link-secondary fs-5" sec:authorize="hasRole('ROLE_OWNER')"
+                                <a class="btn link-secondary fs-5" sec:authorize="hasRole('OWNER')"
                                    th:href="@{/owner-dashboard/add-owner}"
                                    data-bss-hover-animate="pulse" role="button">Add Owner</a>
                                 <a class="btn link-secondary fs-5"
