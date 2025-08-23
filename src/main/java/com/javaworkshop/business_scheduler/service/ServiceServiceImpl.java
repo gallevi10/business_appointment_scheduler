@@ -55,7 +55,7 @@ public class ServiceServiceImpl implements ServiceService{
     @Override
     public Page<Service> getServicePage(int page, int size) {
         Page<Service> servicePage = serviceRepository.findByIsActiveTrue(PageRequest.of(page, size));
-        if (page >= servicePage.getTotalPages()) {
+        if (servicePage.getTotalPages() > 0 && page >= servicePage.getTotalPages()) {
             throw new RuntimeException();
         }
         return servicePage;

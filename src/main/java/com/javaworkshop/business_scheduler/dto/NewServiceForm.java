@@ -94,4 +94,15 @@ public class NewServiceForm {
     public int hashCode() {
         return Objects.hash(serviceName, price, duration, imagePath, serviceImage);
     }
+
+    @Override
+    public String toString() {
+        return "NewServiceForm{" +
+                "serviceName='" + serviceName + '\'' +
+                ", price=" + price +
+                ", duration=" + duration +
+                ", imagePath='" + imagePath + '\'' +
+                ", serviceImage=" + serviceImage +
+                '}';
+    }
 }

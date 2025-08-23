@@ -260,9 +260,6 @@ public class OwnerController {
     @GetMapping("/edit-home")
     public String showEditHome(Model model) {
         BusinessInfo businessInfo = businessInfoService.getBusinessInfo();
-        if (businessInfo == null) {
-            return "error/404"; // if the business info does not exist return 404 error page
-        }
         EditHomeForm form = EditHomeForm.fromBusinessInfo(businessInfo);
         model.addAttribute("form", form);
         return "owner/edit-home";

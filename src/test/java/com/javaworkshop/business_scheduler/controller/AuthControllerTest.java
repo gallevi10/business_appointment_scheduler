@@ -369,7 +369,8 @@ class AuthControllerTest {
 
         when(userService.findByUsername(customerUser.getUsername())).thenReturn(customerUser);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/delete-account"))
+        mockMvc.perform(MockMvcRequestBuilders.post("/delete-account")
+                .with(csrf()))
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/login?accountDeleted"));
 
@@ -385,7 +386,8 @@ class AuthControllerTest {
 
         when(userService.findByUsername(ownerUser.getUsername())).thenReturn(ownerUser);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/delete-account"))
+        mockMvc.perform(MockMvcRequestBuilders.post("/delete-account")
+            .with(csrf()))
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/login?accountDeleted"));
 
@@ -399,7 +401,8 @@ class AuthControllerTest {
     @Test
     void processDeleteAccountDefaultOwnerCase() throws Exception {
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/delete-account"))
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/delete-account")
+            .with(csrf()))
             .andExpect(status().isOk()).andReturn();
 
         ModelAndView mav = mvcResult.getModelAndView();

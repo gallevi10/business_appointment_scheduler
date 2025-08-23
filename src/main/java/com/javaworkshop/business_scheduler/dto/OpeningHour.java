@@ -84,4 +84,13 @@ public class OpeningHour {
     public int hashCode() {
         return Objects.hash(day, dayOfWeek, ranges);
     }
+
+    @Override
+    public String toString() {
+        return "OpeningHour{" +
+                "day='" + day + '\'' +
+                ", dayOfWeek=" + dayOfWeek +
+                ", ranges=" + ranges +
+                '}';
+    }
 }

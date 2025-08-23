@@ -71,8 +71,6 @@ public class ServicesAsyncTest {
     private Thread[] threads;
 
     private List<Throwable> exceptions;
-    @Autowired
-    private AppointmentRepository appointmentRepository;
 
     @BeforeEach
     void setUp() {
@@ -359,8 +357,16 @@ public class ServicesAsyncTest {
             .plusDays(1)
             .withHour(9)
             .withMinute(0)
+            .withSecond(0)
             .withNano(0);
         LocalDateTime endTime = startTime.plusMinutes(service.getDuration());
+        BusinessHour businessHour = new BusinessHour(
+            (byte) (startTime.getDayOfWeek().getValue() % 7),
+            LocalTime.of(8, 0),
+            LocalTime.of(17, 0),
+            true
+        );
+        businessHourRepository.save(businessHour);
 
         Runnable task = () -> {
             try {

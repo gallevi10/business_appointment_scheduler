@@ -13,6 +13,10 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -66,8 +70,8 @@ class BookingServiceTest {
         );
 
         assertAll(
-            () -> assertEquals("error.appointmentTime.invalid", firstException.getMessage()),
-            () -> assertEquals("error.appointmentTime.invalid", secondException.getMessage())
+            () -> assertEquals("error.appointmentTime.invalid.or.taken", firstException.getMessage()),
+            () -> assertEquals("error.appointmentTime.invalid.or.taken", secondException.getMessage())
         );
 
     }
@@ -84,7 +88,17 @@ class BookingServiceTest {
             .withNano(0);
         LocalDateTime endTime = startTime.plusMinutes(service.getDuration());
 
-        when(appointmentService.isSlotAvailable(startTime, endTime)).thenReturn(false);
+        // mocking available slots that do not include the requested start time
+        List<LocalTime> availableSlots = List.of(
+                LocalTime.of(8, 0),
+                LocalTime.of(8, 30),
+                LocalTime.of(9, 30),
+                LocalTime.of(10, 0)
+        );
+
+        when(appointmentService.getAvailableSlots(
+            any(Service.class), eq(startTime.toLocalDate()), anyList()
+        )).thenReturn(availableSlots);
 
         Exception exception = assertThrows(RuntimeException.class, () ->
             bookingService.bookAppointment(customer.getFirstName(), customer.getLastName(),
@@ -92,9 +106,54 @@ class BookingServiceTest {
                 service, null, startTime, endTime)
         );
 
-        assertEquals("error.appointmentTime.taken", exception.getMessage());
+        assertEquals("error.appointmentTime.invalid.or.taken", exception.getMessage());
 
-        verify(appointmentService).isSlotAvailable(startTime, endTime);
+        verify(appointmentService)
+            .getAvailableSlots(
+                any(Service.class), eq(startTime.toLocalDate()), anyList()
+            );
+
+    }
+
+    @DisplayName("Exception when booking a New Appointment As Owner")
+    @Test
+    void exceptionWhenBookingANewAppointmentAsOwner() {
+        LocalDateTime startTime = LocalDateTime
+            .now()
+            .plusDays(1)
+            .withHour(9)
+            .withMinute(0)
+            .withSecond(0)
+            .withNano(0);
+        LocalDateTime endTime = startTime.plusMinutes(service.getDuration());
+
+        // mocking available slots that do not include the requested start time
+        List<LocalTime> availableSlots = List.of(
+            LocalTime.of(8, 0),
+            LocalTime.of(8, 30),
+            LocalTime.of(9, 0),
+            LocalTime.of(9, 30),
+            LocalTime.of(10, 0)
+        );
+
+        when(appointmentService.getAvailableSlots(
+            any(Service.class), eq(startTime.toLocalDate()), anyList()
+        )).thenReturn(availableSlots);
+        when(customerService.findByUsername(anyString()))
+            .thenReturn(null);
+
+        Exception exception = assertThrows(RuntimeException.class, () ->
+            bookingService.bookAppointment(null, null,
+                null, null, "someOwnerUsername",
+                service, null, startTime, endTime)
+        );
+
+        assertEquals("error.user.cannot.have.an.appointment", exception.getMessage());
+
+        verify(appointmentService)
+            .getAvailableSlots(
+                any(Service.class), eq(startTime.toLocalDate()), anyList()
+            );
 
     }
 
@@ -110,7 +169,14 @@ class BookingServiceTest {
             .withNano(0);
         LocalDateTime endTime = startTime.plusMinutes(service.getDuration());
 
-        when(appointmentService.isSlotAvailable(startTime, endTime)).thenReturn(true);
+        List<LocalTime> availableSlots = List.of(
+            LocalTime.of(8, 0),
+            LocalTime.of(9, 0) // requested slot
+        );
+
+        when(appointmentService.getAvailableSlots(
+            any(Service.class), eq(startTime.toLocalDate()), anyList()
+        )).thenReturn(availableSlots);
         when(customerService.findByUsername(customer.getUser().getUsername()))
             .thenReturn(customer);
         when(appointmentService.save(any(Appointment.class)))
@@ -138,8 +204,10 @@ class BookingServiceTest {
             existingAppointment.getId(), startTime, endTime
         ));
 
-        verify(appointmentService, times(2)).isSlotAvailable(startTime, endTime);
-        verify(customerService, times(2)).findByUsername(customer.getUser().getUsername());
+        verify(appointmentService, times(2))
+            .getAvailableSlots(any(Service.class), eq(startTime.toLocalDate()), anyList());
+        verify(customerService, times(2))
+            .findByUsername(customer.getUser().getUsername());
         verify(appointmentService, times(2)).save(any(Appointment.class));
         verify(appointmentService).findById(existingAppointment.getId());
     }
@@ -156,7 +224,14 @@ class BookingServiceTest {
             .withNano(0);
         LocalDateTime endTime = startTime.plusMinutes(service.getDuration());
 
-        when(appointmentService.isSlotAvailable(startTime, endTime)).thenReturn(true);
+        List<LocalTime> availableSlots = List.of(
+            LocalTime.of(8, 0),
+            LocalTime.of(9, 0)
+        );
+
+        when(appointmentService.getAvailableSlots(
+            any(Service.class), eq(startTime.toLocalDate()), anyList()
+        )).thenReturn(availableSlots);
         when(customerService.findByEmailAndPhone(customer.getEmail(), customer.getPhone()))
             .thenReturn(customer);
         when(customerService.getValidCustomer(customer, customer.getEmail(), customer.getPhone(),
@@ -188,7 +263,9 @@ class BookingServiceTest {
         ));
 
         verify(appointmentService, times(2))
-            .isSlotAvailable(startTime, endTime);
+            .getAvailableSlots(
+                any(Service.class), eq(startTime.toLocalDate()), anyList()
+            );
         verify(customerService, times(2))
             .findByEmailAndPhone(customer.getEmail(), customer.getPhone());
         verify(customerService, times(2)).getValidCustomer(
@@ -211,7 +288,14 @@ class BookingServiceTest {
             .withNano(0);
         LocalDateTime endTime = startTime.plusMinutes(service.getDuration());
 
-        when(appointmentService.isSlotAvailable(startTime, endTime)).thenReturn(true);
+        List<LocalTime> availableSlots = List.of(
+            LocalTime.of(8, 0),
+            LocalTime.of(9, 0)
+        );
+
+        when(appointmentService.getAvailableSlots(
+            any(Service.class), eq(startTime.toLocalDate()), anyList()
+        )).thenReturn(availableSlots);
         when(customerService.findByEmailAndPhone(customer.getEmail(), customer.getPhone()))
             .thenReturn(null);
         when(customerService.getValidCustomer(null, customer.getEmail(), customer.getPhone(),
@@ -228,7 +312,9 @@ class BookingServiceTest {
             null, startTime, endTime
         ));
 
-        verify(appointmentService).isSlotAvailable(startTime, endTime);
+        verify(appointmentService).getAvailableSlots(
+                any(Service.class), eq(startTime.toLocalDate()), anyList()
+        );
         verify(customerService).findByEmailAndPhone(customer.getEmail(), customer.getPhone());
         verify(customerService).getValidCustomer(
             null, customer.getEmail(), customer.getPhone(),

@@ -81,4 +81,14 @@ public class NewRangeForm {
     public int hashCode() {
         return Objects.hash(dayOfWeek, startTime, endTime, isOpen);
     }
+
+    @Override
+    public String toString() {
+        return "NewRangeForm{" +
+                "dayOfWeek=" + dayOfWeek +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", isOpen=" + isOpen +
+                '}';
+    }
 }

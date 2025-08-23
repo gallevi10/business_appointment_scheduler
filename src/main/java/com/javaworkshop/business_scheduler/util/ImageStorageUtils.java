@@ -48,7 +48,9 @@ public class ImageStorageUtils {
         } catch (IOException e) {
             throw new RuntimeException("error.image.upload");
         }
-        return "\\" + targetDir + "\\" + fileFullName;
+        return "/" +
+            targetDir.toString().replace('\\', '/')
+            + "/" + fileFullName;
     }
 
 

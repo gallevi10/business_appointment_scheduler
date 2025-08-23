@@ -6,6 +6,8 @@ import com.javaworkshop.business_scheduler.model.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 import java.util.UUID;
 
 // This class handles the booking of appointments for customers.
@@ -14,11 +16,15 @@ public class BookingService {
 
     private final CustomerService customerService;
     private final AppointmentService appointmentService;
+    private final BusinessHourService businessHourService;
 
     @Autowired
-    public BookingService(CustomerService customerService, AppointmentService appointmentService) {
+    public BookingService(CustomerService customerService,
+                          AppointmentService appointmentService,
+                          BusinessHourService businessHourService) {
         this.customerService = customerService;
         this.appointmentService = appointmentService;
+        this.businessHourService = businessHourService;
     }
 
     public synchronized Appointment bookAppointment(String firstName, String lastName, String email, String phone,
@@ -26,13 +32,18 @@ public class BookingService {
                                        LocalDateTime startTime, LocalDateTime endTime) {
 
         // checks if the given start time is valid
-        if (startTime.isBefore(LocalDateTime.now()) || startTime.isAfter(LocalDateTime.now().plusMonths(1))) {
-            throw new RuntimeException("error.appointmentTime.invalid");
-        }
-
-        // checks if the slot is available for the given time range
-        if (!appointmentService.isSlotAvailable(startTime, endTime)) {
-            throw new RuntimeException("error.appointmentTime.taken");
+        List<LocalTime> expectedAvailableHours =
+            appointmentService.getAvailableSlots(
+                service,
+                startTime.toLocalDate(),
+                businessHourService.findAllRangesByDayOfWeek(
+                    (byte) (startTime.getDayOfWeek().getValue() % 7)
+                )
+            );
+        if (startTime.isBefore(LocalDateTime.now()) || // cannot book in the past
+            startTime.isAfter(LocalDateTime.now().plusMonths(1)) || // cannot book more than 1 month in advance
+            !expectedAvailableHours.contains(startTime.toLocalTime())) { // the hour must be in the available hours list
+            throw new RuntimeException("error.appointmentTime.invalid.or.taken");
         }
 
         Customer bookingCustomer;
@@ -58,6 +69,9 @@ public class BookingService {
             appointmentService.sendAppointmentConfirmationEmail(appointmentToBook, true);
         }
         else { // if the appointmentId is not provided, we are creating a new appointment
+            if (bookingCustomer == null) { // if the customer is null, probably it's an owner trying to book a new appointment
+                throw new RuntimeException("error.user.cannot.have.an.appointment");
+            }
             appointmentToBook = new Appointment(bookingCustomer, service, startTime, endTime, false);
             customerService.save(bookingCustomer); // ensure the customer is saved before saving the appointment
             appointmentService.save(appointmentToBook);

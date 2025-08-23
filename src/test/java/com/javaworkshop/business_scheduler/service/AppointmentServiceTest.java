@@ -26,12 +26,13 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ActiveProfiles("disable-scheduling")
 class AppointmentServiceTest {
+
+    private final int TIMEOUT = 3000;
 
     @MockitoBean
     private AppointmentRepository appointmentRepository;
@@ -416,7 +417,7 @@ class AppointmentServiceTest {
                 "Thank you for choosing our business!";
             appointmentService.sendAppointmentConfirmationEmail(appointment, false);
             try {
-                verify(emailUtil).sendMail(toEmail, subject, body);
+                verify(emailUtil, timeout(TIMEOUT)).sendMail(toEmail, subject, body);
             } catch (Exception ignored) {
             } // ignored because EmailUtil is mocked
         });

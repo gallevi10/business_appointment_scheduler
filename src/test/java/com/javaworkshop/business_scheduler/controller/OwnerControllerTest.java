@@ -872,27 +872,6 @@ class OwnerControllerTest {
 
     }
 
-    @DisplayName("Error On Show Edit Home - Non-Existent Business Info")
-    @WithMockUser(username = "ownerUser", roles = {"OWNER"})
-    @Test
-    void showEditHome() throws Exception {
-
-        when(businessInfoService.getBusinessInfo())
-            .thenReturn(null);
-
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
-                .get("/owner-dashboard/edit-home"))
-            .andExpect(status().isOk())
-            .andReturn();
-
-        ModelAndView mav = mvcResult.getModelAndView();
-        assertNotNull(mav, "ModelAndView should not be null");
-        assertViewName(mav, "error/404");
-
-        verify(businessInfoService).getBusinessInfo();
-
-    }
-
     @DisplayName("Process Edit Home Form - Validation Error Case")
     @WithMockUser(username = "ownerUser", roles = {"OWNER"})
     @Test

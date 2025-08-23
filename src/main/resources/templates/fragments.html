@@ -1,8 +1,10 @@
 <!DOCTYPE html>
+<!-- This file contains reusable Thymeleaf fragments for the application -->
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
+    <!-- Fragment for the head section, including meta tags, title, and stylesheets -->
     <head th:fragment="head(title)">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
@@ -19,8 +21,8 @@
         </style>
     </head>
     <body>
+        <!-- Fragment for the navigation bar when the user is not authenticated -->
         <div th:fragment="unauthenticatedNavbar">
-            <!-- if user is unauthenticated, show login and register links -->
             <nav class="navbar navbar-expand-md bg-transparent">
                 <div class="container-fluid text-center">
                     <a class="order-first text-secondary" th:href="@{/}">
@@ -47,6 +49,7 @@
             </nav>
         </div>
 
+        <!-- Fragment for the navigation bar when the user is authenticated -->
         <div th:fragment="authenticatedNavbar(activePage)">
             <!-- if user is authenticated, show logout and navbar options -->
             <nav class="navbar navbar-expand-md bg-secondary-subtle">
@@ -125,17 +128,21 @@
                                 <form th:action="@{/logout}" method="post">
                                     <input class="btn link-secondary fs-5" data-bss-hover-animate="pulse" type="submit" name="logout" value="Logout" />
                                 </form>
-                                <a class="btn link-danger fs-5"
-                                   th:if="${#authentication.name != 'owner'}"
-                                   th:href="@{/delete-account}"
-                                   onclick="return confirm('Are you sure you want to delete your account?');"
-                                   data-bss-hover-animate="pulse" role="button">Delete Account</a>
+                                <form th:action="@{/delete-account}" method="POST"
+                                      th:if="${#authentication.name != 'owner'}" >
+                                    <input class="btn link-danger fs-5"
+                                           type="submit"
+                                           value="Delete Account"
+                                           onclick="return confirm('Are you sure you want to delete your account?');"
+                                           data-bss-hover-animate="pulse" />
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
             </nav>
         </div>
+        <!-- Fragment for page headings -->
         <div th:fragment="heading(heading)" class="container text-center mt-4">
             <h1 th:text="${heading}"></h1>
         </div>

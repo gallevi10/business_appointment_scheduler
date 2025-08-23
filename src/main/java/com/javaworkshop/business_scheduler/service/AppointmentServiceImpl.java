@@ -6,6 +6,7 @@ import com.javaworkshop.business_scheduler.model.Service;
 import com.javaworkshop.business_scheduler.repository.AppointmentRepository;
 import com.javaworkshop.business_scheduler.util.EmailUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.xml.stream.XMLOutputFactory;
@@ -78,7 +79,8 @@ public class AppointmentServiceImpl implements AppointmentService{
                 }
             }
         } catch (Exception e) {
-            System.err.println("Failed to send daily reminders: " + e.getMessage());
+            System.err.println("Failed to send daily reminders: " + e.getMessage() +
+                "\nFail cause: " + e.getCause().getMessage());
         }
     }
 
@@ -209,6 +211,7 @@ public class AppointmentServiceImpl implements AppointmentService{
     }
 
     // this method sends an appointment confirmation email to the customer
+    @Async // to send emails asynchronously
     public void sendAppointmentConfirmationEmail(Appointment appointment, boolean isRescheduled) {
         try {
             String toEmail = appointment.getCustomer().getEmail();
@@ -224,7 +227,8 @@ public class AppointmentServiceImpl implements AppointmentService{
             emailUtil.sendMail(toEmail, subject, body);
 
         } catch (Exception e) {
-            System.err.println("Failed to send confirmation email: " + e.getMessage());
+            System.err.println("Failed to send confirmation email: " + e.getMessage() +
+                "\nFail cause: " + e.getCause().getMessage());
         }
     }
 

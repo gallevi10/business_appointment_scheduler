@@ -10,7 +10,7 @@ public class CustomerDetailsForm {
 
     @NotNull(message = "Phone number is required")
     @NotBlank(message = "Phone number is required")
-    @Pattern(regexp = "^[0-9]{10}", message = "Phone number must be 10 digits")
+    @Pattern(regexp = "^05[0-589][0-9]{7}$", message = "Phone number must be a valid Israeli mobile number")
     private String phoneNumber;
 
     @NotNull(message = "Email is required")

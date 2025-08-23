@@ -95,7 +95,7 @@ public class AuthController {
     }
 
     // processes the deletion of the user account
-    @GetMapping("/delete-account")
+    @PostMapping("/delete-account")
     public String processDeleteAccount(Authentication authentication) {
         String username = authentication.getName();
         if (username.equals("owner")) {

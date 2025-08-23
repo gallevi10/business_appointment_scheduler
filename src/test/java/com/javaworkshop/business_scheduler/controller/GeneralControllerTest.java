@@ -372,8 +372,7 @@ class GeneralControllerTest {
             .thenReturn(chosenService);
 
         List<String> possibleErrorCodes = List.of(
-            "error.appointmentTime.invalid",
-            "error.appointmentTime.taken",
+            "error.appointmentTime.invalid.or.taken",
             "error.customer.email.conflict",
             "error.customer.phone.conflict",
             "error.customer.email.and.phone.conflict"
@@ -436,43 +435,38 @@ class GeneralControllerTest {
         when(serviceService.findById(chosenService.getId()))
             .thenReturn(chosenService);
 
-        List<String> possibleErrorCodes = List.of(
-            "error.appointmentTime.invalid",
-            "error.appointmentTime.taken"
-        );
+        String possibleErrorCode = "error.appointmentTime.invalid.or.taken";
 
-        for (String possibleErrorCode : possibleErrorCodes) {
-            doThrow(new RuntimeException(possibleErrorCode)).when(bookingService)
-                .bookAppointment(nullable(String.class), nullable(String.class), nullable(String.class),
-                    nullable(String.class), nullable(String.class), any(Service.class), nullable(UUID.class),
-                    any(LocalDateTime.class), any(LocalDateTime.class));
+        doThrow(new RuntimeException(possibleErrorCode)).when(bookingService)
+            .bookAppointment(nullable(String.class), nullable(String.class), nullable(String.class),
+                nullable(String.class), nullable(String.class), any(Service.class), nullable(UUID.class),
+                any(LocalDateTime.class), any(LocalDateTime.class));
 
-            MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
-                    .post("/book/processBooking")
-                    .param("sid", chosenService.getId().toString())
-                    .param("appointmentTimeForm.appointmentDate", "2025-08-01")
-                    .param("appointmentTimeForm.appointmentTime", "08:00")
-                    .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(model().hasErrors()).andReturn();
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
+                .post("/book/processBooking")
+                .param("sid", chosenService.getId().toString())
+                .param("appointmentTimeForm.appointmentDate", "2025-08-01")
+                .param("appointmentTimeForm.appointmentTime", "08:00")
+                .with(csrf()))
+            .andExpect(status().isOk())
+            .andExpect(model().hasErrors()).andReturn();
 
-            ModelAndView mav = mvcResult.getModelAndView();
+        ModelAndView mav = mvcResult.getModelAndView();
 
-            assertNotNull(mav, "ModelAndView should not be null");
-            assertViewName(mav, "general/book");
+        assertNotNull(mav, "ModelAndView should not be null");
+        assertViewName(mav, "general/book");
 
-            BindingResult bindingResult =
-                (BindingResult) mav.getModel().get(BindingResult.MODEL_KEY_PREFIX + "form");
+        BindingResult bindingResult =
+            (BindingResult) mav.getModel().get(BindingResult.MODEL_KEY_PREFIX + "form");
 
-            assertTrue(bindingResult.getAllErrors().stream().anyMatch(
-                    error -> possibleErrorCode.equals(error.getCode())),
-                possibleErrorCode + " should be present in the errors");
+        assertTrue(bindingResult.getAllErrors().stream().anyMatch(
+                error -> possibleErrorCode.equals(error.getCode())),
+            possibleErrorCode + " should be present in the errors");
 
-        }
 
-        verify(serviceService, times(possibleErrorCodes.size()))
-            .findById(chosenService.getId());
-        verify(bookingService, times(possibleErrorCodes.size())).bookAppointment(
+
+        verify(serviceService).findById(chosenService.getId());
+        verify(bookingService).bookAppointment(
             nullable(String.class), nullable(String.class), nullable(String.class),
             nullable(String.class), nullable(String.class), any(Service.class), nullable(UUID.class),
             any(LocalDateTime.class), any(LocalDateTime.class)

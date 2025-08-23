@@ -34,14 +34,14 @@ opening hours, and upcoming appointments through an admin dashboard.
 ## 🛠️ Technologies
 
 - **Java 17**
-- **Spring Boot 3.5** — REST, business logic, configuration
-- **Spring Security** — authentication & authorization
-- **Spring Data JPA (Hibernate)** — ORM
-- **MySQL / H2 (for tests)** — database
-- **Thymeleaf** — template engine
-- **Bootstrap 5** — responsive UI
-- **JavaMailSender** — email support
-- **JUnit 5 + Spring Boot Test** — testing
+- **Spring Boot 3.5** - REST, business logic, configuration
+- **Spring Security** - authentication & authorization
+- **Spring Data JPA (Hibernate)** - ORM
+- **MySQL / H2 (for tests)** - database
+- **Thymeleaf** - template engine
+- **Bootstrap 5** - responsive UI
+- **JavaMailSender** - email support
+- **JUnit 5 + Spring Boot Test** - testing
 
 ---
 

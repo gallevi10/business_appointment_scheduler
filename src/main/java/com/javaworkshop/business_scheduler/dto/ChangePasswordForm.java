@@ -3,6 +3,8 @@ package com.javaworkshop.business_scheduler.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import java.util.Objects;
+
 // This class represents a form for changing a user's password.
 public class ChangePasswordForm {
 
@@ -49,5 +51,28 @@ public class ChangePasswordForm {
 
     public void setConfirmNewPassword(String confirmNewPassword) {
         this.confirmNewPassword = confirmNewPassword;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ChangePasswordForm other = (ChangePasswordForm) o;
+        return Objects.equals(oldPassword, other.oldPassword) &&
+            Objects.equals(newPassword, other.newPassword) &&
+            Objects.equals(confirmNewPassword, other.confirmNewPassword);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(oldPassword, newPassword, confirmNewPassword);
+    }
+
+    @Override
+    public String toString() {
+        return "ChangePasswordForm{" +
+            "oldPassword='" + oldPassword + '\'' +
+            ", newPassword='" + newPassword + '\'' +
+            ", confirmNewPassword='" + confirmNewPassword + '\'' +
+            '}';
     }
 }

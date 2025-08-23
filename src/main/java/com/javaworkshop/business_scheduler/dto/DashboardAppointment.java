@@ -123,4 +123,16 @@ public class DashboardAppointment {
     public int hashCode() {
         return Objects.hash(appointmentId, customer, service, date, time, isActive);
     }
+
+    @Override
+    public String toString() {
+        return "DashboardAppointment{" +
+            "appointmentId=" + appointmentId +
+            ", customer=" + customer +
+            ", service=" + service +
+            ", date=" + date +
+            ", time=" + time +
+            ", isActive=" + isActive +
+            '}';
+    }
 }
